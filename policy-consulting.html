@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>소상공인 정책 컨설팅 | 커리어포레스트</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Gowun+Batang:wght@400;700&family=Cormorant+Garamond:ital,wght@0,300;1,300&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --forest:#2D5A3D; --forest-light:#3D7A52; --sage:#7B9E87;
+  --gold:#C9A84C; --gold-light:#E8C97A;
+  --cream:#F5F0E8; --cream-dark:#EDE7DA;
+  --terra:#C4704F; --charcoal:#2C2C2C;
+  --white:#FFFFFF; --gray:#888; --light-gray:#f8f6f2;
+  --teal:#2a7a6b; --navy:#1a1a2e;
+  --orange:#E8863A;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Noto Sans KR',sans-serif;color:var(--charcoal);background:var(--white);line-height:1.7;}
+.container{max-width:1100px;margin:0 auto;padding:0 24px;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:#fff;border-bottom:1px solid rgba(45,90,61,.12);padding:14px 0;box-shadow:0 2px 12px rgba(0,0,0,.06);}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.nav-logo img{height:44px;width:auto;}
+.nav-logo-text{font-size:17px;font-weight:900;color:var(--forest);}
+.nav-logo-sub{font-size:11px;color:var(--sage);margin-top:-2px;}
+.nav-back{font-size:13px;color:var(--forest);text-decoration:none;font-weight:600;display:flex;align-items:center;gap:6px;padding:8px 18px;border:1.5px solid var(--forest);border-radius:20px;transition:all .2s;}
+.nav-back:hover{background:var(--forest);color:#fff;}
+
+/* HERO */
+.hero{padding:130px 0 80px;background:linear-gradient(160deg,#2a1a0e 0%,#4a2e1a 50%,#2D5A3D 100%);position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 60% at 20% 50%,rgba(201,168,76,.15),transparent);}
+.hero::after{content:'🏪';position:absolute;right:-20px;top:20px;font-size:280px;opacity:.05;pointer-events:none;}
+.hero-inner{position:relative;z-index:1;}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(201,168,76,.15);border:1px solid rgba(201,168,76,.3);color:var(--gold-light);font-size:12px;padding:5px 14px;border-radius:20px;font-weight:600;margin-bottom:16px;}
+.hero-title{font-family:'Gowun Batang',serif;font-size:clamp(28px,4vw,46px);font-weight:700;line-height:1.25;margin-bottom:16px;color:#fff;}
+.hero-title em{color:var(--gold-light);font-style:normal;}
+.hero-sub{font-size:15px;color:rgba(255,255,255,.8);line-height:1.9;margin-bottom:28px;max-width:620px;}
+.hero-notice{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:10px;padding:10px 18px;font-size:13px;color:rgba(255,255,255,.85);margin-bottom:32px;}
+.hero-cta{display:inline-flex;align-items:center;gap:8px;background:var(--gold);color:var(--charcoal);padding:14px 28px;border-radius:50px;font-size:15px;font-weight:700;text-decoration:none;transition:all .2s;margin-right:12px;}
+.hero-cta:hover{background:var(--gold-light);transform:translateY(-2px);}
+.hero-cta2{display:inline-flex;align-items:center;gap:8px;background:transparent;color:white;padding:14px 28px;border-radius:50px;font-size:15px;font-weight:700;text-decoration:none;border:2px solid rgba(255,255,255,.4);transition:all .2s;}
+.hero-cta2:hover{border-color:#fff;}
+
+/* 핵심 요약 배너 */
+.summary-bar{background:var(--forest);padding:28px 0;}
+.summary-inner{display:grid;grid-template-columns:repeat(4,1fr);gap:0;}
+@media(max-width:800px){.summary-inner{grid-template-columns:1fr 1fr;}}
+@media(max-width:500px){.summary-inner{grid-template-columns:1fr;}}
+.sum-item{text-align:center;padding:16px 20px;border-right:1px solid rgba(255,255,255,.12);}
+.sum-item:last-child{border-right:none;}
+.sum-num{font-family:'Gowun Batang',serif;font-size:24px;font-weight:700;color:var(--gold-light);}
+.sum-label{font-size:11px;color:rgba(255,255,255,.7);margin-top:4px;}
+
+/* 섹션 공통 */
+.section{padding:72px 0;}
+.section-label{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:10px;}
+.section-title{font-family:'Gowun Batang',serif;font-size:clamp(22px,3.5vw,34px);font-weight:700;line-height:1.3;margin-bottom:14px;color:var(--forest);}
+.section-sub{font-size:15px;color:var(--gray);line-height:1.9;}
+
+/* 지원 구성 카드 */
+.support-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:40px;}
+@media(max-width:900px){.support-grid{grid-template-columns:1fr;}}
+.support-card{border-radius:20px;padding:28px;position:relative;overflow:hidden;transition:all .25s;}
+.support-card:hover{transform:translateY(-4px);box-shadow:0 16px 40px rgba(0,0,0,.12);}
+.support-card.main{background:linear-gradient(135deg,var(--forest),var(--forest-light));color:white;}
+.support-card.blue{background:linear-gradient(135deg,var(--teal),#3a9a8a);color:white;}
+.support-card.warm{background:linear-gradient(135deg,var(--terra),#d4845f);color:white;}
+.support-card::before{content:attr(data-emoji);position:absolute;right:-10px;top:-10px;font-size:80px;opacity:.12;}
+.card-tag{display:inline-block;background:rgba(255,255,255,.2);font-size:11px;padding:3px 10px;border-radius:20px;font-weight:700;margin-bottom:14px;}
+.card-icon{font-size:36px;margin-bottom:14px;}
+.card-title{font-size:18px;font-weight:900;margin-bottom:8px;}
+.card-desc{font-size:13px;opacity:.88;line-height:1.8;margin-bottom:16px;}
+.card-items{display:flex;flex-direction:column;gap:6px;}
+.card-item{display:flex;align-items:center;gap:8px;font-size:12.5px;opacity:.9;}
+.card-dot{width:5px;height:5px;border-radius:50%;background:var(--gold-light);flex-shrink:0;}
+.card-link{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.2);color:white;padding:8px 16px;border-radius:20px;font-size:12px;font-weight:700;text-decoration:none;margin-top:16px;transition:all .15s;}
+.card-link:hover{background:rgba(255,255,255,.3);}
+
+/* 원스톱 상세 */
+.detail-section{background:var(--light-gray);padding:72px 0;}
+.detail-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:32px 0 24px;}
+.detail-tab{padding:9px 20px;border-radius:50px;border:2px solid rgba(45,90,61,.2);background:transparent;color:var(--forest);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;}
+.detail-tab.active{background:var(--forest);color:#fff;border-color:var(--forest);}
+.detail-content{display:none;}
+.detail-content.active{display:block;}
+
+/* 지원 항목 카드 */
+.item-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;}
+@media(max-width:700px){.item-grid{grid-template-columns:1fr;}}
+.item-card{background:#fff;border-radius:16px;padding:22px 24px;border:1px solid rgba(45,90,61,.1);}
+.item-head{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+.item-emoji{font-size:28px;}
+.item-name{font-size:15px;font-weight:800;color:var(--charcoal);}
+.item-sub{font-size:11px;color:var(--sage);margin-top:2px;}
+.item-amount{display:inline-block;background:rgba(201,168,76,.12);color:#8a6a00;font-size:13px;font-weight:700;padding:4px 12px;border-radius:20px;margin-bottom:12px;}
+.item-list{display:flex;flex-direction:column;gap:6px;}
+.item-row{display:flex;gap:8px;font-size:13px;color:#555;line-height:1.6;}
+.item-row::before{content:'•';color:var(--forest);flex-shrink:0;margin-top:1px;}
+.item-warning{background:rgba(196,112,79,.08);border-left:3px solid var(--terra);border-radius:0 8px 8px 0;padding:10px 14px;margin-top:12px;font-size:12px;color:var(--terra);line-height:1.7;}
+
+/* 신청 방법 */
+.apply-section{padding:72px 0;}
+.apply-flow{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:36px;position:relative;}
+@media(max-width:800px){.apply-flow{grid-template-columns:1fr 1fr;}}
+.flow-card{background:#fff;border:1px solid rgba(45,90,61,.12);border-radius:16px;padding:20px;text-align:center;position:relative;}
+.flow-num{width:36px;height:36px;border-radius:50%;background:var(--forest);color:#fff;font-weight:900;font-size:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;}
+.flow-icon{font-size:28px;margin-bottom:10px;}
+.flow-title{font-size:13px;font-weight:800;color:var(--charcoal);margin-bottom:6px;}
+.flow-desc{font-size:12px;color:var(--gray);line-height:1.7;}
+.flow-arrow{display:none;}
+@media(min-width:800px){
+  .apply-flow{position:relative;}
+  .flow-card::after{content:'→';position:absolute;right:-14px;top:50%;transform:translateY(-50%);font-size:18px;color:var(--sage);z-index:1;}
+  .flow-card:last-child::after{display:none;}
+}
+
+/* 신청처 박스 */
+.apply-sites{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:32px;}
+@media(max-width:600px){.apply-sites{grid-template-columns:1fr;}}
+.site-card{background:var(--light-gray);border-radius:14px;padding:20px 24px;border:2px solid transparent;transition:all .2s;}
+.site-card:hover{border-color:var(--forest);background:#fff;}
+.site-name{font-size:14px;font-weight:800;color:var(--charcoal);margin-bottom:4px;}
+.site-url{font-size:13px;color:var(--teal);font-weight:600;margin-bottom:8px;}
+.site-items{font-size:12.5px;color:var(--gray);line-height:1.9;}
+.site-btn{display:inline-flex;align-items:center;gap:5px;margin-top:10px;padding:7px 16px;background:var(--forest);color:#fff;border-radius:20px;font-size:12px;font-weight:700;text-decoration:none;}
+
+/* 자주 묻는 질문 */
+.faq-section{background:var(--cream);padding:72px 0;}
+.faq-list{max-width:760px;margin:36px auto 0;}
+.faq-item{background:#fff;border-radius:12px;margin-bottom:10px;overflow:hidden;}
+.faq-q{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;cursor:pointer;font-size:14.5px;font-weight:700;color:var(--charcoal);gap:16px;}
+.faq-q:hover{color:var(--forest);}
+.faq-arrow{font-size:16px;transition:transform .3s;flex-shrink:0;color:var(--sage);}
+.faq-item.open .faq-arrow{transform:rotate(180deg);}
+.faq-a{font-size:13.5px;color:#555;line-height:1.9;padding:0 22px 18px;display:none;}
+.faq-item.open .faq-a{display:block;}
+
+/* CTA */
+.cta-section{background:linear-gradient(135deg,var(--forest),var(--forest-light));padding:72px 0;text-align:center;}
+.cta-title{font-family:'Gowun Batang',serif;font-size:clamp(22px,3.5vw,34px);font-weight:700;color:#fff;margin-bottom:12px;}
+.cta-sub{font-size:15px;color:rgba(255,255,255,.8);margin-bottom:8px;line-height:1.8;}
+.cta-expert{font-size:13px;color:var(--gold-light);margin-bottom:28px;}
+.cta-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
+.btn-gold{display:inline-flex;align-items:center;gap:8px;background:var(--gold);color:var(--charcoal);padding:14px 28px;border-radius:50px;font-size:15px;font-weight:700;text-decoration:none;transition:all .2s;}
+.btn-gold:hover{background:var(--gold-light);transform:translateY(-2px);}
+.btn-white{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.15);color:white;padding:14px 28px;border-radius:50px;font-size:15px;font-weight:700;text-decoration:none;border:2px solid rgba(255,255,255,.3);transition:all .2s;}
+.btn-white:hover{background:rgba(255,255,255,.25);}
+
+.fade-up{opacity:1;transform:none;transition:all .7s ease;}
+.fade-up.visible{opacity:1;transform:translateY(0);}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <img src="로고_배경제거_PNG.png" alt="커리어포레스트 로고"/>
+        <div>
+          <div class="nav-logo-text">커리어포레스트</div>
+          <div class="nav-logo-sub">길을 아는 자, 셰르파!</div>
+        </div>
+      </a>
+      <a href="index.html" class="nav-back">← 홈으로</a>
+    </div>
+  </div>
+</nav>
+
+<!-- 히어로 -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-badge">📋 Policy Lab · 소상공인 정책 컨설팅</div>
+    <h1 class="hero-title">폐업이 끝이 아닙니다.<br/><em>정부가 돕습니다.</em></h1>
+    <p class="hero-sub">희망리턴패키지 원스톱폐업지원부터 재창업 지원까지 — 복잡한 정부 정책을 현장 전문가가 쉽고 정확하게 안내해 드립니다.</p>
+    <div class="hero-notice">⚠️ 매년 사업 내용이 변경됩니다. 신청 전 반드시 최신 공고를 확인하세요.</div>
+    <br/>
+    <a href="https://pf.kakao.com/_EJNlX" target="_blank" class="hero-cta">💬 무료 상담 신청</a>
+    <a href="#support" class="hero-cta2">지원 내용 보기 ↓</a>
+  </div>
+</section>
+
+<!-- 핵심 요약 -->
+<div class="summary-bar">
+  <div class="container">
+    <div class="summary-inner">
+      <div class="sum-item">
+        <div class="sum-num">44,250건</div>
+        <div class="sum-label">2026년 지원 목표</div>
+      </div>
+      <div class="sum-item">
+        <div class="sum-num">최대 600만원</div>
+        <div class="sum-label">점포철거비 (2026.1 기준)</div>
+      </div>
+      <div class="sum-item">
+        <div class="sum-num">최대 100만원</div>
+        <div class="sum-label">전직장려수당</div>
+      </div>
+      <div class="sum-item">
+        <div class="sum-num">1533-0100</div>
+        <div class="sum-label">희망리턴패키지 문의</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 지원 구성 -->
+<section class="section" id="support">
+  <div class="container">
+    <p class="section-label">2026 희망리턴패키지</p>
+    <h2 class="section-title">3가지 지원 패키지</h2>
+    <p class="section-sub">폐업 → 취업 → 재기까지 단계별로 지원합니다. 상황에 맞는 패키지를 선택하세요.</p>
+    <div class="support-grid">
+
+      <div class="support-card main" data-emoji="📋">
+        <div class="card-tag">① 원스톱폐업지원</div>
+        <div class="card-icon">📋</div>
+        <div class="card-title">사업 정리 올인원 지원</div>
+        <div class="card-desc">폐업 과정에서 필요한 컨설팅·법률·채무·철거비를 한 번에 지원합니다.</div>
+        <div class="card-items">
+          <div class="card-item"><div class="card-dot"></div>사업정리 컨설팅 (최대 3개 분야)</div>
+          <div class="card-item"><div class="card-dot"></div>점포철거비 최대 600만원</div>
+          <div class="card-item"><div class="card-dot"></div>법률자문 (개인파산·회생 등)</div>
+          <div class="card-item"><div class="card-dot"></div>채무조정 신용전문가 상담</div>
+          <div class="card-item"><div class="card-dot"></div>심리컨설팅 (심리안정 프로그램)</div>
+        </div>
+        <a href="hope_return_package.html" class="card-link">자세히 보기 →</a>
+      </div>
+
+      <div class="support-card blue" data-emoji="💼">
+        <div class="card-tag">② 특화취업지원</div>
+        <div class="card-icon">💼</div>
+        <div class="card-title">취업·전직 교육 & 수당</div>
+        <div class="card-desc">기초·심화 교육 수료 후 취업 시 전직장려수당을 지원합니다.</div>
+        <div class="card-items">
+          <div class="card-item"><div class="card-dot"></div>기초교육 10시간 이상 (e러닝)</div>
+          <div class="card-item"><div class="card-dot"></div>심화교육 30시간 이상 (오프라인)</div>
+          <div class="card-item"><div class="card-dot"></div>전직장려수당 1차 60만원</div>
+          <div class="card-item"><div class="card-dot"></div>전직장려수당 2차 40만원</div>
+        </div>
+        <a href="blog_draft_2편_전직장려수당.html" class="card-link">상세 안내 →</a>
+      </div>
+
+      <div class="support-card warm" data-emoji="🚀">
+        <div class="card-tag">③ 재기사업화지원</div>
+        <div class="card-icon">🚀</div>
+        <div class="card-title">재창업 · 사업화 지원</div>
+        <div class="card-desc">폐업 후 재창업을 준비하는 소상공인을 위한 교육·멘토링·자금을 지원합니다.</div>
+        <div class="card-items">
+          <div class="card-item"><div class="card-dot"></div>재창업 교육 및 멘토링</div>
+          <div class="card-item"><div class="card-dot"></div>사업화 자금 연계 지원</div>
+          <div class="card-item"><div class="card-dot"></div>재창업 패키지 프로그램</div>
+          <div class="card-item"><div class="card-dot"></div>전문가 컨설팅 연계</div>
+        </div>
+        <a href="https://pf.kakao.com/_EJNlX" class="card-link">상담 신청 →</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- 원스톱폐업지원 상세 -->
+<div class="detail-section" id="detail">
+  <div class="container">
+    <p class="section-label">원스톱폐업지원 상세 안내</p>
+    <h2 class="section-title">지원 항목별 자세히 보기</h2>
+    <div class="detail-tabs">
+      <button class="detail-tab active" onclick="showDetail(0)">📋 사업정리 컨설팅</button>
+      <button class="detail-tab" onclick="showDetail(1)">🔨 점포철거비</button>
+      <button class="detail-tab" onclick="showDetail(2)">⚖️ 법률자문</button>
+      <button class="detail-tab" onclick="showDetail(3)">💳 채무조정</button>
+      <button class="detail-tab" onclick="showDetail(4)">🌲 심리안정 프로그램</button>
+    </div>
+
+    <!-- 사업정리 컨설팅 -->
+    <div class="detail-content active" id="detail-0">
+      <div class="item-grid">
+        <div class="item-card">
+          <div class="item-head">
+            <div class="item-emoji">🔍</div>
+            <div><div class="item-name">재기전략 컨설팅</div><div class="item-sub">사업 정리 방향 설계</div></div>
+          </div>
+          <div class="item-list">
+            <div class="item-row">폐업 절차 및 타임라인 설계</div>
+            <div class="item-row">재취업·재창업 방향 상담</div>
+            <div class="item-row">1:1 전문가 컨설팅 (최대 1대1, 5개 분야 중 최대 3개)</div>
+          </div>
+        </div>
+        <div class="item-card">
+          <div class="item-head">
+            <div class="item-emoji">📊</div>
+            <div><div class="item-name">세무 컨설팅</div><div class="item-sub">폐업 세금 정리</div></div>
+          </div>
+          <div class="item-list">
+            <div class="item-row">부가가치세·종합소득세 신고 안내</div>
+            <div class="item-row">체납세금 처리 방법</div>
+            <div class="item-row">세금계산서·현금영수증 마감 처리</div>
+          </div>
+          <div class="item-warning">⚠️ 폐업 후 세금신고 놓치면 가산세 발생 — 반드시 확인하세요.</div>
+        </div>
+        <div class="item-card">
+          <div class="item-head">
+            <div class="item-emoji">🏠</div>
+            <div><div class="item-name">부동산 컨설팅</div><div class="item-sub">임대차 계약 정리</div></div>
+          </div>
+          <div class="item-list">
+            <div class="item-row">임대차 계약 종료 절차</div>
+            <div class="item-row">보증금 반환 관련 상담</div>
+            <div class="item-row">분쟁 예방 전략</div>
+          </div>
+          <div class="item-warning">⚠️ 유사업종 컨설팅은 지원불가 (예: 부동산업 폐업 → 부동산 컨설팅 신청 불가)</div>
+        </div>
+        <div class="item-card">
+          <div class="item-head">
+            <div class="item-emoji">💼</div>
+            <div><div class="item-name">직무·직능 컨설팅</div><div class="item-sub">재취업 역량 분석</div></div>
+          </div>
+          <div class="item-list">
+            <div class="item-row">사장 경험의 직무 역량 전환</div>
+            <div class="item-row">재취업 가능 직종 탐색</div>
+            <div class="item-row">이력서·자기소개서 방향 설계</div>
+          </div>
+          <div class="item-warning">⚠️ 취업 상태인 분 (사전진단일 기준 · 고용보험 취득) 신청 불가</div>
+        </div>
+        <div class="item-card">
+          <div class="item-head">
+            <div class="item-emoji">🧠</div>
+            <div><div class="item-name">심리 컨설팅</div><div class="item-sub">폐업 심리 안정 상담</div></div>
+          </div>
+          <div class="item-list">
+            <div class="item-row">폐업 스트레스·우울감 등 심리 안정 지원</div>
+            <div class="item-row">전문 심리상담사 1:1 상담</div>
+            <div class="item-row">사업정리 컨설팅 5개 분야 중 하나로 신청</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 점포철거비 -->
+    <div class="detail-content" id="detail-1">
+      <div class="item-card" style="max-width:680px;">
+        <div class="item-head">
+          <div class="item-emoji">🔨</div>
+          <div><div class="item-name">점포철거비 지원</div><div class="item-sub">최대 600만원</div></div>
+        </div>
+        <div class="item-amount">💰 최대 600만원 지원 <span style="font-size:11px;font-weight:400;opacity:.7;">(2026년 1월 공고 기준 · 변경될 수 있음)</span></div>
+        <div class="item-list">
+          <div class="item-row">임차 점포 원상복구 철거 비용 지원</div>
+          <div class="item-row">인테리어·간판 철거, 설비 해체 등 포함</div>
+          <div class="item-row">신청처: 소상공인24 (sbiz24.kr)</div>
+          <div class="item-row">철거 전 반드시 신청 — 철거 완료 후 신청 불가</div>
+        </div>
+        <a href="https://www.sbiz24.kr" target="_blank" style="display:inline-flex;align-items:center;gap:6px;margin-top:16px;padding:9px 20px;background:var(--forest);color:#fff;border-radius:20px;font-size:13px;font-weight:700;text-decoration:none;">소상공인24 바로가기 →</a>
+      </div>
+    </div>
+
+    <!-- 법률자문 -->
+    <div class="detail-content" id="detail-2">
+      <div class="item-grid">
+        <div class="item-card">
+          <div class="item-head">
+            <div class="item-emoji">⚖️</div>
+            <div><div class="item-name">법률자문</div><div class="item-sub">개인파산·회생 무료 상담</div></div>
+          </div>
+          <div class="item-list">
+            <div class="item-row">개인파산·개인회생 소송대리 지원</div>
+            <div class="item-row">신용회복위원회 워크아웃 연계</div>
+            <div class="item-row">변호사·법무사 전문 상담</div>
+          </div>
+        </div>
+        <div class="item-card">
+          <div class="item-head">
+            <div class="item-emoji">📌</div>
+            <div><div class="item-name">신청 자격</div><div class="item-sub">대상 확인 필수</div></div>
+          </div>
+          <div class="item-list">
+            <div class="item-row">사업 운영기간 60일 이상 소상공인</div>
+            <div class="item-row">폐업(예정)자 — 폐업 전후 모두 가능</div>
+            <div class="item-row">기폐업자: 폐업일 기준 확인 필요</div>
+            <div class="item-row">업종제한 없음 (단, 지원불가 업종 확인)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 채무조정 -->
+    <div class="detail-content" id="detail-3">
+      <div class="item-card" style="max-width:680px;">
+        <div class="item-head">
+          <div class="item-emoji">💳</div>
+          <div><div class="item-name">채무조정</div><div class="item-sub">신용전문가 맞춤 솔루션</div></div>
+        </div>
+        <div class="item-list">
+          <div class="item-row">신용전문가 1:1 채무조정 상담</div>
+          <div class="item-row">채무조정 방법 및 절차 안내</div>
+          <div class="item-row">이자 감면·상환 유예 등 솔루션 제공</div>
+          <div class="item-row">신용회복위원회 연계 워크아웃 지원</div>
+      </div>
+    </div>
+
+    <!-- 심리안정 프로그램 -->
+    <div class="detail-content" id="detail-4">
+      <div class="item-card" style="max-width:680px;">
+        <div class="item-head">
+          <div class="item-emoji">🌲</div>
+          <div>
+            <div class="item-name">심리안정 프로그램</div>
+            <div class="item-sub">별도 운영 · 휴양림 힐링 프로그램</div>
+          </div>
+        </div>
+        <div style="font-size:13.5px;color:#555;line-height:1.9;margin-bottom:14px;">
+          폐업 소상공인을 위한 <strong>휴양림 숙박 기반 심리회복 프로그램</strong>으로, 심리컨설팅(사업정리 컨설팅 분야)과는 별도로 운영됩니다.<br/>
+          자연 속 힐링 환경에서 집단 프로그램, 상담, 휴식 등을 통해 심리적 회복을 지원합니다.
+        </div>
+        <div class="item-warning">※ 운영 일정·신청 방법은 연도별로 다릅니다. 최신 공고 또는 희망리턴패키지 홈페이지에서 확인하세요.</div>
+        <a href="https://www.sbiz24.kr/#/pbanc/594" target="_blank" style="display:inline-flex;align-items:center;gap:6px;margin-top:16px;padding:9px 20px;background:var(--forest);color:#fff;border-radius:20px;font-size:13px;font-weight:700;text-decoration:none;">소상공인24 심리안정 프로그램 →</a>
+      </div>
+    </div>
+
+  </div>
+</div>
+  </div>
+</div>
+
+<!-- 신청 방법 -->
+<section class="apply-section" id="apply">
+  <div class="container">
+    <p class="section-label">신청 방법</p>
+    <h2 class="section-title">이렇게 신청하세요</h2>
+    <p class="section-sub">신청기간: 2026년 1월 ~ 예산 소진 시까지 (선착순)</p>
+    <div class="apply-flow" style="margin-top:36px;">
+      <div class="flow-card">
+        <div class="flow-num">1</div>
+        <div class="flow-icon">🔍</div>
+        <div class="flow-title">대상 확인</div>
+        <div class="flow-desc">소상공인24 또는 희망리턴패키지 홈페이지에서 내가 해당되는지 확인</div>
+      </div>
+      <div class="flow-card">
+        <div class="flow-num">2</div>
+        <div class="flow-icon">📝</div>
+        <div class="flow-title">온라인 신청</div>
+        <div class="flow-desc">소상공인24(sbiz24.kr) 또는 hope.sbiz.or.kr에서 항목별 신청</div>
+      </div>
+      <div class="flow-card">
+        <div class="flow-num">3</div>
+        <div class="flow-icon">📞</div>
+        <div class="flow-title">접수 확인</div>
+        <div class="flow-desc">접수 후 담당자 연락 대기. 서류 보완 요청 시 빠르게 제출</div>
+      </div>
+      <div class="flow-card">
+        <div class="flow-num">4</div>
+        <div class="flow-icon">✅</div>
+        <div class="flow-title">지원 진행</div>
+        <div class="flow-desc">컨설팅·교육·수당 등 지원 진행. 기준일 꼭 기록해두세요</div>
+      </div>
+    </div>
+
+    <div class="apply-sites" style="margin-top:40px;">
+      <div class="site-card">
+        <div class="site-name">🌐 희망리턴패키지 홈페이지</div>
+        <div class="site-url">hope.sbiz.or.kr</div>
+        <div class="site-items">
+          사업정리 컨설팅 신청<br/>
+          법률자문 신청<br/>
+          채무조정 신청<br/>
+          특화취업지원 신청
+        </div>
+        <a href="https://hope.sbiz.or.kr" target="_blank" class="site-btn">바로가기 →</a>
+      </div>
+      <div class="site-card">
+        <div class="site-name">🏪 소상공인24</div>
+        <div class="site-url">sbiz24.kr</div>
+        <div class="site-items">
+          점포철거비 신청 (여기서만!)<br/>
+          전직장려수당 신청<br/>
+          소상공인 지원사업 통합 조회<br/>
+          문의: 1533-0100
+        </div>
+        <a href="https://www.sbiz24.kr" target="_blank" class="site-btn">바로가기 →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq-section">
+  <div class="container">
+    <p class="section-label" style="text-align:center;">FAQ</p>
+    <h2 class="section-title" style="text-align:center;">현장에서 자주 받는 질문</h2>
+    <div class="faq-list">
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">폐업 예정인데 아직 폐업 전이어도 신청할 수 있나요? <span class="faq-arrow">▾</span></div>
+        <div class="faq-a">네, 가능합니다. 희망리턴패키지는 폐업 예정자도 신청 대상입니다. 단, 지원 항목에 따라 폐업 상태 여부가 달라질 수 있으니 신청 전 공고문을 확인하세요.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">전직장려수당 1차·2차 언제까지 신청해야 하나요? <span class="faq-arrow">▾</span></div>
+        <div class="faq-a">1차 수당은 취업교육 심화과정(30시간 이상, 오프라인) 수료일로부터 12개월 이내, 2차 수당은 1차 지급일로부터 36개월 이내에 신청해야 합니다. 기준일을 반드시 기록해 두세요.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">2차 전직장려수당 근속 조건이 어떻게 되나요? <span class="faq-arrow">▾</span></div>
+        <div class="faq-a">상시근로자(고용보험 가입) 기준으로 60일 이상 근속해야 합니다. (30일이 아님 — 혼동 주의)</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">사업 운영기간이 60일 미만인데 신청 가능한가요? <span class="faq-arrow">▾</span></div>
+        <div class="faq-a">원칙적으로 사업 운영기간 60일 이상이 기본 요건입니다. 단, 별도 예외 조건이 있을 수 있으니 공고문을 확인하거나 1533-0100으로 문의하세요.</div>
+      </div>
+
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">컨설팅 분야를 여러 개 신청할 수 있나요? <span class="faq-arrow">▾</span></div>
+        <div class="faq-a">최대 3개 분야까지 신청 가능합니다. 단, 유사 업종 관련 컨설팅은 지원이 불가합니다 (예: 부동산업 폐업 예정자 → 부동산 컨설팅 신청 불가).</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="container">
+    <h2 class="cta-title">복잡한 정책, 혼자 하지 마세요.</h2>
+    <p class="cta-sub">소진공 2년 연속 최우수상 현장 전문가가 직접 안내해 드립니다.</p>
+    <p class="cta-expert">커리어포레스트 · 임금희 컨설턴트 · 소진공 공식 컨설턴트</p>
+    <div class="cta-btns">
+      <a href="https://pf.kakao.com/_EJNlX" target="_blank" class="btn-gold">💬 카카오 무료 상담</a>
+      <a href="https://forms.gle/iaL1ysw9A5LP8Sza7" target="_blank" class="btn-white">📋 상담 신청서 작성</a>
+      <a href="/cdn-cgi/l/email-protection#8be2e5ede4cbe8eaf9eeeef9ede4f9eef8ffa5e8e4a5e0f9" class="btn-white">✉️ 이메일 문의</a>
+    </div>
+    <p style="margin-top:20px;font-size:12px;color:rgba(255,255,255,.5);">문의전화: 1533-0100 (희망리턴패키지) · 1357 (중소기업 통합콜센터)</p>
+  </div>
+</section>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+function showDetail(n) {
+  document.querySelectorAll('.detail-content').forEach((el,i) => {
+    el.classList.toggle('active', i === n);
+  });
+  document.querySelectorAll('.detail-tab').forEach((btn,i) => {
+    btn.classList.toggle('active', i === n);
+  });
+}
+function toggleFaq(el) {
+  el.parentElement.classList.toggle('open');
+}
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.c

@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AI 실무 교육 | 커리어포레스트</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Gowun+Batang:wght@400;700&family=Cormorant+Garamond:ital,wght@0,300;1,300&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --forest:#2D5A3D; --forest-light:#3D7A52; --sage:#7B9E87;
+  --gold:#C9A84C; --gold-light:#E8C97A;
+  --cream:#F5F0E8; --cream-dark:#EDE7DA;
+  --terra:#C4704F; --charcoal:#2C2C2C;
+  --white:#FFFFFF; --gray:#888; --light-gray:#f8f6f2;
+  --teal:#2a7a6b; --navy:#1a1a2e;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Noto Sans KR',sans-serif;color:var(--charcoal);background:var(--white);line-height:1.7;}
+.container{max-width:1100px;margin:0 auto;padding:0 24px;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:#fff;border-bottom:1px solid rgba(45,90,61,.12);padding:14px 0;box-shadow:0 2px 12px rgba(0,0,0,.06);}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.nav-logo img{height:44px;width:auto;}
+.nav-logo-text{font-size:17px;font-weight:900;color:var(--forest);}
+.nav-logo-sub{font-size:11px;color:var(--sage);margin-top:-2px;}
+.nav-back{font-size:13px;color:var(--forest);text-decoration:none;font-weight:600;display:flex;align-items:center;gap:6px;padding:8px 18px;border:1.5px solid var(--forest);border-radius:20px;transition:all .2s;}
+.nav-back:hover{background:var(--forest);color:#fff;}
+
+/* HERO */
+.hero{padding:130px 0 80px;background:linear-gradient(160deg,var(--navy) 0%,#1a3a28 100%);position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 80% 50%,rgba(45,90,61,.4),transparent);}
+.hero::after{content:'🤖';position:absolute;right:-30px;top:20px;font-size:320px;opacity:.04;pointer-events:none;}
+.hero-inner{position:relative;z-index:1;display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;}
+@media(max-width:800px){.hero-inner{grid-template-columns:1fr;}.hero-visual{display:none;}}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(201,168,76,.15);border:1px solid rgba(201,168,76,.3);color:var(--gold-light);font-size:12px;padding:5px 14px;border-radius:20px;font-weight:600;margin-bottom:16px;}
+.hero-title{font-family:'Gowun Batang',serif;font-size:clamp(30px,4vw,48px);font-weight:700;line-height:1.25;margin-bottom:16px;color:#fff;}
+.hero-title em{color:var(--gold-light);font-style:normal;}
+.hero-sub{font-size:15px;color:rgba(255,255,255,.75);line-height:1.9;margin-bottom:32px;}
+.hero-tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:36px;}
+.hero-tag{background:rgba(255,255,255,.1);color:rgba(255,255,255,.85);font-size:12px;padding:5px 14px;border-radius:20px;border:1px solid rgba(255,255,255,.15);}
+.hero-cta{display:inline-flex;align-items:center;gap:8px;background:var(--gold);color:var(--charcoal);padding:14px 28px;border-radius:50px;font-size:15px;font-weight:700;text-decoration:none;transition:all .2s;}
+.hero-cta:hover{background:var(--gold-light);transform:translateY(-2px);}
+
+/* 히어로 우측 카드 */
+.hero-stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.hero-stat{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:16px;padding:20px;text-align:center;backdrop-filter:blur(8px);}
+.hero-stat-num{font-family:'Gowun Batang',serif;font-size:28px;font-weight:700;color:var(--gold-light);}
+.hero-stat-label{font-size:11px;color:rgba(255,255,255,.6);margin-top:4px;}
+
+/* 섹션 공통 */
+.section{padding:80px 0;}
+.section-label{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:10px;}
+.section-title{font-family:'Gowun Batang',serif;font-size:clamp(24px,3.5vw,36px);font-weight:700;line-height:1.3;margin-bottom:14px;color:var(--forest);}
+.section-sub{font-size:15px;color:var(--gray);line-height:1.9;max-width:580px;}
+
+/* 과정 탭 */
+.course-tabs{background:var(--light-gray);border-bottom:1px solid #e8e0d0;}
+.tab-inner{display:flex;gap:0;overflow-x:auto;}
+.tab-btn{padding:16px 28px;font-size:14px;font-weight:600;color:var(--gray);border:none;background:transparent;cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent;transition:all .2s;font-family:'Noto Sans KR',sans-serif;}
+.tab-btn.active{color:var(--forest);border-bottom-color:var(--forest);}
+.tab-btn:hover{color:var(--forest);}
+
+/* 과정 상세 */
+.course-section{padding:60px 0;display:none;}
+.course-section.active{display:block;}
+.course-header{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start;margin-bottom:48px;}
+@media(max-width:800px){.course-header{grid-template-columns:1fr;}}
+.course-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;border-radius:20px;font-size:12px;font-weight:700;margin-bottom:14px;}
+.course-icon-big{font-size:56px;margin-bottom:16px;}
+.course-title{font-family:'Gowun Batang',serif;font-size:28px;font-weight:700;color:var(--charcoal);margin-bottom:12px;}
+.course-desc{font-size:15px;color:#555;line-height:1.9;margin-bottom:20px;}
+.course-meta{display:flex;flex-wrap:wrap;gap:10px;}
+.course-meta-item{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--gray);}
+
+/* 커리큘럼 */
+.curriculum-wrap{background:var(--light-gray);border-radius:20px;padding:32px;}
+.curriculum-title{font-size:12px;letter-spacing:0.2em;text-transform:uppercase;font-weight:700;margin-bottom:20px;color:var(--forest);}
+.curriculum-list{display:flex;flex-direction:column;gap:0;}
+.curriculum-item{display:flex;gap:16px;padding:16px 0;border-bottom:1px solid rgba(45,90,61,.1);}
+.curriculum-item:last-child{border-bottom:none;}
+.curr-num{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0;margin-top:2px;}
+.curr-content{}
+.curr-title{font-size:14px;font-weight:700;color:var(--charcoal);margin-bottom:4px;}
+.curr-desc{font-size:12.5px;color:var(--gray);line-height:1.7;}
+.curr-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px;}
+.curr-tag{font-size:10.5px;padding:2px 9px;border-radius:10px;font-weight:600;}
+
+/* 대상 & 특징 */
+.course-features{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px;}
+@media(max-width:600px){.course-features{grid-template-columns:1fr;}}
+.feature-card{padding:16px 18px;border-radius:12px;border:1px solid rgba(45,90,61,.15);background:#fff;}
+.feature-icon{font-size:20px;margin-bottom:6px;}
+.feature-title{font-size:13px;font-weight:700;color:var(--forest);margin-bottom:4px;}
+.feature-desc{font-size:12px;color:var(--gray);line-height:1.6;}
+
+/* 수강 대상 박스 */
+.target-box{background:linear-gradient(135deg,var(--forest),var(--forest-light));border-radius:16px;padding:24px 28px;color:white;margin-top:20px;}
+.target-title{font-size:11px;letter-spacing:0.2em;text-transform:uppercase;font-weight:700;margin-bottom:14px;opacity:.7;}
+.target-list{display:flex;flex-direction:column;gap:8px;}
+.target-item{display:flex;align-items:center;gap:10px;font-size:13.5px;color:rgba(255,255,255,.9);}
+.target-dot{width:6px;height:6px;border-radius:50%;background:var(--gold-light);flex-shrink:0;}
+
+/* CTA */
+.cta-section{background:linear-gradient(135deg,var(--navy),#1a3a28);padding:80px 0;text-align:center;}
+.cta-title{font-family:'Gowun Batang',serif;font-size:clamp(24px,3.5vw,36px);font-weight:700;color:#fff;margin-bottom:12px;}
+.cta-sub{font-size:15px;color:rgba(255,255,255,.75);margin-bottom:32px;line-height:1.8;}
+.cta-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
+.btn-gold{display:inline-flex;align-items:center;gap:8px;background:var(--gold);color:var(--charcoal);padding:14px 28px;border-radius:50px;font-size:15px;font-weight:700;text-decoration:none;transition:all .2s;}
+.btn-gold:hover{background:var(--gold-light);transform:translateY(-2px);}
+.btn-outline-white{display:inline-flex;align-items:center;gap:8px;background:transparent;color:white;padding:14px 28px;border-radius:50px;font-size:15px;font-weight:700;text-decoration:none;border:2px solid rgba(255,255,255,.4);transition:all .2s;}
+.btn-outline-white:hover{border-color:#fff;background:rgba(255,255,255,.08);}
+
+/* 강사 */
+.instructor-section{background:var(--cream);padding:80px 0;}
+.instructor-inner{display:grid;grid-template-columns:auto 1fr;gap:40px;align-items:center;}
+@media(max-width:700px){.instructor-inner{grid-template-columns:1fr;}}
+.instructor-photo{width:140px;height:140px;border-radius:50%;background:linear-gradient(135deg,var(--forest),var(--forest-light));display:flex;align-items:center;justify-content:center;font-size:60px;flex-shrink:0;}
+.instructor-name{font-family:'Gowun Batang',serif;font-size:24px;font-weight:700;color:var(--charcoal);margin-bottom:4px;}
+.instructor-title{font-size:13px;color:var(--sage);margin-bottom:14px;}
+.instructor-badges{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;}
+.inst-badge{font-size:11px;padding:4px 12px;background:rgba(45,90,61,.08);color:var(--forest);border-radius:20px;font-weight:600;}
+.instructor-bio{font-size:14px;color:#555;line-height:1.9;}
+
+/* 아코디언 FAQ */
+.faq-section{padding:80px 0;background:var(--white);}
+.faq-list{max-width:720px;margin:40px auto 0;}
+.faq-item{border-bottom:1px solid #e8e0d0;}
+.faq-q{display:flex;align-items:center;justify-content:space-between;padding:20px 0;cursor:pointer;font-size:15px;font-weight:600;color:var(--charcoal);gap:16px;}
+.faq-q:hover{color:var(--forest);}
+.faq-arrow{font-size:18px;transition:transform .3s;flex-shrink:0;}
+.faq-item.open .faq-arrow{transform:rotate(180deg);}
+.faq-a{font-size:14px;color:var(--gray);line-height:1.9;padding:0 0 20px;display:none;}
+.faq-item.open .faq-a{display:block;}
+
+/* fade-up */
+.fade-up{opacity:0;transform:translateY(24px);transition:all .7s ease;}
+.fade-up.visible{opacity:1;transform:translateY(0);}
+
+@media(max-width:700px){
+  nav .nav-logo img{height:36px;}
+  .tab-btn{padding:14px 16px;font-size:13px;}
+  .curriculum-wrap{padding:20px;}
+}
+</style>
+</head>
+<body>
+
+<!-- 네비게이션 -->
+<nav>
+  <div class="container">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <img src="로고_배경제거_PNG.png" alt="커리어포레스트 로고"/>
+        <div>
+          <div class="nav-logo-text">커리어포레스트</div>
+          <div class="nav-logo-sub">길을 아는 자, 셰르파!</div>
+        </div>
+      </a>
+      <a href="index.html" class="nav-back">← 홈으로</a>
+    </div>
+  </div>
+</nav>
+
+<!-- 히어로 -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-inner">
+      <div>
+        <div class="hero-badge">🤖 AI 실무 교육 · AI Education</div>
+        <h1 class="hero-title">초보자도 바로<br/><em>써먹는 AI 교육</em></h1>
+        <p class="hero-sub">AI 리터러시부터 업무자동화, 소상공인 맞춤 AI까지 —<br/>16년차 현장 전문가가 직접 설계한 실전 교육입니다.</p>
+        <div class="hero-tags">
+          <span class="hero-tag">🧠 AI 리터러시</span>
+          <span class="hero-tag">💼 AI & 커리어</span>
+          <span class="hero-tag">⚙️ AI 업무자동화</span>
+          <span class="hero-tag">🏪 소상공인 맞춤 AI</span>
+        </div>
+        <a href="#courses" class="hero-cta">📚 교육 과정 보기</a>
+      </div>
+      <div class="hero-visual">
+        <div class="hero-stats-grid">
+          <div class="hero-stat">
+            <div class="hero-stat-num">16년차</div>
+            <div class="hero-stat-label">현장 경력</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-num">1,600+</div>
+            <div class="hero-stat-label">상담·교육 케이스</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-num">4개</div>
+            <div class="hero-stat-label">전문 과정</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-num">맞춤형</div>
+            <div class="hero-stat-label">기업·기관 출강</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 과정 탭 -->
+<div class="course-tabs" id="courses">
+  <div class="container">
+    <div class="tab-inner">
+      <button class="tab-btn active" onclick="showCourse(0)">🧠 AI 리터러시</button>
+      <button class="tab-btn" onclick="showCourse(1)">💼 AI & 커리어</button>
+      <button class="tab-btn" onclick="showCourse(2)">⚙️ AI 업무자동화</button>
+      <button class="tab-btn" onclick="showCourse(3)">🏪 소상공인 맞춤 AI</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── 과정 1: AI 리터러시 ── -->
+<div class="course-section active" id="course-0">
+  <div class="container">
+    <div class="course-header">
+      <div>
+        <div class="course-badge" style="background:rgba(42,122,107,.1);color:var(--teal);">🧠 LEVEL 1 · 기초</div>
+        <div class="course-icon-big">🧠</div>
+        <h2 class="course-title">AI 리터러시</h2>
+        <p class="course-desc">AI가 뭔지, 어떻게 쓰는 건지 — 이론 없이 실습으로만 배웁니다. 챗GPT부터 Claude, 이미지 AI까지 핵심 도구를 직접 써보며 익힙니다.</p>
+        <div class="course-meta">
+          <div class="course-meta-item">⏱ 3시간 (집중) / 6시간 (기본)</div>
+          <div class="course-meta-item">👥 10~30명</div>
+          <div class="course-meta-item">📍 방문 출강 가능</div>
+        </div>
+        <div class="target-box" style="margin-top:20px;">
+          <div class="target-title">수강 대상</div>
+          <div class="target-list">
+            <div class="target-item"><div class="target-dot"></div>AI가 처음이거나 막연한 분</div>
+            <div class="target-item"><div class="target-dot"></div>소상공인·자영업자 대상 AI 입문</div>
+            <div class="target-item"><div class="target-dot"></div>50대 이상 디지털 취약계층</div>
+            <div class="target-item"><div class="target-dot"></div>기관·기업 전 직원 대상 AI 기초 교육</div>
+          </div>
+        </div>
+      </div>
+      <div class="curriculum-wrap">
+        <div class="curriculum-title">커리큘럼</div>
+        <div class="curriculum-list">
+          <div class="curriculum-item">
+            <div class="curr-num" style="background:var(--teal);">1</div>
+            <div class="curr-content">
+              <div class="curr-title">AI란 무엇인가 — 10분 만에 이해하기</div>
+              <div class="curr-desc">AI의 개념, 생성형 AI vs 검색의 차이, 나에게 왜 필요한가</div>
+              <div class="curr-tags"><span class="curr-tag" style="background:rgba(42,122,107,.08);color:var(--teal);">개념</span></div>
+            </div>
+          </div>
+          <div class="curriculum-item">
+            <div class="curr-num" style="background:var(--teal);">2</div>
+            <div class="curr-content">
+              <div class="curr-title">챗GPT & Claude 첫 만남</div>
+              <div class="curr-desc">가입부터 첫 대화까지, 무료로 시작하는 법. 좋은 질문(프롬프트) 만들기</div>
+              <div class="curr-tags"><span class="curr-tag" style="background:rgba(42,122,107,.08);color:var(--teal);">실습</span></div>
+            </div>
+          </div>
+          <div class="curriculum-item">
+            <div class="curr-num" style="background:var(--teal);">3</div>
+            <div class="curr-content">
+              <div class="curr-title">AI로 글쓰기 — 공문·SNS·보고서</div>
+              <div class="curr-desc">30초 만에 초안 만들기, 내 말투로 수정하기, 실전 예시 10가지</div>
+              <div class="curr-tags"><span class="curr-tag" style="background:rgba(42,122,107,.08);color:var(--teal);">실습</span></div>
+            </div>
+          </div>
+          <div class="curriculum-item">
+            <div class="curr-num" style="background:var(--teal);">4</div>
+            <div class="curr-content">
+              <div class="curr-title">이미지 AI 체험 — 캔바 · 미리캔버스</div>
+              <div class="curr-desc">홍보물, 썸네일, 프로필 사진 AI로 5분 만에 만들기</div>
+              <div class="curr-tags"><span class="curr-tag" style="background:rgba(42,122,107,.08);color:var(--teal);">실습</span></div>
+            </div>
+          </div>
+          <div class="curriculum-item">
+            <div class="curr-num" style="background:var(--teal);">5</div>
+            <div class="curr-content">
+              <div class="curr-title">AI 활용 시 주의사항 & 팩트체크</div>
+              <div class="curr-desc">AI가 틀릴 때, 개인정보 보호, 저작권 — 안전하게 쓰는 법</div>
+              <div class="curr-tags"><span class="curr-tag" style="background:rgba(42,122,107,.08);color:var(--teal);">안전</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── 과정 2: AI & 커리어 ── -->
+<div class="course-section" id="course-1">
+  <div class="container">
+    <div class="course-header">
+      <div>
+        <div class="course-badge" style="background:rgba(201,168,76,.1);color:var(--gold);">💼 LEVEL 2 · 응용</div>
+        <div class="course-icon-big">💼</div>
+        <h2 class="course-title">AI & 커리어</h2>
+        <p class="course-desc">이직·재취업·경력전환을 앞둔 분들을 위한 AI 활용 커리어 전략. 자기소개서, 면접 준비, 포트폴리오까지 AI가 함께합니다.</p>
+        <div class="course-meta">
+          <div class="course-meta-item">⏱ 6시간 (기본) / 12시간 (심화)</div>
+          <div class="course-meta-item">👥 5~20명</div>
+          <div class="course-meta-item">📍 방문 출강 · 온라인 가능</div>
+        </div>
+        <div class="target-box" style="margin-top:20px;">
+          <div class="target-title">수강 대상</div>
+          <div class="target-list">
+            <div class="target-item"><div class="target-dot"></div>이직·재취업 준비 중인 분</div>
+            <div class="target-item"><div class="target-dot"></div>폐업 후 재취업을 고민하는 소상공인</div>
+            <div class="target-item"><div class="target-dot"></div>경력단절 후 복귀를 준비하는 분</div>
+            <div class="target-item"><div class="target-dot"></div>취업지원기관·고용센터 수강생</div>
+          </div>
+        </div>
+      </div>
+      <div class="curriculum-wrap">
+        <div class="curriculum-title">커리큘럼</div>
+        <div class="curriculum-list">
+          <div class="curriculum-item">
+            <div class="curr-num" style="background:var(--gold);">1</div>
+            <div class="curr-content">
+              <div class="curr-title">AI로 나를 먼저 분석하기</div>
+              <div class="curr-desc">강점·경험 정리, AI와 함께 나만의 커리어 키워드 발굴하기</div>
+              <div class="curr-tags"><span class="curr-tag" style="background:rgba(201,168,76,.1);color:var(--gold);">자기분석</span></div>
+            </div>
+          </div>
+          <div class="curriculum-item">
+            <div class="curr-num" style="background:var(--gold);">2</div>
+            <div class="curr-content">
+              <div class="curr-title">AI로 자기소개서 쓰기</div>
+              <div class="curr-desc">공고 분석 → 맞춤 초안 생성 → 내 경험으로 구체화. 실전 예시 비교</div>
+              <div class="curr-tags"><span class="curr-tag" style="background:rgba(201,168,76,.1);color:var(--gold);">실습</span></div>
+            </div>
+          </div>
+          <div class="curriculum-item">
+            <div class="curr-num" style="background:var(--gold);">3</div>
+            <div class="curr-content">
+              <div class="curr-title">AI 면접 코치 활용법</div>
+              <div class="curr-desc">예상 질문 생성, 답변 피드백, 약점 보완 전략. 역할극 실습</div>
+              <div class="curr-tags"><span class="curr-tag" style="background:rgba(201,168,76,.1);color:var(--gold);">실습</span></div>
+            </div>
+          </div>
+          <div class="curriculum-item">
+            <div class="curr-num" style="background:var(--gold);">4</div>
+            <div class="curr-content">
+              <div class="curr-title">직무 시장 분석 & 트렌드 파악</div>
+              <div class="curr-desc">AI로 채용 공고 분석, 직무별 요구 역량 파악, 경쟁력 진단</div>
+              <div class="curr-tags"><span class="curr-tag" style="background:rgba(201,168,76,.1);color:var(--gold);">분석</span></div>
+            </div>
+          </div>
+          <div class="curriculum-item">
+            <div class="curr-num" style="background:var(--gold);">5</div>
+            <div class="curr-content">
+              <div class="curr-title">나만의 커리어 로드맵 완성</div>
+              <div class="curr-desc">단기·중기·장기 목표 설정, AI와 함께 실행 계획 수립</div>
+              <div class="curr-tags"><span class="curr-tag" style="background:rgba(201,168,76,.1);color:var(--gold);">전략</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── 과정 3: AI 업무자동화 ── -->
+<div class="course-section" id="course-2">
+  <div class="container">
+    <div class="course-header">
+      <div>
+        <div class="course-badge" style="background:rgba(123,94,167,.1);color:#7b5ea7;">⚙️ LEVEL 3 · 심화</div>
+        <div class="course-icon-big">⚙️</div>
+        <h2 class="course-title">AI 업무자동화</h2>
+        <p class="course-desc">반복 업무를 AI로 줄이고, 생산성을 2배로. 엑셀 자동화부터 보고서 자동 생성, 일정 관리까지 — 코딩 없이 누구나 할 수 있습니다.</p>
+        <div class="course-meta">
+          <div class="course-meta-item">⏱ 6시간 (기본) / 2일 (심화)</div>
+          <div class="course-meta-item">👥 10~20명</div>
+          <div class="course-meta-item">📍 방문 출강 · 기업 맞춤</div>
+        </div>
+        <div class="target-box" style="margin-top:20px;">
+          <div class="target-title">수강 대상</div>
+          <div class="target-list">
+            <div class="target-item"><div class="target-dot"></div>사무직 직장인 · 팀장급 이상</div>
+            <div class="target-item"><div class="target-dot"></div>반복 업무가 많은 중소기업 담당자</div>
+            <div class="target-item"><div class="target-dot"></div>HRD 담당자 · 교육 담당자</div>
+            <div class="target-item"><div class="target-dot"></div>프리랜서 · 1인 사업자</div>
+          </div>
+        </div>
+      </div>
+      <div class="curriculum-wrap">
+        <div class="curriculum-title">커리큘럼</div>
+        <div class="curriculum-list">
+          <div class="curriculum-item">
+            <div class="curr-num" style="background:#7b5ea7;">1</div>
+            <div class="curr-content">
+              <div class="curr-title">나의 업무 중 자동화 가능한 것 찾기</div>
+              <div class="curr-desc">업무 분류, AI 적용 가능 영역 진단, 우선순위 설정</div>
+              <div class="curr-tags"><span class="curr-tag" style="background:rgba(123,94,167,.08);color:#7b5ea7;">진단</span></div>
+            </div>
+          </div>
+          <div class="curriculum-item">
+            <div class="curr-num" style="background:#7b5ea7;">2</div>
+            <div class="curr-content">
+              <div class="curr-title">ChatGPT로 문서·보고서 자동 생성</div>
+              <div class="curr-desc">회의록, 결재 문서, 이메일, 제안서 — 10분 안에 초안 완성</div>
+              <div class="curr-tags"><span class="curr-tag" style="background:rgba(123,94,167,.08);color:#7b5ea7;">실습</span></div>
+            </div>
+          </div>
+          <div class="curriculum-item">
+            <div class="curr-num" style="background:#7b5ea7;">3</div>
+            <div class="curr-content">
+              <div class="curr-title">엑셀 + AI 조합으로 데이터 분석</div>
+              <div class="curr-desc">수식 자동 생성, 데이터 정리, 차트 해석 — 코딩 없이 가능</div>
+              <div class="curr-tags"><span class="curr-tag" style="background:rgba(123,94,167,.08);color:#7b5ea7;">실습</span></div>
+            </div>
+          </div>
+          <div class="curriculum-item">
+            <div class="curr-num" style="background:#7b5ea7;">4</div>
+            <div class="curr-content">
+              <div class="curr-title">나만의 GPT 만들기 (노코드)</div>
+              <div class="curr-desc">업무 특화 AI 어시스턴트 제작, 팀원과 공유하기</div>
+              <div class="curr-tags"><span class="curr-tag" style="background:rgba(123,94,167,.08);color:#7b5ea7;">심화</span></div>
+            </div>
+          </div>
+          <div class="curriculum-item">
+            <div class="curr-num" style="background:#7b5ea7;">5</div>
+            <div class="curr-content">
+              <div class="curr-title">자동화 워크플로우 설계 실습</div>
+              <div class="curr-desc">Make·Zapier 체험, 반복 업무 자동화 시나리오 직접 만들기</div>
+              <div class="curr-tags"><span class="curr-tag" style="background:rgba(123,94,167,.08);color:#7b5ea7;">심화</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── 과정 4: 소상공인 맞춤 AI ── -->
+<div class="course-section" id="course-3">
+  <div class="container">
+    <div class="course-header">
+      <div>
+        <div class="course-badge" style="background:rgba(196,112,79,.1);color:var(--terra);">🏪 SPECIAL · 맞춤</div>
+        <div class="course-icon-big">🏪</div>
+        <h2 class="course-title">소상공인 맞춤 AI</h2>
+        <p class="course-desc">폐업을 고민하거나 재기를 준비하는 소상공인을 위한 특화 과정. 정책 정보 활용부터 AI 마케팅, 재취업 준비까지 현장에서 바로 쓰는 실전 교육입니다.</p>
+        <div class="course-meta">
+          <div class="course-meta-item">⏱ 3시간 ~ 6시간</div>
+          <div class="course-meta-item">👥 소진공·서울신보 연계 가능</div>
+          <div class="course-meta-item">📍 현장 출강 · 센터 방문</div>
+        </div>
+        <div class="target-box" style="margin-top:20px;background:linear-gradient(135deg,var(--terra),#d4845f);">
+          <div class="target-title">수강 대상</div>
+          <div class="target-list">
+            <div class="target-item"><div class="target-dot" style="background:#ffd8c0;"></div>폐업을 고민하거나 준비 중인 소상공인</div>
+            <div class="target-item"><div class="target-dot" style="background:#ffd8c0;"></div>희망리턴패키지 참여 대상자</div>
+            <div class="target-item"><div class="target-dot" style="background:#ffd8c0;"></div>재취업·재창업을 준비하는 전직 소상공인</div>
+            <div class="target-item"><div class="target-dot" style="background:#ffd8c0;"></div>소진공·신보 연계 컨설팅 대상자</div>
+          </div>
+        </div>
+      </div>
+      <div class="curriculum-wrap">
+        <div class="curriculum-title">커리큘럼</div>
+        <div class="curriculum-list">
+          <div class="curriculum-item">
+            <div class="curr-num" style="background:var(--terra);">1</div>
+            <div class="curr-content">
+              <div class="curr-title">AI로 정부 지원 정책 빠르게 파악하기</div>
+              <div class="curr-desc">희망리턴패키지·특화취업지원 — AI로 나에게 맞는 정책 찾기</div>
+              <div class="curr-tags"><span class="curr-tag" style="background:rgba(196,112,79,.1);color:var(--terra);">정책</span></div>
+            </div>
+          </div>
+          <div class="curriculum-item">
+            <div class="curr-num" style="background:var(--terra);">2</div>
+            <div class="curr-content">
+              <div class="curr-title">AI 마케팅 — SNS·홍보물 직접 만들기</div>
+              <div class="curr-desc">가게 홍보글, 인스타그램 카드, 메뉴판 AI로 5분 만에 완성</div>
+              <div class="curr-tags"><span class="curr-tag" style="background:rgba(196,112,79,.1);color:var(--terra);">마케팅</span></div>
+            </div>
+          </div>
+          <div class="curriculum-item">
+            <div class="curr-num" style="background:var(--terra);">3</div>
+            <div class="curr-content">
+              <div class="curr-title">내 경력을 자산으로 — AI 경력 정리</div>
+              <div class="curr-desc">사장 경험을 이력서 강점으로, AI로 자기소개서 초안 만들기</div>
+              <div class="curr-tags"><span class="curr-tag" style="background:rgba(196,112,79,.1);color:var(--terra);">커리어</span></div>
+            </div>
+          </div>
+          <div class="curriculum-item">
+            <div class="curr-num" style="background:var(--terra);">4</div>
+            <div class="curr-content">
+              <div class="curr-title">AI 면접 준비 — 소상공인 특화</div>
+              <div class="curr-desc">폐업 이유 설명하는 법, 경영 경험 어필하기, 예상 질문 대비</div>
+              <div class="curr-tags"><span class="curr-tag" style="background:rgba(196,112,79,.1);color:var(--terra);">면접</span></div>
+            </div>
+          </div>
+          <div class="curriculum-item">
+            <div class="curr-num" style="background:var(--terra);">5</div>
+            <div class="curr-content">
+              <div class="curr-title">재기 로드맵 수립 — 나의 다음 단계</div>
+              <div class="curr-desc">재취업·재창업 결정 기준, AI로 직업 탐색, 개인별 1:1 피드백</div>
+              <div class="curr-tags"><span class="curr-tag" style="background:rgba(196,112,79,.1);color:var(--terra);">전략</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- FAQ -->
+<section class="faq-section">
+  <div class="container">
+    <p class="section-label fade-up" style="text-align:center;">FAQ · 자주 묻는 질문</p>
+    <h2 class="section-title fade-up" style="text-align:center;">궁금한 게 있으신가요?</h2>
+    <div class="faq-list">
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">컴퓨터를 잘 못해도 들을 수 있나요? <span class="faq-arrow">▾</span></div>
+        <div class="faq-a">네, 완전 초보자도 참여 가능합니다. 스마트폰이나 노트북만 있으면 됩니다. 모든 실습은 단계별로 천천히 진행되며, 강사가 1:1로 도와드립니다.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">기업·기관 단체 교육도 가능한가요? <span class="faq-arrow">▾</span></div>
+        <div class="faq-a">물론입니다. 소진공, 고용센터, 기업 HRD, 지역 평생교육원 등 다양한 기관 출강 경험이 있습니다. 대상과 시간에 맞게 커리큘럼을 조정해 드립니다. 카카오채널로 문의해 주세요.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">교육 비용은 어떻게 되나요? <span class="faq-arrow">▾</span></div>
+        <div class="faq-a">과정별, 인원별, 출강 지역에 따라 다릅니다. 소진공·서울신보 등 정부 연계 프로그램의 경우 무료 또는 지원금 적용이 가능합니다. 카카오채널 또는 이메일로 문의해 주시면 맞춤 견적을 드립니다.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">온라인으로도 수강할 수 있나요? <span class="faq-arrow">▾</span></div>
+        <div class="faq-a">AI 리터러시, AI & 커리어 과정은 Zoom을 통한 온라인 교육도 가능합니다. AI 업무자동화와 소상공인 맞춤 과정은 실습 효과를 위해 오프라인을 권장하지만 협의 가능합니다.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">수료증이 나오나요? <span class="faq-arrow">▾</span></div>
+        <div class="faq-a">기관 연계 교육의 경우 수료증이 발급됩니다. 개인 과정은 별도 협의가 필요합니다.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 링크 현황 -->
+<section style="background:var(--cream);padding:60px 0;">
+  <div class="container">
+    <p class="section-label fade-up" style="text-align:center;">채널 안내 · Official Channels</p>
+    <h2 class="section-title fade-up" style="text-align:center;margin-bottom:32px;">커리어포레스트 공식 채널</h2>
+    <div class="fade-up" style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;max-width:960px;margin:0 auto;">
+      <a href="https://careerforest.co.kr" target="_blank" style="text-decoration:none;">
+        <div style="background:#fff;border-radius:16px;padding:24px;text-align:center;border:2px solid rgba(45,90,61,.15);transition:all .2s;" onmouseover="this.style.borderColor='var(--forest)';this.style.transform='translateY(-4px)'" onmouseout="this.style.borderColor='rgba(45,90,61,.15)';this.style.transform=''">
+          <div style="font-size:32px;margin-bottom:10px;">🌐</div>
+          <div style="font-size:13px;font-weight:700;color:var(--charcoal);margin-bottom:4px;">홈페이지</div>
+          <div style="font-size:11px;color:var(--gray);margin-bottom:10px;">careerforest.co.kr</div>
+          <span style="display:inline-block;background:rgba(39,174,96,.1);color:#27ae60;font-size:10px;font-weight:700;padding:3px 10px;border-radius:10px;">✅ 배포 완료</span>
+        </div>
+      </a>
+      <a href="https://pf.kakao.com/_EJNlX" target="_blank" style="text-decoration:none;">
+        <div style="background:#fff;border-radius:16px;padding:24px;text-align:center;border:2px solid rgba(201,168,76,.2);transition:all .2s;" onmouseover="this.style.borderColor='var(--gold)';this.style.transform='translateY(-4px)'" onmouseout="this.style.borderColor='rgba(201,168,76,.2)';this.style.transform=''">
+          <div style="font-size:32px;margin-bottom:10px;">💬</div>
+          <div style="font-size:13px;font-weight:700;color:var(--charcoal);margin-bottom:4px;">카카오채널</div>
+          <div style="font-size:11px;color:var(--gray);margin-bottom:10px;">AI커리어숲</div>
+          <span style="display:inline-block;background:rgba(201,168,76,.12);color:#b8860b;font-size:10px;font-weight:700;padding:3px 10px;border-radius:10px;">🔄 비즈심사 중</span>
+        </div>
+      </a>
+      <a href="https://forms.gle/iaL1ysw9A5LP8Sza7" target="_blank" style="text-decoration:none;">
+        <div style="background:#fff;border-radius:16px;padding:24px;text-align:center;border:2px solid rgba(42,122,107,.15);transition:all .2s;" onmouseover="this.style.borderColor='var(--teal)';this.style.transform='translateY(-4px)'" onmouseout="this.style.borderColor='rgba(42,122,107,.15)';this.style.transform=''">
+          <div style="font-size:32px;margin-bottom:10px;">📋</div>
+          <div style="font-size:13px;font-weight:700;color:var(--charcoal);margin-bottom:4px;">상담 신청</div>
+          <div style="font-size:11px;color:var(--gray);margin-bottom:10px;">구글폼</div>
+          <span style="display:inline-block;background:rgba(42,122,107,.08);color:var(--teal);font-size:10px;font-weight:700;padding:3px 10px;border-radius:10px;">⏳ 연동 예정</span>
+        </div>
+      </a>
+      <a href="mailto:info@careerforest.co.kr" style="text-decoration:none;">
+        <div style="background:#fff;border-radius:16px;padding:24px;text-align:center;border:2px solid rgba(123,94,167,.15);transition:all .2s;" onmouseover="this.style.borderColor='#7b5ea7';this.style.transform='translateY(-4px)'" onmouseout="this.style.borderColor='rgba(123,94,167,.15)';this.style.transform=''">
+          <div style="font-size:32px;margin-bottom:10px;">✉️</div>
+          <div style="font-size:13px;font-weight:700;color:var(--charcoal);margin-bottom:4px;">이메일 문의</div>
+          <div style="font-size:11px;color:var(--gray);margin-bottom:10px;">info@careerforest.co.kr</div>
+          <span style="display:inline-block;background:rgba(123,94,167,.08);color:#7b5ea7;font-size:10px;font-weight:700;padding:3px 10px;border-radius:10px;">✅ 즉시 가능</span>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="container">
+    <h2 class="cta-title">AI 교육, 지금 바로 문의하세요.</h2>
+    <p class="cta-sub">기관 출강·단체 교육·개인 상담 모두 가능합니다.<br/>먼저 카카오채널로 편하게 이야기해 주세요.</p>
+    <div class="cta-btns">
+      <a href="https://pf.kakao.com/_EJNlX" target="_blank" class="btn-gold">💬 카카오톡 문의</a>
+      <a href="https://forms.gle/iaL1ysw9A5LP8Sza7" target="_blank" class="btn-outline-white">📋 상담 신청서</a>
+      <a href="mailto:info@careerforest.co.kr" class="btn-outline-white">✉️ info@careerforest.co.kr</a>
+      <a href="index.html" class="btn-outline-white">🌐 홈으로 돌아가기</a>
+    </div>
+  </div>
+</section>
+
+<script>
+function showCourse(n) {
+  document.querySelectorAll('.course-section').forEach((el,i) => {
+    el.classList.toggle('active', i === n);
+  });
+  document.querySelectorAll('.tab-btn').forEach((btn,i) => {
+    btn.classList.toggle('active', i === n);
+  });
+}
+
+function toggleFaq(el) {
+  const item = el.parentElement;
+  item.classList.toggle('open');
+}
+
+// 스크롤 애니메이션
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
