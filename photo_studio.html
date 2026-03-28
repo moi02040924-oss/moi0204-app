@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 사진관 — AI커리어숲</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Gowun+Batang:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink:#1a1a2e; --warm:#c8956c; --paper:#fdf6ec; --muted:#8a7560;
+  --accent:#7b5ea7; --teal:#2a7a6b; --gold:#c9973a; --forest:#2d5a3d;
+  --red:#c0392b; --green:#27ae60;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--ink); min-height:100vh; font-family:'Noto Serif KR',serif; overflow-x:hidden; }
+
+/* ── 별빛 배경 ── */
+body::before {
+  content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+  background-image:
+    radial-gradient(1px 1px at 15% 20%, rgba(255,255,255,0.35) 0%, transparent 100%),
+    radial-gradient(1px 1px at 75% 12%, rgba(255,255,255,0.3) 0%, transparent 100%),
+    radial-gradient(1px 1px at 45% 78%, rgba(255,255,255,0.3) 0%, transparent 100%),
+    radial-gradient(1px 1px at 88% 55%, rgba(255,255,255,0.25) 0%, transparent 100%),
+    radial-gradient(2px 2px at 55% 30%, rgba(200,149,108,0.4) 0%, transparent 100%),
+    radial-gradient(2px 2px at 30% 65%, rgba(42,122,107,0.35) 0%, transparent 100%);
+}
+
+/* ════════════════════════════════
+   잠금 화면
+════════════════════════════════ */
+#lockScreen {
+  position:fixed; inset:0; z-index:100;
+  display:flex; align-items:center; justify-content:center; padding:20px;
+}
+.lock-card {
+  position:relative; z-index:1;
+  background:var(--paper); border-radius:4px;
+  width:100%; max-width:440px;
+  padding:52px 48px;
+  box-shadow:0 0 0 1px rgba(200,149,108,0.3), 0 40px 80px rgba(0,0,0,0.55);
+  animation:fadeUp 0.9s ease forwards; opacity:0; transform:translateY(20px);
+}
+.lock-card::before, .lock-card::after {
+  content:''; position:absolute; width:36px; height:36px;
+  border-color:var(--warm); border-style:solid;
+}
+.lock-card::before { top:16px; left:16px; border-width:1px 0 0 1px; }
+.lock-card::after  { bottom:16px; right:16px; border-width:0 1px 1px 0; }
+
+.lock-icon { text-align:center; font-size:36px; margin-bottom:16px; }
+.lock-title { font-family:'Gowun Batang',serif; font-size:22px; font-weight:700; color:var(--ink); text-align:center; margin-bottom:6px; }
+.lock-sub { font-family:'Cormorant Garamond',serif; font-style:italic; font-size:14px; color:var(--muted); text-align:center; margin-bottom:32px; }
+.lock-label { font-size:11px; letter-spacing:0.18em; text-transform:uppercase; color:var(--forest); font-weight:600; margin-bottom:8px; }
+.lock-input {
+  width:100%; padding:12px 16px; border:1px solid rgba(45,90,61,0.3);
+  border-radius:6px; background:rgba(45,90,61,0.04);
+  font-family:'Noto Serif KR',serif; font-size:15px; color:var(--ink);
+  letter-spacing:0.1em; outline:none; transition:border-color 0.2s;
+}
+.lock-input:focus { border-color:var(--teal); }
+.lock-btn {
+  width:100%; margin-top:16px; padding:13px;
+  background:var(--forest); color:#fff; border:none; border-radius:6px;
+  font-family:'Gowun Batang',serif; font-size:15px; font-weight:700;
+  cursor:pointer; letter-spacing:0.08em; transition:background 0.2s;
+}
+.lock-btn:hover { background:var(--teal); }
+.lock-error {
+  margin-top:12px; padding:10px 14px; border-radius:6px;
+  background:rgba(192,57,43,0.08); border:1px solid rgba(192,57,43,0.25);
+  font-size:12.5px; color:var(--red); text-align:center; display:none;
+}
+.lock-hint { margin-top:20px; text-align:center; font-size:11.5px; color:var(--muted); line-height:1.7; }
+
+/* ════════════════════════════════
+   관리자 패널
+════════════════════════════════ */
+#adminPanel { display:none; min-height:100vh; padding:40px 20px; position:relative; z-index:1; }
+.admin-wrap { max-width:700px; margin:0 auto; }
+.admin-header {
+  background:var(--paper); border-radius:4px; padding:32px 40px 24px;
+  box-shadow:0 0 0 1px rgba(200,149,108,0.3), 0 20px 40px rgba(0,0,0,0.4);
+  margin-bottom:20px; position:relative;
+}
+.admin-header::before, .admin-header::after {
+  content:''; position:absolute; width:32px; height:32px;
+  border-color:var(--gold); border-style:solid;
+}
+.admin-header::before { top:14px; left:14px; border-width:1px 0 0 1px; }
+.admin-header::after  { bottom:14px; right:14px; border-width:0 1px 1px 0; }
+.admin-badge { display:inline-block; font-size:10px; letter-spacing:0.15em; color:var(--gold); border:1px solid rgba(201,151,58,0.4); padding:3px 10px; border-radius:20px; margin-bottom:12px; font-family:'Cormorant Garamond',serif; font-style:italic; }
+.admin-title { font-family:'Gowun Batang',serif; font-size:26px; font-weight:700; color:var(--ink); margin-bottom:6px; }
+.admin-sub { font-size:13px; color:var(--muted); }
+.admin-logout { position:absolute; top:24px; right:24px; padding:7px 16px; border:1px solid rgba(192,57,43,0.35); border-radius:20px; color:var(--red); font-size:11px; background:transparent; cursor:pointer; font-family:'Noto Serif KR',serif; transition:all 0.2s; }
+.admin-logout:hover { background:rgba(192,57,43,0.06); }
+
+.admin-section {
+  background:var(--paper); border-radius:4px; padding:28px 32px;
+  box-shadow:0 0 0 1px rgba(200,149,108,0.2), 0 10px 30px rgba(0,0,0,0.3);
+  margin-bottom:16px;
+}
+.admin-sec-title { font-size:11px; letter-spacing:0.2em; text-transform:uppercase; font-weight:600; margin-bottom:20px; }
+.admin-sec-title.gold  { color:var(--gold); }
+.admin-sec-title.teal  { color:var(--teal); }
+.admin-sec-title.forest { color:var(--forest); }
+
+/* 코드 생성 */
+.gen-row { display:flex; gap:10px; margin-bottom:14px; }
+.gen-input { flex:1; padding:10px 14px; border:1px solid rgba(45,90,61,0.3); border-radius:6px; background:rgba(45,90,61,0.04); font-family:'Noto Serif KR',serif; font-size:14px; color:var(--ink); outline:none; }
+.gen-input:focus { border-color:var(--teal); }
+.gen-btn { padding:10px 18px; background:var(--teal); color:#fff; border:none; border-radius:6px; font-family:'Gowun Batang',serif; font-size:13px; font-weight:700; cursor:pointer; white-space:nowrap; transition:background 0.2s; }
+.gen-btn:hover { background:var(--forest); }
+.gen-btn.random { background:var(--gold); }
+.gen-btn.random:hover { background:#b8862a; }
+
+/* 코드 리스트 */
+.code-list { display:flex; flex-direction:column; gap:8px; max-height:320px; overflow-y:auto; }
+.code-item {
+  display:flex; align-items:center; gap:12px; padding:10px 14px;
+  border:1px solid rgba(45,90,61,0.15); border-radius:8px;
+  background:rgba(45,90,61,0.03); transition:background 0.15s;
+}
+.code-item.used { opacity:0.5; background:rgba(0,0,0,0.03); }
+.code-item.inactive { opacity:0.4; text-decoration:line-through; }
+.code-badge {
+  font-family:'Cormorant Garamond',serif; font-size:15px; font-weight:600;
+  color:var(--forest); letter-spacing:0.1em; flex:1;
+}
+.code-status { font-size:11px; padding:3px 9px; border-radius:10px; font-weight:600; }
+.code-status.active { background:rgba(39,174,96,0.12); color:var(--green); }
+.code-status.used   { background:rgba(201,151,58,0.12); color:var(--gold); }
+.code-status.off    { background:rgba(192,57,43,0.1); color:var(--red); }
+.code-note { font-size:11.5px; color:var(--muted); flex:1; }
+.code-del { padding:4px 10px; border:1px solid rgba(192,57,43,0.3); border-radius:10px; color:var(--red); font-size:11px; background:transparent; cursor:pointer; transition:all 0.15s; }
+.code-del:hover { background:rgba(192,57,43,0.08); }
+.code-toggle { padding:4px 10px; border:1px solid rgba(42,122,107,0.3); border-radius:10px; color:var(--teal); font-size:11px; background:transparent; cursor:pointer; transition:all 0.15s; }
+.code-toggle:hover { background:rgba(42,122,107,0.08); }
+
+/* 통계 */
+.stat-row { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+.stat-card { padding:16px; border:1px solid rgba(45,90,61,0.15); border-radius:8px; text-align:center; background:rgba(45,90,61,0.03); }
+.stat-num { font-family:'Gowun Batang',serif; font-size:28px; font-weight:700; color:var(--forest); }
+.stat-label { font-size:11px; color:var(--muted); margin-top:4px; letter-spacing:0.08em; }
+
+/* ════════════════════════════════
+   사진관 메인
+════════════════════════════════ */
+#studioPanel { display:none; min-height:100vh; padding:40px 20px; position:relative; z-index:1; }
+.studio-wrap { max-width:680px; margin:0 auto; }
+.studio-card {
+  background:var(--paper); border-radius:4px; padding:48px 52px;
+  box-shadow:0 0 0 1px rgba(200,149,108,0.3), 0 30px 60px rgba(0,0,0,0.45);
+  position:relative;
+}
+.studio-card::before, .studio-card::after {
+  content:''; position:absolute; width:40px; height:40px;
+  border-color:var(--warm); border-style:solid;
+}
+.studio-card::before { top:18px; left:18px; border-width:1px 0 0 1px; }
+.studio-card::after  { bottom:18px; right:18px; border-width:0 1px 1px 0; }
+
+.studio-label { font-family:'Cormorant Garamond',serif; font-style:italic; font-size:13px; letter-spacing:0.2em; color:var(--warm); text-transform:uppercase; margin-bottom:8px; }
+.studio-title { font-family:'Gowun Batang',serif; font-size:28px; font-weight:700; color:var(--ink); margin-bottom:6px; }
+.studio-sub { font-size:13px; color:var(--muted); margin-bottom:28px; line-height:1.7; }
+.studio-logout { position:absolute; top:20px; right:20px; padding:6px 14px; border:1px solid rgba(139,117,96,0.3); border-radius:20px; color:var(--muted); font-size:11px; background:transparent; cursor:pointer; font-family:'Noto Serif KR',serif; }
+.studio-logout:hover { border-color:var(--warm); color:var(--warm); }
+
+.divider { display:flex; align-items:center; gap:12px; margin:24px 0; }
+.divider-line { flex:1; height:1px; background:linear-gradient(to right,transparent,var(--warm),transparent); }
+.divider-dot { width:5px; height:5px; border-radius:50%; background:var(--warm); opacity:0.6; }
+
+.step-label { font-size:10px; letter-spacing:0.22em; text-transform:uppercase; font-weight:600; margin-bottom:10px; }
+.step-label.forest { color:var(--forest); }
+.step-label.teal   { color:var(--teal); }
+.step-label.gold   { color:var(--gold); }
+
+/* 업로드 영역 */
+.upload-zone {
+  border:2px dashed rgba(45,90,61,0.35); border-radius:10px;
+  padding:32px; text-align:center; cursor:pointer;
+  background:rgba(45,90,61,0.03); transition:all 0.2s; margin-bottom:10px;
+}
+.upload-zone:hover { border-color:var(--teal); background:rgba(42,122,107,0.05); }
+.upload-zone.has-image { border-style:solid; border-color:var(--teal); padding:16px; }
+.upload-icon { font-size:32px; margin-bottom:8px; }
+.upload-text { font-size:13px; color:var(--muted); line-height:1.7; }
+#previewImg { max-width:100%; max-height:200px; border-radius:6px; display:none; margin:0 auto; }
+#fileInput, #cameraInput { display:none; }
+.upload-btns { display:flex; gap:10px; margin-top:10px; }
+.upload-btn { flex:1; padding:9px; border:1px solid rgba(45,90,61,0.3); border-radius:6px; background:transparent; color:var(--forest); font-family:'Noto Serif KR',serif; font-size:12.5px; cursor:pointer; transition:all 0.2s; }
+.upload-btn:hover { background:rgba(45,90,61,0.06); border-color:var(--forest); }
+
+/* 프롬프트 */
+.prompt-area {
+  width:100%; padding:14px 16px; border:1px solid rgba(42,122,107,0.3);
+  border-radius:8px; background:rgba(42,122,107,0.03);
+  font-family:'Noto Serif KR',serif; font-size:14px; color:var(--ink);
+  line-height:1.8; resize:vertical; min-height:100px; outline:none; transition:border-color 0.2s;
+}
+.prompt-area:focus { border-color:var(--teal); }
+.prompt-count { text-align:right; font-size:11px; color:var(--muted); margin-top:5px; }
+
+/* 예시 버튼 */
+.example-row { display:flex; gap:8px; flex-wrap:wrap; margin-top:10px; }
+.example-btn { padding:6px 12px; border:1px solid rgba(42,122,107,0.25); border-radius:16px; background:transparent; color:var(--teal); font-size:11.5px; cursor:pointer; font-family:'Noto Serif KR',serif; transition:all 0.15s; }
+.example-btn:hover { background:rgba(42,122,107,0.07); border-color:var(--teal); }
+
+/* 생성 버튼 */
+.generate-btn {
+  width:100%; padding:15px; margin-top:20px;
+  background:linear-gradient(135deg, var(--forest) 0%, var(--teal) 100%);
+  color:#fff; border:none; border-radius:8px;
+  font-family:'Gowun Batang',serif; font-size:16px; font-weight:700;
+  cursor:pointer; letter-spacing:0.05em; transition:opacity 0.2s;
+  box-shadow:0 4px 16px rgba(45,90,61,0.3);
+}
+.generate-btn:hover { opacity:0.9; }
+.generate-btn:disabled { opacity:0.5; cursor:not-allowed; }
+
+/* API 키 섹션 */
+.api-section { margin-bottom:20px; }
+.api-input { width:100%; padding:10px 14px; border:1px solid rgba(201,151,58,0.3); border-radius:6px; background:rgba(201,151,58,0.04); font-family:'Noto Serif KR',serif; font-size:13px; color:var(--ink); outline:none; }
+.api-input:focus { border-color:var(--gold); }
+.api-hint { font-size:11.5px; color:var(--muted); margin-top:6px; line-height:1.6; }
+
+/* 결과 영역 */
+.result-section { margin-top:28px; display:none; }
+.result-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:16px; }
+.result-card { border:1px solid rgba(45,90,61,0.2); border-radius:10px; overflow:hidden; background:rgba(45,90,61,0.03); }
+.result-img-wrap { position:relative; background:#e8e0d4; min-height:180px; display:flex; align-items:center; justify-content:center; }
+.result-img-wrap img { width:100%; display:block; }
+.result-label { padding:10px 14px; font-size:11px; letter-spacing:0.12em; font-weight:600; color:var(--forest); border-top:1px solid rgba(45,90,61,0.1); }
+.result-dl { display:block; width:100%; padding:9px; text-align:center; background:var(--forest); color:#fff; font-family:'Gowun Batang',serif; font-size:12px; font-weight:700; border:none; cursor:pointer; transition:background 0.15s; text-decoration:none; }
+.result-dl:hover { background:var(--teal); }
+
+/* 로딩 */
+.loading-overlay { display:none; position:fixed; inset:0; z-index:200; background:rgba(26,26,46,0.75); align-items:center; justify-content:center; flex-direction:column; gap:16px; }
+.loading-overlay.show { display:flex; }
+.loading-spinner { width:48px; height:48px; border:3px solid rgba(200,149,108,0.2); border-top-color:var(--warm); border-radius:50%; animation:spin 0.9s linear infinite; }
+@keyframes spin { to { transform:rotate(360deg); } }
+.loading-text { font-family:'Cormorant Garamond',serif; font-style:italic; font-size:18px; color:var(--warm); }
+
+/* 알림 토스트 */
+.toast { position:fixed; bottom:30px; left:50%; transform:translateX(-50%) translateY(20px); background:var(--ink); border:1px solid rgba(200,149,108,0.4); color:#fff; padding:10px 24px; border-radius:30px; font-size:13px; z-index:300; opacity:0; transition:all 0.3s; pointer-events:none; white-space:nowrap; }
+.toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+@keyframes fadeUp { to { opacity:1; transform:translateY(0); } }
+@media(max-width:540px) { .studio-card,.admin-header,.admin-section{ padding:32px 24px; } .result-grid{ grid-template-columns:1fr; } .stat-row{ grid-template-columns:1fr 1fr; } .gen-row{ flex-direction:column; } }
+</style>
+</head>
+<body>
+
+<!-- ══ 잠금 화면 ══ -->
+<div id="lockScreen">
+  <div class="lock-card">
+    <div class="lock-icon">📷</div>
+    <h1 class="lock-title">AI 사진관</h1>
+    <p class="lock-sub">AI커리어숲 · 이력서 & 프로필 사진 제작</p>
+    <p class="lock-label">입장 코드</p>
+    <input class="lock-input" id="codeInput" type="password" placeholder="코드를 입력하세요" autocomplete="off" />
+    <button class="lock-btn" onclick="checkCode()">입장하기 🌿</button>
+    <div class="lock-error" id="lockError">❌ 코드가 올바르지 않습니다. 다시 확인해 주세요.</div>
+    <p class="lock-hint">입장 코드는 AI커리어숲 카카오채널을 통해 받으실 수 있습니다.<br>관리자는 관리자 코드로 입장하세요.</p>
+  </div>
+</div>
+
+<!-- ══ 관리자 패널 ══ -->
+<div id="adminPanel">
+  <div class="admin-wrap">
+    <div class="admin-header">
+      <div class="admin-badge">관리자 모드 · Admin</div>
+      <h1 class="admin-title">🔐 코드 관리 패널</h1>
+      <p class="admin-sub">AI커리어숲 사진관 입장 코드를 관리합니다.</p>
+      <button class="admin-logout" onclick="logout()">로그아웃</button>
+    </div>
+
+    <!-- 통계 -->
+    <div class="admin-section">
+      <p class="admin-sec-title teal">📊 현황</p>
+      <div class="stat-row">
+        <div class="stat-card"><div class="stat-num" id="statTotal">0</div><div class="stat-label">전체 코드</div></div>
+        <div class="stat-card"><div class="stat-num" id="statActive">0</div><div class="stat-label">활성 코드</div></div>
+        <div class="stat-card"><div class="stat-num" id="statUsed">0</div><div class="stat-label">비활성</div></div>
+      </div>
+    </div>
+
+    <!-- 코드 생성 -->
+    <div class="admin-section">
+      <p class="admin-sec-title gold">✨ 코드 추가</p>
+      <div class="gen-row">
+        <input class="gen-input" id="newCodeInput" placeholder="직접 입력 (예: forest01)" />
+        <button class="gen-btn" onclick="addCode()">추가</button>
+        <button class="gen-btn random" onclick="addRandomCode()">랜덤 생성</button>
+      </div>
+      <div class="gen-row">
+        <input class="gen-input" id="newCodeNote" placeholder="메모 (선택) — 예: 홍길동님, 3월 상담" />
+      </div>
+    </div>
+
+    <!-- 코드 목록 -->
+    <div class="admin-section">
+      <p class="admin-sec-title forest">🗝️ 코드 목록</p>
+      <div class="code-list" id="codeList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ 사진관 메인 ══ -->
+<div id="studioPanel">
+  <div class="studio-wrap">
+    <div class="studio-card">
+      <button class="studio-logout" onclick="logout()">나가기</button>
+      <p class="studio-label">AI커리어숲 · 사진관</p>
+      <h1 class="studio-title">📷 이력서 & 프로필 사진</h1>
+      <p class="studio-sub">AI로 이력서 사진을 전문적으로 보정해드립니다.<br>얼굴 특징은 그대로 유지하면서 의상·배경·헤어를 바꿔드려요.</p>
+
+      <div class="divider"><div class="divider-line"></div><div class="divider-dot"></div><div class="divider-line"></div></div>
+
+      <!-- API 키 -->
+      <div class="api-section">
+        <p class="step-label gold">🔑 Gemini API 키</p>
+        <input class="api-input" id="apiKeyInput" type="password" placeholder="Google AI Studio API 키 입력" />
+        <p class="api-hint">💡 <a href="https://aistudio.google.com" target="_blank" style="color:var(--gold);">aistudio.google.com</a>에서 무료로 발급받으세요. 키는 이 기기에만 임시 저장됩니다.</p>
+      </div>
+
+      <div class="divider"><div class="divider-line"></div><div class="divider-dot"></div><div class="divider-line"></div></div>
+
+      <!-- STEP 1: 사진 업로드 -->
+      <div style="margin-bottom:24px;">
+        <p class="step-label forest">STEP 01 — 원본 사진 업로드</p>
+        <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
+          <div class="upload-icon">🖼️</div>
+          <p class="upload-text">클릭하여 사진을 선택하거나<br>여기에 파일을 드래그하세요</p>
+          <img id="previewImg" alt="미리보기" />
+        </div>
+        <div class="upload-btns">
+          <button class="upload-btn" onclick="document.getElementById('fileInput').click()">📁 파일 선택</button>
+          <button class="upload-btn" onclick="document.getElementById('cameraInput').click()">📱 사진 촬영</button>
+        </div>
+        <input type="file" id="fileInput" accept="image/*" onchange="handleFile(this)" />
+        <input type="file" id="cameraInput" accept="image/*" capture="user" onchange="handleFile(this)" />
+      </div>
+
+      <!-- STEP 2: 프롬프트 -->
+      <div style="margin-bottom:24px;">
+        <p class="step-label teal">STEP 02 — 수정 요청 입력</p>
+        <textarea class="prompt-area" id="promptInput" maxlength="300" placeholder="수정하고 싶은 내용을 상세히 적어주세요." oninput="updateCount()"></textarea>
+        <p class="prompt-count"><span id="promptCount">0</span> / 300자</p>
+        <div class="example-row">
+          <button class="example-btn" onclick="fillExample(1)">💼 신뢰감 스타일</button>
+          <button class="example-btn" onclick="fillExample(2)">✨ 깔끔한 프로필</button>
+          <button class="example-btn" onclick="fillExample(3)">🌿 자연스러운 스타일</button>
+        </div>
+      </div>
+
+      <!-- 생성 버튼 -->
+      <button class="generate-btn" id="generateBtn" onclick="generateImages()">✨ AI 사진 생성하기 (2가지 버전)</button>
+
+      <!-- 결과 -->
+      <div class="result-section" id="resultSection">
+        <div class="divider"><div class="divider-line"></div><div class="divider-dot"></div><div class="divider-line"></div></div>
+        <p class="step-label gold">STEP 03 — 결과물</p>
+        <div class="result-grid">
+          <div class="result-card">
+            <div class="result-img-wrap" id="result1Wrap">
+              <span style="color:var(--muted);font-size:12px;">생성 중...</span>
+            </div>
+            <div class="result-label">수정본 #01 — 기본 버전</div>
+            <button class="result-dl" id="dl1Btn" onclick="downloadImage(1)" disabled>⬇ 고화질 다운로드</button>
+          </div>
+          <div class="result-card">
+            <div class="result-img-wrap" id="result2Wrap">
+              <span style="color:var(--muted);font-size:12px;">생성 중...</span>
+            </div>
+            <div class="result-label">수정본 #02 — 분위기 변형</div>
+            <button class="result-dl" id="dl2Btn" onclick="downloadImage(2)" disabled>⬇ 고화질 다운로드</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 로딩 -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-spinner"></div>
+  <p class="loading-text">AI가 사진을 제작하고 있어요...</p>
+</div>
+
+<!-- 토스트 -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ════════════════════════════════
+//  코드 데이터 (localStorage 연동)
+// ════════════════════════════════
+const ADMIN_CODE = 'admin2026'; // ★ 관리자 코드 — 배포 전 변경하세요
+
+function getCodes() {
+  const raw = localStorage.getItem('studio_codes');
+  if (!raw) {
+    // 초기 기본 코드
+    const defaults = [
+      { code:'forest01', note:'기본 코드 1', active:true },
+      { code:'career01', note:'기본 코드 2', active:true },
+      { code:'green2026', note:'기본 코드 3', active:true },
+    ];
+    localStorage.setItem('studio_codes', JSON.stringify(defaults));
+    return defaults;
+  }
+  return JSON.parse(raw);
+}
+function saveCodes(list) { localStorage.setItem('studio_codes', JSON.stringify(list)); }
+
+// ════════════════════════════════
+//  잠금 화면
+// ════════════════════════════════
+document.getElementById('codeInput').addEventListener('keydown', e => { if(e.key==='Enter') checkCode(); });
+
+function checkCode() {
+  const val = document.getElementById('codeInput').value.trim();
+  const err = document.getElementById('lockError');
+  if (!val) return;
+
+  if (val === ADMIN_CODE) {
+    document.getElementById('lockScreen').style.display = 'none';
+    document.getElementById('adminPanel').style.display = 'block';
+    renderAdminPanel();
+    return;
+  }
+
+  const codes = getCodes();
+  const found = codes.find(c => c.code === val && c.active);
+  if (found) {
+    document.getElementById('lockScreen').style.display = 'none';
+    document.getElementById('studioPanel').style.display = 'block';
+    err.style.display = 'none';
+  } else {
+    err.style.display = 'block';
+    document.getElementById('codeInput').value = '';
+    document.getElementById('codeInput').focus();
+  }
+}
+
+function logout() {
+  document.getElementById('adminPanel').style.display = 'none';
+  document.getElementById('studioPanel').style.display = 'none';
+  document.getElementById('lockScreen').style.display = 'flex';
+  document.getElementById('codeInput').value = '';
+  document.getElementById('lockError').style.display = 'none';
+}
+
+// ════════════════════════════════
+//  관리자 패널
+// ════════════════════════════════
+function renderAdminPanel() {
+  const codes = getCodes();
+  const active = codes.filter(c => c.active).length;
+  document.getElementById('statTotal').textContent = codes.length;
+  document.getElementById('statActive').textContent = active;
+  document.getElementById('statUsed').textContent = codes.length - active;
+
+  const list = document.getElementById('codeList');
+  list.innerHTML = '';
+  if (codes.length === 0) {
+    list.innerHTML = '<p style="font-size:13px;color:var(--muted);text-align:center;padding:20px;">코드가 없습니다. 위에서 추가해 주세요.</p>';
+    return;
+  }
+  codes.forEach((c, i) => {
+    const el = document.createElement('div');
+    el.className = 'code-item' + (c.active ? '' : ' inactive');
+    el.innerHTML = `
+      <span class="code-badge">${c.code}</span>
+      <span class="code-note">${c.note || '—'}</span>
+      <span class="code-status ${c.active ? 'active' : 'off'}">${c.active ? '활성' : '비활성'}</span>
+      <button class="code-toggle" onclick="toggleCode(${i})">${c.active ? '비활성화' : '활성화'}</button>
+      <button class="code-del" onclick="deleteCode(${i})">삭제</button>
+    `;
+    list.appendChild(el);
+  });
+}
+
+function addCode() {
+  const val = document.getElementById('newCodeInput').value.trim();
+  const note = document.getElementById('newCodeNote').value.trim();
+  if (!val) { showToast('코드를 입력해 주세요.'); return; }
+  const codes = getCodes();
+  if (codes.find(c => c.code === val)) { showToast('이미 존재하는 코드입니다.'); return; }
+  codes.push({ code:val, note:note, active:true });
+  saveCodes(codes);
+  document.getElementById('newCodeInput').value = '';
+  document.getElementById('newCodeNote').value = '';
+  renderAdminPanel();
+  showToast('✅ 코드가 추가되었습니다: ' + val);
+}
+
+function addRandomCode() {
+  const adj = ['green','forest','career','bright','new','spring','tree'];
+  const nums = Math.floor(Math.random()*900+100);
+  const code = adj[Math.floor(Math.random()*adj.length)] + nums;
+  document.getElementById('newCodeInput').value = code;
+  showToast('랜덤 코드: ' + code);
+}
+
+function toggleCode(i) {
+  const codes = getCodes();
+  codes[i].active = !codes[i].active;
+  saveCodes(codes);
+  renderAdminPanel();
+  showToast(codes[i].active ? '✅ 활성화되었습니다.' : '🔒 비활성화되었습니다.');
+}
+
+function deleteCode(i) {
+  if (!confirm('이 코드를 삭제할까요?')) return;
+  const codes = getCodes();
+  const removed = codes.splice(i, 1);
+  saveCodes(codes);
+  renderAdminPanel();
+  showToast('🗑️ 삭제: ' + removed[0].code);
+}
+
+// ════════════════════════════════
+//  사진관
+// ════════════════════════════════
+let uploadedImageBase64 = null;
+let resultImages = [null, null];
+
+const uploadZone = document.getElementById('uploadZone');
+uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.style.borderColor='var(--teal)'; });
+uploadZone.addEventListener('dragleave', () => { uploadZone.style.borderColor=''; });
+uploadZone.addEventListener('drop', e => {
+  e.preventDefault();
+  const file = e.dataTransfer.files[0];
+  if (file && file.type.startsWith('image/')) processFile(file);
+});
+
+function handleFile(input) {
+  const file = input.files[0];
+  if (file) processFile(file);
+}
+
+function processFile(file) {
+  const reader = new FileReader();
+  reader.onload = e => {
+    uploadedImageBase64 = e.target.result.split(',')[1];
+    const img = document.getElementById('previewImg');
+    img.src = e.target.result;
+    img.style.display = 'block';
+    document.querySelector('#uploadZone .upload-icon').style.display = 'none';
+    document.querySelector('#uploadZone .upload-text').style.display = 'none';
+    uploadZone.classList.add('has-image');
+  };
+  reader.readAsDataURL(file);
+}
+
+function updateCount() {
+  const len = document.getElementById('promptInput').value.length;
+  document.getElementById('promptCount').textContent = len;
+}
+
+const examples = {
+  1: '짙은 네이비 정장에 넥타이를 착용하고, 배경은 밝은 파란색 계열로 수정해줘. 미소는 유지하면서 인상을 더 또렷하게 만들어줘.',
+  2: '흰색 블라우스를 입혀주고 배경은 따뜻한 베이지톤으로 해줘. 머리 스타일은 어깨선까지 내려오는 깔끔한 생머리로 수정해줘.',
+  3: '검정색 정장에 흰색 셔츠를 입혀주고, 배경은 깔끔한 연회색으로 바꿔줘. 자연스러운 미소를 유지하고 피부톤을 밝게 보정해줘.'
+};
+function fillExample(n) {
+  document.getElementById('promptInput').value = examples[n];
+  updateCount();
+}
+
+async function generateImages() {
+  const apiKey = document.getElementById('apiKeyInput').value.trim();
+  const prompt = document.getElementById('promptInput').value.trim();
+
+  if (!apiKey)        { showToast('❗ API 키를 먼저 입력해 주세요.'); return; }
+  if (!uploadedImageBase64) { showToast('❗ 원본 사진을 먼저 업로드해 주세요.'); return; }
+  if (!prompt)        { showToast('❗ 수정 요청 내용을 입력해 주세요.'); return; }
+
+  document.getElementById('resultSection').style.display = 'block';
+  document.getElementById('loadingOverlay').classList.add('show');
+  document.getElementById('generateBtn').disabled = true;
+  document.getElementById('result1Wrap').innerHTML = '<span style="color:var(--muted);font-size:12px;">생성 중...</span>';
+  document.getElementById('result2Wrap').innerHTML = '<span style="color:var(--muted);font-size:12px;">생성 중...</span>';
+
+  const systemPrompt = `당신은 전문 이력서 사진 편집 AI입니다. 다음 원칙을 반드시 준수하세요:
+1. 사용자의 얼굴 이목구비(눈,코,입,얼굴형)를 절대 변형하지 않습니다.
+2. 입력된 프롬프트에 따라 의상, 배경, 헤어스타일, 피부 보정만 수행합니다.
+3. 결과물은 이력서·취업용으로 전문적이고 단정하게 만듭니다.`;
+
+  try {
+    // 버전 1 생성
+    const res1 = await callGeminiImage(apiKey, systemPrompt, prompt + ' (버전1: 프롬프트 충실 반영)', uploadedImageBase64);
+    displayResult(1, res1);
+
+    // 버전 2 생성 (조명/분위기 변형)
+    const res2 = await callGeminiImage(apiKey, systemPrompt, prompt + ' (버전2: 동일 내용이지만 조명과 배경 분위기를 살짝 다르게 표현해줘)', uploadedImageBase64);
+    displayResult(2, res2);
+
+  } catch(err) {
+    showToast('❌ 오류: ' + (err.message || '생성 실패'));
+    console.error(err);
+  } finally {
+    document.getElementById('loadingOverlay').classList.remove('show');
+    document.getElementById('generateBtn').disabled = false;
+  }
+}
+
+async function callGeminiImage(apiKey, system, userPrompt, imageBase64) {
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp-image-generation:generateContent?key=${apiKey}`;
+  const body = {
+    contents: [{
+      parts: [
+        { text: system + '\n\n' + userPrompt },
+        { inline_data: { mime_type: 'image/jpeg', data: imageBase64 } }
+      ]
+    }],
+    generationConfig: { responseModalities: ['image','text'] }
+  };
+  const res = await fetch(url, {
+    method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)
+  });
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.error?.message || 'API 오류');
+  }
+  const data = await res.json();
+  const parts = data.candidates?.[0]?.content?.parts || [];
+  for (const p of parts) {
+    if (p.inline_data?.data) return p.inline_data.data;
+  }
+  throw new Error('이미지를 받지 못했습니다.');
+}
+
+function displayResult(n, base64) {
+  resultImages[n-1] = base64;
+  const wrap = document.getElementById('result' + n + 'Wrap');
+  wrap.innerHTML = `<img src="data:image/jpeg;base64,${base64}" alt="수정본 ${n}" style="width:100%;display:block;" />`;
+  const btn = document.getElementById('dl' + n + 'Btn');
+  btn.disabled = false;
+}
+
+function downloadImage(n) {
+  if (!resultImages[n-1]) return;
+  const a = document.createElement('a');
+  a.href = 'data:image/jpeg;base64,' + resultImages[n-1];
+  a.download = `ai_career_photo_v${n}.jpg`;
+  a.click();
+}
+
+// ════════════════════════════════
+//  유틸
+// ════════════════════════════════
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+</script>
+</body>
+</html>

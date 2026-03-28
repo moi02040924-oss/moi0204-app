@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+<title>나의 기대수명 & 삶의 나침반 | 커리어포레스트</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:rgba(0,0,0,0.05);}
+body{font-family:'Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',sans-serif;background:#F5F0E8;min-height:100vh;}
+button{touch-action:manipulation;cursor:pointer;font-family:inherit;}
+input,select,textarea{font-size:16px!important;font-family:inherit;}
+@media print{
+  .no-print{display:none!important}
+  body{background:white!important;margin:0;padding:0;}
+  .result-wrap{background:white!important;}
+  .card{box-shadow:none!important;border:1px solid #ddd!important;}
+  button{display:none!important;}
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}
+}
+
+/* 공통 */
+.wrap{min-height:100vh;background:#F5F0E8;}
+.header{background:linear-gradient(135deg,#1B3A6B,#2a52a0);color:white;padding:15px 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
+.header h1{font-size:17px;font-weight:900;display:flex;align-items:center;gap:8px;}
+.card{background:white;border-radius:14px;padding:20px;box-shadow:0 2px 14px rgba(0,0,0,0.08);margin-bottom:16px;}
+.inner{max-width:640px;margin:0 auto;padding:24px 16px;}
+.btn-navy{background:#1B3A6B;color:white;border:none;border-radius:10px;padding:14px 26px;font-size:15px;cursor:pointer;touch-action:manipulation;min-height:50px;display:inline-flex;align-items:center;justify-content:center;gap:6px;}
+.btn-outline{background:white;color:#1B3A6B;border:2px solid #1B3A6B;border-radius:10px;padding:12px 22px;font-size:14px;cursor:pointer;touch-action:manipulation;min-height:50px;display:inline-flex;align-items:center;justify-content:center;}
+.btn-gold{background:#C9A84C;color:white;border:none;border-radius:10px;padding:12px 22px;font-size:14px;cursor:pointer;touch-action:manipulation;min-height:50px;display:inline-flex;align-items:center;justify-content:center;}
+
+/* 스텝퍼 */
+.stepper{display:flex;justify-content:center;padding:12px 0;background:white;border-bottom:1px solid #e8e4de;}
+.step-item{display:flex;align-items:center;}
+.step-circle{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:bold;color:white;}
+.step-label{font-size:11px;margin-top:3px;text-align:center;}
+.step-line{width:32px;height:2px;margin:0 3px 16px;}
+
+/* 진행바 */
+.progress-bar{background:#ddd;height:5px;}
+.progress-fill{height:100%;transition:width .3s;}
+
+/* 퀴즈 버튼 */
+.quiz-btn{width:100%;padding:14px 16px;border-radius:10px;font-size:15px;cursor:pointer;text-align:left;touch-action:manipulation;min-height:52px;border:2px solid #ddd;background:white;color:#333;transition:all .15s;margin-bottom:8px;}
+.quiz-btn.selected{background:#1B3A6B;color:white;border-color:#1B3A6B;}
+
+/* 점수 버튼 */
+.score-btn{width:40px;height:40px;border-radius:50%;font-size:14px;font-weight:bold;cursor:pointer;touch-action:manipulation;border:2px solid;transition:all .15s;display:flex;align-items:center;justify-content:center;}
+
+/* 결과 */
+.result-wrap{min-height:100vh;background:white;font-family:inherit;}
+.radar-container{width:100%;height:280px;position:relative;}
+.radar-svg{width:100%;height:100%;}
+
+/* 관리자 테이블 */
+.admin-table{width:100%;border-collapse:collapse;font-size:12px;}
+.admin-table th{background:#1B3A6B;color:white;padding:8px 10px;text-align:left;white-space:nowrap;}
+.admin-table td{padding:8px 10px;border-bottom:1px solid #f0f0f0;}
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+const NAVY="#1B3A6B",GOLD="#C9A84C",CREAM="#F5F0E8";
+const BASE=84;
+const KR={all:83.7,male:80.8,female:86.6,year:2024};
+const PW="admin1234";
+
+const LQ=[
+  ["성별을 선택하세요.",[["남성",-3],["여성",3]]],
+  ["인구 200만 명 이상의 도시에 거주하십니까?",[["예",-2],["아니오",0]]],
+  ["인구 1만 명 이하의 읍·농촌에 거주하십니까?",[["예",2],["아니오",0]]],
+  ["조부모 중 한 분이 85세 이상 생존하셨습니까?",[["예",2],["아니오",0]]],
+  ["조부모 4분 모두 80세 이상 사셨습니까?",[["예",6],["아니오",0]]],
+  ["부모님 중 한 분이 50세 이전에 뇌졸중·심장마비로 돌아가셨습니까?",[["예",-4],["아니오",0]]],
+  ["부모·형제·자매 중 50세 이하에서 암·심장병·당뇨가 있는 분이 있습니까?",[["예",-3],["아니오",0]]],
+  ["연간 소득이 6,000만 원을 초과합니까?",[["예",-2],["아니오",0]]],
+  ["학력 및 전문 자격을 선택하세요.\n(해당하는 가장 높은 항목 하나만 선택)",[["대학원 학위 또는 전문직 자격증 보유",2],["대학교 졸업",1],["해당 없음",0]]],
+  ["65세 이상이며 현재 일을 하고 있습니까?",[["예",3],["아니오 / 해당없음",0]]],
+  ["배우자나 친한 친구와 함께 생활하고 있습니까?",[["예, 함께 살고 있다",5],["혼자 생활 (25세 이후 10년 이내)",-1],["혼자 생활 (25세 이후 10~20년)",-2],["혼자 생활 (25세 이후 30년 이상)",-3]]],
+  ["주로 앉아서 일합니까?",[["예",-1],["아니오",0]]],
+  ["정규직이며 무거운 육체노동을 합니까?",[["예",3],["아니오",0]]],
+  ["운동 빈도를 선택하세요.",[["주 5회 이상",4],["주 2~3회",2],["거의 하지 않음",0]]],
+  ["매일 10시간 이상 잡니까?",[["예",-4],["아니오",0]]],
+  ["성격이 감정적·공격적이며 쉽게 화를 냅니까?",[["예",-3],["아니오",0]]],
+  ["편안하게 생각하고 자주 휴식을 취하십니까?",[["예",3],["아니오",0]]],
+  ["현재 삶이 행복합니까?",[["행복하다",1],["보통이다",0],["불행하다",-2]]],
+  ["작년에 속도위반 범칙금을 납부한 적이 있습니까?",[["예",-1],["아니오",0]]],
+  ["여성이며 연 1회 산부인과 검진을 받고 있습니까?",[["예",2],["아니오 / 해당없음",0]]],
+  ["흡연 여부를 선택하세요.",[["하루 2갑 이상",-8],["하루 1~2갑",-6],["하루 반~1갑",-3],["비흡연",0]]],
+  ["과체중 여부를 선택하세요.",[["20kg 이상 초과",-8],["11~20kg 초과",-4],["4~10kg 초과",-2],["정상 체중",0]]],
+  ["40세 이상 남성이며 매년 건강검진을 받습니까?",[["예",2],["아니오 / 해당없음",0]]],
+  ["현재 연령대를 선택하세요.",[["30~40세",2],["40~50세",3],["50~70세",4],["30세 미만 또는 70세 초과",0]]],
+];
+
+const DD=[
+  {key:"health",name:"신체건강",color:"#2E7D32",emoji:"💪",
+   qs:["규칙적으로 운동을 하고 있다","수면의 질이 좋고 충분히 잔다","균형 잡힌 식사를 규칙적으로 한다","정기적으로 건강검진을 받는다","현재 신체 건강 상태에 만족한다"],
+   lv:[[20,"매우 우수","신체 건강 관리가 탁월합니다.","현재 좋은 습관을 유지하며 새로운 스포츠에도 도전해 보세요.","건강한 몸은 삶의 모든 여정을 더욱 빛나게 합니다!"],
+       [15,"양호","전반적으로 건강 관리를 잘 하고 있습니다.","수면·식습관·운동 중 취약한 부분을 집중 개선해 보세요.","작은 습관 하나가 큰 건강으로 이어집니다!"],
+       [10,"보통","기본적인 건강 관리는 하고 있으나 더 적극적인 관심이 필요합니다.","주 3회 30분 걷기와 채소 위주 식단으로 시작해 보세요.","지금 시작하는 변화가 10년 후 건강을 바꿉니다!"],
+       [5,"주의 필요","건강 관리에 적신호가 켜졌습니다.","전문 의료인 상담 후 맞춤 건강 계획을 수립해 보세요.","몸의 회복력은 생각보다 강합니다!"],
+       [0,"위험","건강 관리가 매우 부족한 상태입니다.","가까운 병원이나 건강증진센터를 방문해 종합검진을 받으세요.","오늘의 한 걸음이 미래를 바꿉니다!"]]},
+  {key:"mental",name:"마음·정서",color:"#1565C0",emoji:"🧠",
+   qs:["스트레스를 효과적으로 관리하고 있다","정서적으로 안정되고 평온하다","삶의 의미와 목적을 느끼고 있다","어려운 상황에서도 긍정적으로 대처한다","심리적으로 행복하고 만족스럽다"],
+   lv:[[20,"매우 우수","정신적으로 매우 건강하고 뛰어난 회복탄력성을 지니고 있습니다.","긍정 에너지를 주변과 나누며 멘토 역할도 고려해 보세요.","건강한 마음은 삶의 모든 영역을 빛나게 합니다!"],
+       [15,"양호","정신 건강이 전반적으로 양호합니다.","명상·마음챙김·감사 일기를 일상에 추가해 보세요.","내면의 평화는 실천할수록 깊어집니다!"],
+       [10,"보통","보통 수준의 심리 안정을 유지하고 있습니다.","일기 쓰기, 규칙적 운동, 충분한 수면으로 심리 안정을 도모하세요.","조금씩 나아지는 것으로 충분합니다!"],
+       [5,"주의 필요","스트레스와 심리적 불안이 높은 상태입니다.","전문 심리 상담이나 힐링 프로그램에 참여해 보세요.","도움을 구하는 것은 가장 용기 있는 행동입니다!"],
+       [0,"위험","심리적으로 매우 힘든 상황일 수 있습니다.","정신건강 위기상담 1577-0199를 활용해 보세요.","힘든 시간도 지나갑니다. 당신은 혼자가 아닙니다!"]]},
+  {key:"relation",name:"가족·관계",color:"#AD1457",emoji:"❤️",
+   qs:["가족 간의 관계가 원만하고 행복하다","신뢰하고 의지할 수 있는 친구가 있다","다른 사람들과 원활하게 소통한다","사회적 활동에 적극적으로 참여한다","인간관계에서 충분한 지지와 사랑을 받는다"],
+   lv:[[20,"매우 우수","인간관계가 매우 풍요롭고 강한 사회적 유대를 갖고 있습니다.","관계의 힘을 활용해 새로운 커뮤니티를 이끌어 보세요.","좋은 관계는 삶을 두 배로 풍요롭게 합니다!"],
+       [15,"양호","전반적으로 좋은 인간관계를 유지하고 있습니다.","정기적인 만남으로 소중한 관계를 더 돈독히 하세요.","관계에 투자한 시간은 반드시 행복으로 돌아옵니다!"],
+       [10,"보통","기본적인 관계는 유지되나 더 넓힐 여지가 있습니다.","동호회·봉사활동 등에 참여해 새로운 인연을 만들어 보세요.","진심 어린 관심 하나가 평생의 인연을 만듭니다!"],
+       [5,"주의 필요","인간관계에서 어려움을 겪고 있을 수 있습니다.","소통 기술을 배우고 작은 친절과 경청을 실천해 보세요.","새로운 관계는 언제든 시작될 수 있습니다!"],
+       [0,"위험","사회적 고립감이 높을 수 있습니다.","지역사회 모임이나 전문 상담을 통해 관계 회복을 시작해 보세요.","당신의 이야기를 들어줄 사람은 반드시 있습니다!"]]},
+  {key:"career",name:"직업·경력",color:"#E65100",emoji:"💼",
+   qs:["현재 직업이나 역할에 만족한다","일과 생활의 균형이 잘 이루어진다","직업적으로 성장하고 발전하고 있다","내 일에서 보람과 의미를 느낀다","미래 경력에 대한 명확한 계획이 있다"],
+   lv:[[20,"매우 우수","직업적으로 매우 만족스럽고 꾸준히 성장하고 있습니다.","멘토링이나 강연을 통해 경험을 나누어 보세요.","좋아하는 일을 하는 것은 인생 최고의 행운입니다!"],
+       [15,"양호","직업 만족도와 성장이 양호합니다.","새로운 기술 습득이나 네트워킹으로 커리어를 확장해 보세요.","커리어는 아직 충분히 성장할 여지가 있습니다!"],
+       [10,"보통","직업 생활을 유지하나 더 큰 만족을 추구할 수 있습니다.","커리어 코칭이나 직무 교육에 투자해 보세요.","의미 있는 일을 찾는 여정은 언제나 계속될 수 있습니다!"],
+       [5,"주의 필요","직업적 만족도나 방향성에 어려움이 있습니다.","직업 상담이나 전직 지원 프로그램을 알아보세요.","지금의 어려움도 더 나은 길의 발판이 됩니다!"],
+       [0,"위험","직업 생활에 큰 어려움이 있거나 방향을 잃은 상태일 수 있습니다.","고용센터나 직업상담소에서 전문 도움을 받아보세요.","새로운 시작은 언제나 가능합니다!"]]},
+  {key:"finance",name:"재정·경제",color:"#4A148C",emoji:"💰",
+   qs:["현재 재정 상태가 안정적이다","꾸준히 저축 또는 투자를 하고 있다","노후를 위한 재정 계획이 있다","재정적 불안 없이 안정적으로 생활한다","수입과 지출을 체계적으로 관리한다"],
+   lv:[[20,"매우 우수","재정 관리가 탁월하고 미래 준비가 잘 되어 있습니다.","자산 다양화와 사회 환원도 고려해 보세요.","재정적 자유는 삶의 더 많은 선택지를 열어줍니다!"],
+       [15,"양호","재정 상태가 전반적으로 안정적입니다.","노후 자금 계획을 더 구체적으로 수립해 보세요.","꾸준한 저축이 미래의 든든한 기반이 됩니다!"],
+       [10,"보통","기본적인 재정 관리는 하고 있습니다.","재무 설계사 상담이나 재테크 교육을 받아보세요.","지금 시작해도 충분합니다!"],
+       [5,"주의 필요","재정적으로 불안정한 상태일 수 있습니다.","부채 관리 계획과 긴급 자금 마련을 우선시하세요.","재정적 어려움에는 반드시 해결책이 있습니다!"],
+       [0,"위험","재정적으로 매우 어려운 상황일 수 있습니다.","서민금융진흥원 등 공공 지원 기관을 활용하세요.","재정 회복의 첫 걸음을 지금 내딛을 수 있습니다!"]]},
+  {key:"growth",name:"자기계발·여가",color:"#00695C",emoji:"🌱",
+   qs:["지속적으로 새로운 것을 배우고 있다","취미나 여가 활동을 즐기고 있다","개인적인 성장 목표를 갖고 추구한다","창의적인 활동에 시간을 투자한다","충분한 휴식으로 삶의 균형을 유지한다"],
+   lv:[[20,"매우 우수","자기계발과 여가의 균형이 매우 훌륭합니다.","배운 것을 강의·글쓰기·코칭으로 나누어 보세요.","성장하는 사람은 나이와 관계없이 빛납니다!"],
+       [15,"양호","꾸준한 자기계발이 이루어지고 있습니다.","새로운 분야에도 도전해 시야를 넓혀보세요.","배움의 기쁨은 나이가 들수록 더욱 깊어집니다!"],
+       [10,"보통","어느 정도 자기계발에 투자하고 있습니다.","하루 30분 독서나 온라인 강의로 시작해 보세요.","매일의 작은 배움이 쌓여 큰 성장이 됩니다!"],
+       [5,"주의 필요","자기계발과 여가 활동이 부족한 상태입니다.","관심 있는 취미 하나를 지금 당장 시작해 보세요.","취미는 인생에 색깔과 활력을 더해줍니다!"],
+       [0,"위험","삶의 활력과 성장 동력이 부족한 상태입니다.","지역 문화센터나 복지관 프로그램을 활용해 보세요.","호기심을 갖는 것만으로도 충분한 시작입니다!"]]},
+];
+
+const QUOTES=[
+  {text:"천 리 길도 한 걸음부터 시작된다.",author:"노자"},
+  {text:"건강은 첫 번째 부이고, 덕은 두 번째, 지식은 세 번째이다.",author:"랄프 왈도 에머슨"},
+  {text:"가장 어두운 밤도 끝나고 태양은 반드시 뜬다.",author:"빅토르 위고"},
+  {text:"오늘 할 수 있는 일을 내일로 미루지 마라.",author:"벤자민 프랭클린"},
+  {text:"인생은 자전거를 타는 것과 같다. 균형을 유지하려면 계속 움직여야 한다.",author:"아인슈타인"},
+  {text:"나이가 든다고 멈추는 것이 아니라, 멈추기 때문에 나이가 드는 것이다.",author:"가브리엘 샤넬"},
+  {text:"삶이 있는 곳에 희망이 있다.",author:"키케로"},
+  {text:"뜻이 있는 곳에 길이 있다.",author:"한국 속담"},
+  {text:"비가 온 후에 땅이 굳는다.",author:"한국 속담"},
+  {text:"미래는 꿈을 믿는 자들의 것이다.",author:"엘리너 루스벨트"},
+  {text:"오늘은 어제 죽은 사람이 그토록 원하던 내일이다.",author:"작자 미상"},
+  {text:"지금 이 순간이 앞으로 남은 생애 중 가장 젊은 순간이다.",author:"작자 미상"},
+];
+const todayQ=QUOTES[Math.floor(Date.now()/86400000)%QUOTES.length];
+
+// ── 영역별 풍부한 전략 데이터 ──
+const RICH={
+  health:{levels:[
+    {min:20,status:"신체 건강 관리가 매우 탁월합니다. 규칙적인 생활습관이 건강수명을 크게 늘려주고 있습니다.",
+     short:["현재 운동 루틴을 유지하며 새로운 스포츠 도전","수면 질 모니터링 앱 활용","식단 일지 작성 시작"],
+     mid:["마라톤·등산 등 목표 있는 운동 도전","정기 건강검진 항목 확대","영양사 상담으로 식단 최적화"],
+     long:["건강 관련 자격증 취득","주변에 건강 생활습관 전파","100세 시대 건강 로드맵 수립"]},
+    {min:15,status:"전반적으로 건강 관리를 잘 하고 있으나 일부 영역의 보완이 필요합니다.",
+     short:["수면·식습관·운동 중 가장 약한 부분 하나 집중 개선","매일 30분 걷기 시작","물 하루 8잔 마시기 습관화"],
+     mid:["주 3회 규칙적 운동 루틴 정착","연 1회 종합건강검진 받기","균형 잡힌 식단 계획 수립"],
+     long:["건강한 생활습관이 완전히 일상화","가족과 함께하는 건강 문화 만들기","건강수명 목표 구체화"]},
+    {min:10,status:"기본적인 건강 관리는 되고 있으나 보다 적극적인 관심과 실천이 필요한 상태입니다.",
+     short:["오늘부터 매일 20분 걷기","취침 시간 일정하게 고정","채소·과일 하루 한 가지씩 추가"],
+     mid:["규칙적 운동 습관 만들기 (주 2~3회)","생활습관병 예방 검진 받기","금연·절주 계획 수립"],
+     long:["신체 나이를 실제 나이보다 5세 낮추기","건강 관련 커뮤니티 참여","가족 건강 문화 형성"]},
+    {min:5,status:"건강 관리에 적신호가 켜진 상태입니다. 지금 당장 작은 변화부터 시작하는 것이 중요합니다.",
+     short:["병원 방문으로 현재 건강 상태 확인","매일 10분 스트레칭부터 시작","규칙적인 식사 시간 정하기"],
+     mid:["주치의 정기 상담 시작","생활습관 개선 프로그램 참여","수면 환경 개선"],
+     long:["건강 회복 후 운동 목표 설정","만성질환 예방 생활습관 정착","건강한 삶의 의미 재발견"]},
+    {min:0,status:"건강 관리가 매우 부족한 상태입니다. 지금이 가장 중요한 전환점입니다.",
+     short:["가까운 병원 방문으로 건강 상태 파악","하루 세 끼 규칙적 식사부터 시작","충분한 수면(7~8시간) 확보"],
+     mid:["전문 의료인 맞춤 건강 계획 수립","금연·절주 등 해로운 습관 하나씩 개선","건강증진센터 프로그램 활용"],
+     long:["기초 체력 회복 후 일상 활동 확대","건강한 삶을 위한 환경 전면 개편","삶의 질 향상을 위한 건강 투자"]},
+  ]},
+  mental:{levels:[
+    {min:20,status:"정신적으로 매우 건강하고 뛰어난 회복탄력성을 지니고 있습니다.",
+     short:["긍정 에너지를 주변과 나누기","감사 일기 지속 작성","마음챙김 명상 심화"],
+     mid:["멘토·코치 역할로 타인 지원","감정 조절 기술 더욱 발전","삶의 의미와 목적 심화 탐구"],
+     long:["심리적 풍요로움을 삶의 전 영역에 적용","커뮤니티 내 정서적 리더 역할","내면의 지혜를 사회에 환원"]},
+    {min:15,status:"정신 건강이 전반적으로 양호합니다. 더 깊은 내면의 평화를 위한 실천이 도움이 됩니다.",
+     short:["매일 감사한 일 3가지 기록","호흡 명상 10분 시작","부정적 생각 패턴 인식하고 전환 연습"],
+     mid:["마음챙김 습관 정착","스트레스 유발 요인 파악 및 관리","긍정적 자기대화 훈련"],
+     long:["심리적 탄력성 강화","삶의 의미와 가치 명확히 정립","내면의 평화를 기반으로 한 삶 설계"]},
+    {min:10,status:"보통 수준의 심리 안정을 유지하고 있으나 더 적극적인 정서 관리가 필요합니다.",
+     short:["감정 일기 시작 (하루 5분)","자연 속 산책으로 기분 전환","좋아하는 음악 들으며 휴식"],
+     mid:["스트레스 관리 기술 학습","긍정적 사고 훈련 프로그램 참여","취미 활동을 통한 정서적 충전"],
+     long:["안정적인 정서 기반 구축","삶의 목적의식 강화","자신만의 심리 회복 루틴 완성"]},
+    {min:5,status:"스트레스와 심리적 어려움이 높은 상태입니다. 지금 자신을 위한 시간이 필요합니다.",
+     short:["하루 10분 혼자만의 조용한 시간 갖기","일기 쓰기로 감정 표현","신뢰할 수 있는 사람과 대화"],
+     mid:["생활 리듬 안정화","취미 활동으로 긍정 경험 쌓기","자기 자신에게 친절하게 대하기"],
+     long:["정서적 안정 기반 위에 삶 재설계","내면의 강점 발굴 및 활용","삶의 균형과 조화 회복"]},
+    {min:0,status:"심리적으로 매우 힘든 상황일 수 있습니다. 당신은 혼자가 아닙니다.",
+     short:["신뢰하는 가족·친구에게 솔직하게 털어놓기","자연 속 걷기로 마음 진정","하루 한 가지 즐거운 일 찾기"],
+     mid:["일상의 작은 기쁨 찾기 연습","규칙적인 생활 리듬 회복","지지 그룹 또는 커뮤니티 참여"],
+     long:["심리적 회복 후 삶의 방향 재설정","자신의 이야기를 강점으로 전환","새로운 삶의 의미 발견"]},
+  ]},
+  relation:{levels:[
+    {min:20,status:"인간관계가 매우 풍요롭고 강한 사회적 유대를 갖고 있습니다.",
+     short:["소중한 관계에 감사 표현하기","관계 네트워크를 지역사회로 확장","새로운 커뮤니티 리더 역할 고려"],
+     mid:["멘토링 또는 봉사활동으로 관계 다양화","깊고 의미 있는 관계 심화","직업·취미 연계 네트워크 구축"],
+     long:["사회적 영향력 확대","관계를 통한 사회 기여","다음 세대와의 연결 및 전수"]},
+    {min:15,status:"전반적으로 좋은 인간관계를 유지하고 있습니다. 더 깊은 유대로 발전시킬 여지가 있습니다.",
+     short:["오래된 지인에게 먼저 연락하기","정기적인 만남 약속 잡기","감사 메시지 보내기"],
+     mid:["새로운 모임·동호회 참여","직업 관련 네트워킹 행사 참석","봉사활동으로 새로운 인연 만들기"],
+     long:["다양한 분야의 사람들과 폭넓은 관계망","신뢰와 존중을 기반으로 한 깊은 관계","사회적 자산으로서의 인간관계 완성"]},
+    {min:10,status:"기본적인 관계는 유지되나 더 풍요로운 인간관계를 만들 여지가 있습니다.",
+     short:["주변 사람에게 작은 관심과 친절 표현","단톡방·SNS로 가볍게 안부 묻기","주 1회 누군가와 식사하기"],
+     mid:["관심 분야 동호회 가입","지역 커뮤니티 활동 참여","경청과 공감 능력 키우기"],
+     long:["신뢰할 수 있는 관계망 5~10명 구축","사회적 소속감과 유대감 강화","관계를 통한 삶의 풍요로움 경험"]},
+    {min:5,status:"인간관계에서 어려움을 겪고 있을 수 있습니다. 작은 연결부터 시작해보세요.",
+     short:["가장 편한 사람 한 명에게 연락하기","이웃·동네 사람들과 인사 나누기","온라인 커뮤니티 관심 분야 참여"],
+     mid:["소통 기술 향상 (경청, 공감) 연습","봉사활동으로 새로운 관계 시작","지역 모임·행사 참여"],
+     long:["안정적인 소규모 관계망 형성","사회적 고립에서 점진적 탈피","따뜻한 인간관계의 가치 재발견"]},
+    {min:0,status:"사회적 고립감이 높을 수 있습니다. 아주 작은 연결부터 시작하면 됩니다.",
+     short:["가족 중 한 명에게 오늘 연락하기","지역 복지관·주민센터 프로그램 알아보기","반려동물이나 식물 키우며 돌봄 경험"],
+     mid:["관심사 기반 소규모 모임 참여","정기적으로 만날 수 있는 사람 찾기","온라인에서 시작해 오프라인으로 확장"],
+     long:["자신만의 소중한 관계망 구축","사회적 소속감 회복","관계를 통한 삶의 의미 재발견"]},
+  ]},
+  career:{levels:[
+    {min:20,status:"직업적으로 매우 만족스럽고 꾸준히 성장하고 있는 이상적인 상태입니다.",
+     short:["전문성을 강의·출판 등으로 확장","멘토링으로 후배 성장 지원","새로운 도전 영역 탐색"],
+     mid:["브랜드 전문가로서 영향력 확대","업계 리더십 역할 수행","새로운 비즈니스 기회 발굴"],
+     long:["업계 대표 전문가로 자리매김","사회적 가치를 창출하는 커리어","나만의 레거시 구축"]},
+    {min:15,status:"직업 만족도와 성장이 양호합니다. 더 큰 도약을 위한 준비가 가능한 상태입니다.",
+     short:["새로운 기술·자격증 취득 계획","업계 네트워킹 행사 참석","현재 역할에서 리더십 발휘"],
+     mid:["커리어 목표 5년 계획 수립","전문성 심화 교육 수강","새로운 프로젝트·역할 도전"],
+     long:["원하는 커리어 포지션 달성","일과 삶의 완벽한 균형","직업적 성취와 개인 행복 동시 실현"]},
+    {min:10,status:"직업 생활을 유지하고 있으나 더 큰 만족과 성장을 추구할 기회가 있습니다.",
+     short:["현재 직업에서 작은 성취 목표 설정","관심 분야 온라인 강의 시작","직업 관련 책 1권 읽기"],
+     mid:["커리어 코칭 상담 받기","직무 전환 또는 심화 교육 검토","부업·프리랜서로 새로운 가능성 탐색"],
+     long:["진정으로 원하는 일 찾아 전환","직업적 자아실현","경제적 안정과 일의 의미 동시 추구"]},
+    {min:5,status:"직업적 방향성에 어려움이 있습니다. 지금이 새로운 가능성을 탐색할 좋은 시기입니다.",
+     short:["워크넷·커리어넷 직업심리검사 받기","관심 직종 정보 수집","이력서 업데이트"],
+     mid:["직업 상담 전문가 만나기","직업훈련 프로그램 참여 (국민내일배움카드 활용)","소규모 프로젝트로 새 분야 경험"],
+     long:["새로운 직업 정체성 확립","안정적인 수입 구조 완성","일에서 보람과 의미 찾기"]},
+    {min:0,status:"직업적 공백기를 겪고 있지만, 이것은 새로운 챕터를 시작하는 전환점입니다.",
+     short:["고용노동부 취업지원 서비스 신청 (☎ 1350)","희망리턴패키지 재취업 컨설팅 신청","내가 잘하는 것·좋아하는 것 목록 작성"],
+     mid:["국민내일배움카드로 무료 직업훈련","소상공인 경험을 살린 컨설팅 시작","온라인 플랫폼으로 재능 거래"],
+     long:["경력 자산 수익화 완성","나만의 브랜드와 전문성 구축","지속 가능한 직업 생태계 완성"]},
+  ]},
+  finance:{levels:[
+    {min:20,status:"재정 관리가 탁월하고 미래 준비가 매우 잘 되어 있는 이상적인 상태입니다.",
+     short:["자산 포트폴리오 정기 점검","새로운 투자 기회 탐색","사회 환원·기부 계획 수립"],
+     mid:["자산 다각화 전략 심화","은퇴 후 소득 흐름 설계","재정 지식을 주변과 공유"],
+     long:["재정적 자유 완전 달성","세대 간 자산 이전 계획","사회적 가치 투자 확대"]},
+    {min:15,status:"재정 상태가 전반적으로 안정적입니다. 더 탄탄한 미래를 위한 준비가 가능합니다.",
+     short:["비상 자금 목표 (생활비 6개월치) 점검","월 저축액 10% 이상으로 높이기","지출 내역 가계부 작성"],
+     mid:["IRP·연금저축으로 노후 준비 강화","부채 있다면 조기 상환 계획","재무 설계사 무료 상담 활용"],
+     long:["재정적 안정 기반 위에 여유로운 노후","원하는 시기에 원하는 선택을 할 수 있는 자유","재정 독립 달성"]},
+    {min:10,status:"기본적인 재정 관리는 하고 있으나 더 체계적인 계획이 필요한 상태입니다.",
+     short:["한 달 수입·지출 파악 (가계부 앱 활용)","고정 지출 중 줄일 수 있는 것 찾기","소액이라도 저축 시작 (월 5만원도 OK)"],
+     mid:["재테크 기초 공부 시작 (유튜브·도서)","비상 자금 3개월치 목표 설정","불필요한 구독·보험 정리"],
+     long:["안정적인 저축·투자 습관 정착","노후 대비 연금 체계 구축","재정 목표별 통장 분리 관리"]},
+    {min:5,status:"재정적으로 불안정한 상태입니다. 지금 당장 현황 파악부터 시작하는 것이 중요합니다.",
+     short:["현재 자산·부채 현황 한 장에 정리","정부 지원 제도 확인 (희망리턴패키지 등)","고금리 부채 우선 상환 계획"],
+     mid:["서민금융진흥원 무료 재무 상담 활용","소득원 다각화 방법 탐색","생활비 절감 가능 항목 파악"],
+     long:["재정 안정 기반 단계적 구축","부채 해소 후 저축·투자 시작","경제적 자립 기반 완성"]},
+    {min:0,status:"재정적으로 매우 어려운 상황일 수 있습니다. 지금 이용 가능한 지원을 적극 활용하세요.",
+     short:["서민금융진흥원 상담 (☎ 1397)","주거·의료·생계 관련 정부 지원 확인","채무조정 필요시 희망리턴패키지 신청"],
+     mid:["안정적 소득원 확보를 최우선 목표로","재정 회복 단계별 계획 수립","신뢰할 수 있는 재정 전문가 상담"],
+     long:["경제적 안정 회복","재정 회복 경험을 강점으로 전환","지속 가능한 재정 생활 정착"]},
+  ]},
+  growth:{levels:[
+    {min:20,status:"자기계발과 여가의 균형이 매우 훌륭합니다. 배움과 성장이 삶의 일부가 된 상태입니다.",
+     short:["배운 것을 강의·글쓰기·코칭으로 나누기","새로운 분야 도전으로 시야 확장","지식 나눔 커뮤니티 운영"],
+     mid:["전문성을 사회적 가치로 환원","책 출판 또는 온라인 강의 제작","멘토로서 타인의 성장 지원"],
+     long:["배움과 나눔의 선순환 완성","자신만의 지식 브랜드 구축","사회적 영향력을 통한 의미 있는 삶"]},
+    {min:15,status:"꾸준한 자기계발이 이루어지고 있습니다. 더 넓은 세계로 도전할 준비가 되어 있습니다.",
+     short:["새로운 관심 분야 온라인 강의 수강","독서 목록 만들고 월 1권 읽기","새로운 취미 활동 하나 시작"],
+     mid:["자격증·수료증 취득으로 역량 공식화","배운 것을 블로그·SNS로 공유","취미를 부업과 연결하는 방법 탐색"],
+     long:["다양한 분야의 T자형 인재로 성장","여가와 일의 경계를 허무는 즐거운 삶","평생 학습자로서의 정체성 완성"]},
+    {min:10,status:"어느 정도 자기계발에 투자하고 있으나 더 적극적인 성장 의지를 발휘할 여지가 있습니다.",
+     short:["하루 30분 독서 또는 팟캐스트 듣기","관심 있는 무료 온라인 강의 등록","주 1회 새로운 경험 시도"],
+     mid:["체계적인 자기계발 계획 수립","취미 동호회 가입으로 여가 활성화","유튜브·블로그로 배움 기록"],
+     long:["자기계발이 생활의 일부로 정착","다양한 취미와 전문성의 균형","배움을 통한 지속적 자아실현"]},
+    {min:5,status:"자기계발과 여가 활동이 다소 부족한 상태입니다. 작은 것부터 시작해보세요.",
+     short:["오늘 유튜브에서 관심 주제 영상 1개 보기","동네 도서관 방문하기","10분 스트레칭·산책으로 몸과 마음 깨우기"],
+     mid:["무료 문화센터·복지관 프로그램 참여","국민내일배움카드로 직업훈련 수강","취미 활동으로 삶의 활력 찾기"],
+     long:["자기계발 습관 일상화","여가와 성장을 동시에 누리는 삶","호기심을 원동력으로 한 평생 성장"]},
+    {min:0,status:"삶의 활력과 성장 동력이 부족한 상태입니다. 지금 작은 호기심 하나만 따라가보세요.",
+     short:["지역 문화센터·복지관 무료 프로그램 신청","스마트폰으로 관심 있는 것 검색해보기","하루 한 가지 새로운 것 경험하기"],
+     mid:["무료 온라인 강의로 배움 시작","지역 소모임·동호회 참여","손으로 만드는 취미 (요리·원예 등) 시작"],
+     long:["배움과 성장의 즐거움 재발견","삶에 색깔과 활력 불어넣기","자신만의 성장 스토리 만들기"]},
+  ]},
+};
+
+// ── 상태 ──
+let state={
+  screen:"welcome",
+  name:"",anon:false,
+  leIdx:0,leAns:{},
+  domIdx:0,domAns:Array(6).fill(null).map(()=>Array(5).fill(3)),
+  results:null,
+  pwIn:"",pwErr:false,
+  allData:[]
+};
+
+try{const d=localStorage.getItem("cf_survey");if(d)state.allData=JSON.parse(d);}catch(e){}
+
+function save(){try{localStorage.setItem("cf_survey",JSON.stringify(state.allData));}catch(e){}}
+function calcLE(){return BASE+Object.values(state.leAns).reduce((s,v)=>s+v,0);}
+function getLv(lv,sc){return lv.find(([m])=>sc>=m)||lv[lv.length-1];}
+
+function setState(updates){
+  Object.assign(state,updates);
+  render();
+}
+
+// ── 레이더 차트 (순수 SVG) ──
+function radarChart(doms){
+  const cx=200,cy=160,r=120,n=6;
+  const labels=doms.map(d=>d.name);
+  const scores=doms.map(d=>d.score);
+  const maxS=25;
+  const angles=Array.from({length:n},(_,i)=>((i*2*Math.PI/n)-Math.PI/2));
+
+  // 그리드
+  let grid="";
+  [5,10,15,20,25].forEach(v=>{
+    const pts=angles.map(a=>`${cx+r*(v/maxS)*Math.cos(a)},${cy+r*(v/maxS)*Math.sin(a)}`).join(" ");
+    grid+=`<polygon points="${pts}" fill="none" stroke="#e0ddd8" stroke-width="1"/>`;
+  });
+
+  // 축선
+  let axes="";
+  angles.forEach(a=>{
+    axes+=`<line x1="${cx}" y1="${cy}" x2="${cx+r*Math.cos(a)}" y2="${cy+r*Math.sin(a)}" stroke="#e0ddd8" stroke-width="1"/>`;
+  });
+
+  // 데이터
+  const pts=angles.map((a,i)=>`${cx+r*(scores[i]/maxS)*Math.cos(a)},${cy+r*(scores[i]/maxS)*Math.sin(a)}`).join(" ");
+
+  // 레이블
+  let lbls="";
+  angles.forEach((a,i)=>{
+    const lx=cx+(r+28)*Math.cos(a);
+    const ly=cy+(r+28)*Math.sin(a);
+    lbls+=`<text x="${lx}" y="${ly}" text-anchor="middle" dominant-baseline="middle" font-size="11" font-weight="bold" fill="${NAVY}" font-family="'Apple SD Gothic Neo',sans-serif">${labels[i]}</text>`;
+  });
+
+  return `<svg viewBox="0 0 400 320" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;">
+    ${grid}${axes}
+    <polygon points="${pts}" fill="${GOLD}" fill-opacity="0.28" stroke="${GOLD}" stroke-width="2.5"/>
+    ${lbls}
+  </svg>`;
+}
+
+// ── 렌더링 ──
+function render(){
+  const app=document.getElementById("app");
+  const s=state;
+
+  // WELCOME
+  if(s.screen==="welcome"){
+    app.innerHTML=`
+    <div class="wrap">
+      <div class="header">
+        <h1>🌿 생애설계 진단검사</h1>
+        <div style="display:flex;gap:8px;">
+          <button class="btn-gold" onclick="setState({screen:'admin_login'})" style="padding:6px 14px;font-size:13px;min-height:36px;">🔐 관리자</button>
+        </div>
+      </div>
+      <div class="inner">
+        <div style="text-align:center;margin-bottom:24px;">
+          <div style="font-size:52px;margin-bottom:10px;">🌱</div>
+          <h1 style="color:${NAVY};font-size:23px;line-height:1.4;margin-bottom:8px;">나의 기대수명 &amp;<br/>삶의 나침반 진단</h1>
+          <p style="color:#666;font-size:14px;line-height:1.9;">검증된 방법으로 나의 현재를 진단하고<br/>더 건강하고 행복한 미래를 설계하세요</p>
+        </div>
+        <div class="card">
+          <h3 style="color:${NAVY};margin-bottom:12px;font-size:15px;">📋 검사 구성</h3>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+            ${[["🧮","기대수명 계산","24개 요인 기반"],["🎯","6대 영역 진단","30개 문항"],["🧭","삶의 나침반","영역별 시각화"],["📄","PDF 보고서","저장·출력"]].map(([ic,t,d])=>`
+            <div style="background:${CREAM};border-radius:8px;padding:12px;">
+              <div style="font-size:22px;">${ic}</div>
+              <div style="font-weight:bold;font-size:13px;color:${NAVY};margin:4px 0 2px;">${t}</div>
+              <div style="font-size:12px;color:#777;">${d}</div>
+            </div>`).join("")}
+          </div>
+        </div>
+        <div class="card" style="background:linear-gradient(135deg,${NAVY},#2a52a0);color:white;text-align:center;">
+          <div style="font-size:16px;margin-bottom:8px;">✨ 오늘의 격언</div>
+          <p style="font-size:14px;line-height:1.9;font-style:italic;margin:0 0 8px;">"${todayQ.text}"</p>
+          <p style="font-size:12px;color:${GOLD};margin:0;">— ${todayQ.author}</p>
+        </div>
+        <div class="card" style="font-size:13px;color:#555;line-height:2;">
+          <ul style="padding-left:18px;">
+            <li>총 소요 시간: 약 10~15분</li>
+            <li>무료 제공 · 익명 참여 가능</li>
+            <li>결과는 PDF로 저장·출력 가능</li>
+            <li>로그인 없이 바로 사용</li>
+          </ul>
+        </div>
+        <div style="text-align:center;margin-bottom:16px;">
+          <button class="btn-navy" onclick="setState({screen:'info'})" style="font-size:17px;padding:16px 50px;">검사 시작하기 →</button>
+        </div>
+        <div class="card" style="font-size:11px;color:#888;line-height:1.9;">
+          <strong style="color:${NAVY};">📌 자료 출처</strong><br/>
+          • 기대수명: 국가데이터처 「2024년 생명표」(전체 83.7세 / 남 80.8세 / 여 86.6세)<br/>
+          • 계산 문항: D.K. Hannis 미국 보험통계 (한국 실정 반영 수정)<br/>
+          • 생애 영역: 고용노동부 생애경력설계 프로그램 참조<br/>
+          <span style="color:#e65100;">⚠️ 본 결과는 교육적 참고 목적이며 의학적 진단을 대체하지 않습니다.</span>
+        </div>
+      </div>
+    </div>`;
+    return;
+  }
+
+  // INFO
+  if(s.screen==="info"){
+    app.innerHTML=`
+    <div class="wrap">
+      <div class="header"><h1>🌿 생애설계 진단검사</h1></div>
+      ${stepper(0)}
+      <div class="inner">
+        <div class="card">
+          <h2 style="color:${NAVY};font-size:19px;margin-bottom:18px;">참여자 기본 정보</h2>
+          <label style="display:block;font-weight:bold;font-size:14px;color:#333;margin-bottom:8px;">이름 (선택 사항)</label>
+          <input type="text" id="nameInput" placeholder="이름을 입력하세요 (선택)" value="${s.name}"
+            style="width:100%;padding:12px;border-radius:8px;border:2px solid #ddd;font-size:16px;box-sizing:border-box;background:${s.anon?'#f5f5f5':'white'};"
+            ${s.anon?'disabled':''} onchange="setState({name:this.value})"/>
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:14px;color:#555;margin-top:12px;">
+            <input type="checkbox" ${s.anon?'checked':''} style="width:18px;height:18px;"
+              onchange="setState({anon:this.checked,name:''})"/>
+            익명으로 참여합니다
+          </label>
+          <p style="font-size:13px;color:#999;margin-top:14px;border-left:3px solid ${GOLD};padding-left:12px;line-height:1.8;">
+            입력 정보는 통계 목적으로만 활용되며 외부에 공유되지 않습니다.
+          </p>
+        </div>
+        <div style="display:flex;gap:12px;justify-content:center;">
+          <button class="btn-outline" onclick="setState({screen:'welcome'})">← 이전</button>
+          <button class="btn-navy" onclick="setState({screen:'le_quiz',leIdx:0,leAns:{}})">기대수명 계산 시작 →</button>
+        </div>
+      </div>
+    </div>`;
+    return;
+  }
+
+  // LE QUIZ
+  if(s.screen==="le_quiz"){
+    const q=LQ[s.leIdx];
+    const pct=Math.round(((s.leIdx+1)/LQ.length)*100);
+    app.innerHTML=`
+    <div class="wrap">
+      <div class="header">
+        <h1>🧮 기대수명 계산</h1>
+        <span style="opacity:.8;font-size:13px;">${s.leIdx+1} / ${LQ.length}</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="background:${GOLD};width:${pct}%;"></div></div>
+      ${stepper(1)}
+      <div class="inner">
+        <div class="card">
+          <div style="font-size:12px;color:${GOLD};font-weight:bold;margin-bottom:6px;">질문 ${s.leIdx+1} / ${LQ.length}</div>
+          <h2 style="color:${NAVY};font-size:17px;line-height:1.6;margin-bottom:22px;">${q[0]}</h2>
+          <div>
+            ${q[1].map(([label,val],i)=>`
+            <button class="quiz-btn ${s.leAns[s.leIdx]===val?'selected':''}"
+              onclick="onLeAns(${val})">
+              ${label}
+            </button>`).join("")}
+          </div>
+        </div>
+        <div style="display:flex;justify-content:space-between;">
+          <button class="btn-outline" onclick="setState({leIdx:Math.max(0,${s.leIdx}-1),screen:${s.leIdx}===0?'\'info\'':'\'le_quiz\''})">← 이전</button>
+          ${s.leAns[s.leIdx]!==undefined?`<button class="btn-navy" onclick="onLeNext()">다음 →</button>`:''}
+        </div>
+      </div>
+    </div>`;
+    return;
+  }
+
+  // DOMAIN QUIZ
+  if(s.screen==="domain_quiz"){
+    const d=DD[s.domIdx];
+    app.innerHTML=`
+    <div class="wrap" style="background:#fafafa;">
+      <div class="header" style="background:${d.color};">
+        <h1>${d.emoji} ${d.name} 영역</h1>
+        <span style="opacity:.9;font-size:13px;">영역 ${s.domIdx+1} / ${DD.length}</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" style="background:${d.color};width:${((s.domIdx+1)/DD.length)*100}%;"></div></div>
+      ${stepper(2)}
+      <div class="inner" style="max-width:640px;">
+        <div class="card">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px;">
+            <span style="font-size:28px;">${d.emoji}</span>
+            <div>
+              <h2 style="color:${d.color};font-size:18px;margin:0;">${d.name} 진단</h2>
+              <p style="margin:2px 0 0;font-size:12px;color:#999;">1점(전혀 아님) ~ 5점(매우 그렇다)</p>
+            </div>
+          </div>
+          ${d.qs.map((q,qi)=>`
+          <div style="margin-bottom:14px;padding:14px;background:#f8f7f5;border-radius:8px;border-left:4px solid ${d.color};">
+            <div style="font-size:14px;color:#333;margin-bottom:10px;"><strong>${qi+1}.</strong> ${q}</div>
+            <div style="display:flex;align-items:center;gap:6px;justify-content:center;flex-wrap:wrap;">
+              <span style="font-size:11px;color:#bbb;min-width:48px;text-align:right;">전혀 아님</span>
+              ${[1,2,3,4,5].map(v=>`
+              <button class="score-btn" style="background:${s.domAns[s.domIdx][qi]===v?d.color:'white'};color:${s.domAns[s.domIdx][qi]===v?'white':d.color};border-color:${d.color};"
+                onclick="onDomScore(${qi},${v})">${v}</button>`).join("")}
+              <span style="font-size:11px;color:#bbb;min-width:48px;">매우 그렇다</span>
+            </div>
+          </div>`).join("")}
+        </div>
+        <div style="display:flex;gap:12px;justify-content:space-between;">
+          <button class="btn-outline" onclick="setState({domIdx:${s.domIdx>0?s.domIdx-1:0},screen:'${s.domIdx===0?'le_quiz':'domain_quiz'}'})">← 이전</button>
+          <button class="btn-navy" style="background:${d.color};" onclick="${s.domIdx<DD.length-1?`setState({domIdx:${s.domIdx+1}})`:'finish()'}">
+            ${s.domIdx<DD.length-1?`다음: ${DD[s.domIdx+1].name} →`:'🎯 결과 보기'}
+          </button>
+        </div>
+      </div>
+    </div>`;
+    return;
+  }
+
+  // RESULTS
+  if(s.screen==="results"&&s.results){
+    const{le,doms,rec}=s.results;
+    const total=doms.reduce((a,d)=>a+d.score,0);
+    const best=[...doms].sort((a,b)=>b.score-a.score)[0];
+    const worst=[...doms].sort((a,b)=>a.score-b.score)[0];
+    const leC=le>=88?"#1B5E20":le>=83?"#2E7D32":le>=78?"#1565C0":le>=73?GOLD:le>=68?"#E65100":"#C62828";
+    const leM=le>=88?"매우 건강한 생애 예측 🌟":le>=83?"건강한 생애 예측 ✨":le>=78?"평균 수준의 생애 예측 💪":le>=73?"주의가 필요한 생애 예측 ⚡":"즉각적인 생활 개선 필요 🔔";
+    const isMale=s.leAns[0]===-3,isFemale=s.leAns[0]===3;
+    const krAvg=isMale?KR.male:isFemale?KR.female:KR.all;
+    const diff=(le-krAvg).toFixed(1);
+
+    app.innerHTML=`
+    <div class="result-wrap">
+      <style>@media print{.no-print{display:none!important}}</style>
+      <div class="header no-print">
+        <h1>🌿 진단 결과 보고서</h1>
+        <div style="display:flex;gap:8px;">
+          <button class="btn-gold" onclick="window.print()">📄 PDF 저장</button>
+          <button onclick="setState({screen:'welcome',results:null})" style="background:transparent;border:1px solid rgba(255,255,255,.5);color:white;border-radius:6px;padding:6px 12px;cursor:pointer;font-size:12px;">처음으로</button>
+        </div>
+      </div>
+      <div style="max-width:800px;margin:0 auto;padding:24px 16px;">
+
+        <div style="text-align:center;padding-bottom:20px;margin-bottom:22px;border-bottom:3px solid ${NAVY};">
+          <div style="font-size:36px;margin-bottom:6px;">🌿</div>
+          <h1 style="color:${NAVY};font-size:20px;margin-bottom:4px;">나의 기대수명 &amp; 삶의 나침반 진단 보고서</h1>
+          <p style="color:#888;font-size:13px;">참여자: <strong>${rec.name}</strong> &nbsp;|&nbsp; 검사일: ${rec.date}</p>
+        </div>
+
+        <!-- 기대수명 -->
+        <div class="card" style="text-align:center;border:2px solid ${leC};margin-bottom:20px;">
+          <h2 style="color:${NAVY};font-size:15px;margin-bottom:12px;">🧮 나의 기대수명</h2>
+          <div style="display:flex;align-items:baseline;justify-content:center;gap:6px;margin-bottom:4px;">
+            <span style="font-size:72px;font-weight:bold;color:${leC};line-height:1;">${le}</span>
+            <span style="font-size:20px;color:#666;">세</span>
+          </div>
+          <div style="font-size:15px;font-weight:bold;color:${leC};margin-bottom:16px;">${leM}</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px;">
+            ${[["🇰🇷 한국 남성 평균",KR.male+"세","#1565C0"],["🇰🇷 한국 여성 평균",KR.female+"세","#AD1457"],["📊 나의 결과",le+"세",leC]].map(([l,v,c],i)=>`
+            <div style="background:#f5f5f5;border-radius:8px;padding:10px 4px;text-align:center;border:${i===2?`2px solid ${leC}`:'1px solid #e0e0e0'};">
+              <div style="font-size:10px;color:#888;margin-bottom:4px;">${l}</div>
+              <div style="font-size:20px;font-weight:bold;color:${c};">${v}</div>
+            </div>`).join("")}
+          </div>
+          <div style="background:#e8f4fd;border-radius:8px;padding:10px 14px;font-size:13px;color:#1565C0;line-height:1.8;text-align:left;">
+            <strong>💡 남녀 기대수명 차이:</strong> 한국 남성(80.8세)과 여성(86.6세)의 차이는 <strong>5.8년</strong>으로 1985년 8.6년에서 꾸준히 감소 중입니다. 생활습관 개선이 가장 큰 변수입니다! 💪
+          </div>
+          <div style="margin-top:10px;background:${isMale?'#e3f2fd':isFemale?'#fce4ec':'#f5f5f5'};border-radius:8px;padding:10px 14px;font-size:13px;line-height:1.8;">
+            나의 기대수명은 한국 ${isMale?'남성':isFemale?'여성':''} 평균보다&nbsp;
+            <strong style="color:${Number(diff)>=0?'#2E7D32':'#C62828'};font-size:16px;">${Number(diff)>=0?'+':''}${diff}세</strong>
+            &nbsp;${Number(diff)>=0?'더 높습니다 🎉':'낮습니다. 생활습관 개선으로 충분히 바꿀 수 있어요! 🌱'}
+          </div>
+        </div>
+
+        <!-- 삶의 나침반 -->
+        <div class="card" style="margin-bottom:20px;">
+          <h2 style="color:${NAVY};font-size:15px;text-align:center;margin-bottom:4px;">🧭 나의 삶의 나침반</h2>
+          <p style="text-align:center;font-size:13px;color:#888;margin-bottom:8px;">총점 <strong style="color:${NAVY};">${total}</strong> / 150점</p>
+          <div class="radar-container">${radarChart(doms)}</div>
+          <div style="display:flex;justify-content:center;gap:20px;flex-wrap:wrap;font-size:13px;margin-top:8px;">
+            <span>🏆 최고: <strong style="color:${best.color};">${best.name} (${best.score}점)</strong></span>
+            <span>⚡ 보완: <strong style="color:${worst.color};">${worst.name} (${worst.score}점)</strong></span>
+          </div>
+        </div>
+
+        <!-- 영역별 상세 -->
+        <h2 style="color:${NAVY};font-size:15px;margin-bottom:12px;">📋 영역별 상세 분석</h2>
+        <div style="display:flex;flex-direction:column;gap:16px;margin-bottom:20px;">
+          ${doms.map(d=>{
+            const lv=getLv(d.lv,d.score);
+            const pct=Math.round((d.score/25)*100);
+            const rich=RICH[d.key]||{};
+            const richLv=rich.levels?rich.levels.find(l=>d.score>=l.min)||rich.levels[rich.levels.length-1]:null;
+            return `
+            <div style="background:white;border:1px solid #eee;border-top:4px solid ${d.color};border-radius:12px;padding:18px;box-shadow:0 2px 10px rgba(0,0,0,.07);">
+              <!-- 헤더 -->
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <span style="font-size:22px;">${d.emoji}</span>
+                  <div>
+                    <div style="font-weight:bold;color:${NAVY};font-size:15px;">${d.name}</div>
+                    <div style="font-size:12px;font-weight:bold;color:${d.color};">📊 ${lv[1]}</div>
+                  </div>
+                </div>
+                <div style="text-align:right;">
+                  <span style="font-size:26px;font-weight:bold;color:${d.color};">${d.score}</span>
+                  <span style="font-size:12px;color:#bbb;">/25</span>
+                </div>
+              </div>
+              <!-- 진행바 -->
+              <div style="background:#eee;border-radius:4px;height:8px;margin-bottom:14px;">
+                <div style="background:${d.color};height:100%;width:${pct}%;border-radius:4px;"></div>
+              </div>
+              <!-- 현재 상태 -->
+              <div style="font-size:13px;color:#444;line-height:1.8;margin-bottom:12px;padding:10px 14px;background:${d.color}18;border-radius:8px;">
+                <strong style="color:${d.color};">📌 현재 상태</strong><br/>
+                ${lv[2]}
+                ${richLv?`<br/><br/>${richLv.status}`:''}
+              </div>
+              ${richLv?`
+              <!-- 단기 전략 -->
+              <div style="margin-bottom:10px;">
+                <div style="font-size:12px;font-weight:bold;color:#e65100;margin-bottom:6px;">🔴 단기 실천 (1~3개월)</div>
+                <ul style="padding-left:16px;font-size:12px;color:#555;line-height:2;">
+                  ${richLv.short.map(s=>`<li>${s}</li>`).join("")}
+                </ul>
+              </div>
+              <!-- 중기 전략 -->
+              <div style="margin-bottom:10px;">
+                <div style="font-size:12px;font-weight:bold;color:#1565C0;margin-bottom:6px;">🔵 중기 전략 (3~12개월)</div>
+                <ul style="padding-left:16px;font-size:12px;color:#555;line-height:2;">
+                  ${richLv.mid.map(s=>`<li>${s}</li>`).join("")}
+                </ul>
+              </div>
+              <!-- 장기 비전 -->
+              <div style="margin-bottom:10px;">
+                <div style="font-size:12px;font-weight:bold;color:#2E7D32;margin-bottom:6px;">🟢 장기 비전 (1~3년)</div>
+                <ul style="padding-left:16px;font-size:12px;color:#555;line-height:2;">
+                  ${richLv.long.map(s=>`<li>${s}</li>`).join("")}
+                </ul>
+              </div>`:''}
+              <!-- 대안 & 격려 -->
+              <div style="background:#f5f5f5;border-radius:8px;padding:10px 12px;margin-bottom:8px;font-size:12px;color:#444;line-height:1.7;">
+                💡 <strong>실천 팁:</strong> ${lv[3]}
+              </div>
+              <div style="font-size:12px;color:${d.color};font-style:italic;padding:6px 0;">✨ ${lv[4]}</div>
+            </div>`;
+          }).join("")}
+        </div>
+
+        <!-- 격려 -->
+        <div style="background:linear-gradient(135deg,${NAVY},#2a52a0);border-radius:14px;padding:22px;margin-bottom:20px;color:white;text-align:center;">
+          <div style="font-size:32px;margin-bottom:8px;">🌟</div>
+          <h3 style="font-size:16px;margin-bottom:10px;color:${GOLD};">지금까지 살아오신 삶에 진심으로 박수를 보냅니다</h3>
+          <p style="font-size:13px;line-height:2;margin:0 0 14px;opacity:.95;">오늘 이 검사를 완료하셨다는 것 자체가<br/><strong>자신의 삶을 소중히 여기고 더 나은 미래를 준비하는</strong> 용기 있는 행동입니다.</p>
+          <div style="background:rgba(255,255,255,.12);border-radius:8px;padding:12px 16px;font-size:13px;font-style:italic;color:${GOLD};">
+            "${todayQ.text}"<br/><span style="font-size:12px;opacity:.8;">— ${todayQ.author}</span>
+          </div>
+        </div>
+
+        <!-- 종합 -->
+        <div class="card" style="border-left:5px solid ${GOLD};margin-bottom:20px;">
+          <h3 style="color:${NAVY};font-size:15px;margin-bottom:14px;">📝 종합 요약 및 생애설계 제언</h3>
+          <p style="font-size:13px;line-height:2;color:#444;margin-bottom:16px;">
+            <strong>${rec.name}</strong>님의 기대수명은 <strong style="color:${leC};">${le}세</strong>로 산출되었으며,
+            생애 6대 영역 종합 점수는 <strong style="color:${NAVY};">${total}점 / 150점 (${Math.round(total/150*100)}%)</strong>입니다.
+          </p>
+          <!-- 영역별 한줄 요약 -->
+          <div style="margin-bottom:16px;">
+            ${doms.map(d=>{
+              const lv=getLv(d.lv,d.score);
+              const pct=Math.round((d.score/25)*100);
+              return `
+              <div style="display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;margin-bottom:6px;background:#f8f8f8;">
+                <span style="font-size:16px;flex-shrink:0;">${d.emoji}</span>
+                <span style="font-size:13px;font-weight:bold;color:${NAVY};min-width:80px;flex-shrink:0;">${d.name}</span>
+                <div style="flex:1;background:#eee;border-radius:4px;height:6px;">
+                  <div style="background:${d.color};height:100%;width:${pct}%;border-radius:4px;"></div>
+                </div>
+                <span style="font-size:12px;font-weight:bold;color:${d.color};min-width:36px;text-align:right;">${d.score}점</span>
+                <span style="font-size:11px;color:#888;min-width:50px;">${lv[1]}</span>
+              </div>`;
+            }).join("")}
+          </div>
+          <!-- 강점·보완 -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
+            <div style="background:#e8f5e9;border-radius:8px;padding:12px;">
+              <div style="font-size:12px;font-weight:bold;color:#2E7D32;margin-bottom:6px;">🏆 가장 강한 영역</div>
+              <div style="font-size:14px;font-weight:bold;color:${best.color};">${best.emoji} ${best.name}</div>
+              <div style="font-size:12px;color:#555;margin-top:4px;">${best.score}점 · ${getLv(best.lv,best.score)[1]}</div>
+              <div style="font-size:11px;color:#666;margin-top:6px;line-height:1.7;">${getLv(best.lv,best.score)[4]}</div>
+            </div>
+            <div style="background:#fff3e0;border-radius:8px;padding:12px;">
+              <div style="font-size:12px;font-weight:bold;color:#e65100;margin-bottom:6px;">⚡ 집중 보완 영역</div>
+              <div style="font-size:14px;font-weight:bold;color:${worst.color};">${worst.emoji} ${worst.name}</div>
+              <div style="font-size:12px;color:#555;margin-top:4px;">${worst.score}점 · ${getLv(worst.lv,worst.score)[1]}</div>
+              <div style="font-size:11px;color:#666;margin-top:6px;line-height:1.7;">${getLv(worst.lv,worst.score)[3]}</div>
+            </div>
+          </div>
+          <!-- 제언 -->
+          <div style="background:${NAVY}18;border-radius:8px;padding:14px;font-size:13px;color:#333;line-height:2;">
+            <strong style="color:${NAVY};">💡 생애설계 제언</strong><br/>
+            ${rec.name}님은 <strong style="color:${best.color};">${best.name}</strong> 영역에서 탁월한 강점을 보이고 있습니다.
+            이 강점을 기반으로 <strong style="color:${worst.color};">${worst.name}</strong> 영역을 집중적으로 보완해 나간다면
+            삶의 균형이 한층 풍요로워질 것입니다.<br/>
+            기대수명 <strong style="color:${leC};">${le}세</strong>까지 건강하고 행복한 삶을 위해,
+            오늘부터 한 영역씩 작은 변화를 실천해 보세요.
+            지금 이 진단을 받으셨다는 것 자체가 가장 용기 있는 첫 걸음입니다. 🌿
+          </div>
+        </div>
+
+        <!-- PDF 안내 -->
+        <div class="no-print" style="background:#e8f4fd;border-radius:10px;padding:14px 16px;margin-bottom:16px;font-size:13px;color:#1565C0;line-height:1.9;">
+          <strong>📄 PDF 저장 방법</strong><br/>
+          아래 버튼 클릭 → 브라우저 인쇄창 열림<br/>
+          → 대상: <strong>"PDF로 저장"</strong> 선택 → 저장 클릭<br/>
+          <span style="font-size:11px;color:#888;">※ Chrome 권장 | 모바일: 공유 → PDF 저장</span>
+        </div>
+        <div class="no-print" style="text-align:center;margin-bottom:16px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+          <button onclick="printReport()" style="background:${GOLD};color:white;border:none;border-radius:10px;padding:14px 32px;font-size:15px;cursor:pointer;touch-action:manipulation;min-height:50px;">📄 PDF로 저장하기</button>
+          <button class="btn-outline" onclick="setState({screen:'welcome',results:null})">처음으로</button>
+        </div>
+        <div class="card" style="background:#f8f9fa;font-size:11px;color:#888;line-height:1.9;">
+          <strong style="color:#555;">📚 참고 자료</strong><br/>
+          • 기대수명: 국가데이터처 「2024 생명표」(남 80.8 / 여 86.6 / 전체 83.7세)<br/>
+          • 계산 원자료: D.K. Hannis 미국 생명보험 통계 (한국 실정 수정)<br/>
+          • 본 결과는 교육·참고 목적이며 의학적 진단을 대체하지 않습니다.<br/>
+          <strong style="color:${NAVY};">© careerforest.co.kr | 무단 전재·재배포 금지</strong>
+        </div>
+      </div>
+    </div>`;
+    return;
+  }
+
+  // ADMIN LOGIN
+  if(s.screen==="admin_login"){
+    app.innerHTML=`
+    <div class="wrap" style="display:flex;align-items:center;justify-content:center;">
+      <div class="card" style="width:320px;text-align:center;margin:20px;">
+        <div style="font-size:36px;margin-bottom:10px;">🔐</div>
+        <h2 style="color:${NAVY};margin-bottom:18px;">관리자 로그인</h2>
+        <input type="password" id="pwInput" placeholder="비밀번호 입력" value="${s.pwIn}"
+          style="width:100%;padding:12px;border-radius:8px;border:2px solid ${s.pwErr?'red':'#ddd'};font-size:16px;box-sizing:border-box;margin-bottom:8px;"
+          onkeydown="if(event.key==='Enter')adminLogin()"
+          oninput="state.pwIn=this.value;state.pwErr=false;"/>
+        ${s.pwErr?'<p style="color:red;font-size:13px;margin:0 0 8px;">비밀번호가 올바르지 않습니다.</p>':''}
+        <div style="display:flex;gap:10px;justify-content:center;margin-top:8px;">
+          <button class="btn-outline" onclick="setState({screen:'welcome'})">취소</button>
+          <button class="btn-navy" onclick="adminLogin()">로그인</button>
+        </div>
+      </div>
+    </div>`;
+    return;
+  }
+
+  // ADMIN
+  if(s.screen==="admin"){
+    const data=s.allData;
+    const avgLE=data.length?Math.round(data.reduce((a,r)=>a+(r.le||0),0)/data.length):0;
+    const domAvg=name=>{const v=data.map(r=>r.domains?.find(d=>d.name===name)?.score).filter(x=>x!=null);return v.length?Math.round(v.reduce((a,b)=>a+b,0)/v.length):"-";};
+    app.innerHTML=`
+    <div class="wrap">
+      <div class="header">
+        <h1>🔐 관리자 대시보드</h1>
+        <div style="display:flex;gap:8px;">
+          <button class="btn-gold" onclick="exportCSV()" style="font-size:13px;padding:6px 14px;min-height:36px;">📥 CSV</button>
+          <button onclick="setState({screen:'welcome'})" style="background:transparent;border:1px solid rgba(255,255,255,.4);color:white;border-radius:6px;padding:6px 12px;cursor:pointer;font-size:13px;">로그아웃</button>
+        </div>
+      </div>
+      <div class="inner" style="max-width:900px;">
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px;">
+          ${[["👥","총 참여자",data.length+"명"],["🧮","평균 기대수명",avgLE+"세"],["🎯","신청완료",data.length+"건"]].map(([ic,t,v])=>`
+          <div class="card" style="text-align:center;margin-bottom:0;">
+            <div style="font-size:24px;">${ic}</div>
+            <div style="font-size:12px;color:#888;margin:4px 0 2px;">${t}</div>
+            <div style="font-size:22px;font-weight:bold;color:${NAVY};">${v}</div>
+          </div>`).join("")}
+        </div>
+        <div class="card" style="margin-bottom:18px;">
+          <h3 style="color:${NAVY};margin-bottom:12px;font-size:14px;">📊 영역별 평균</h3>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;">
+            ${DD.map(d=>`
+            <div style="background:${CREAM};border-radius:8px;padding:8px 12px;border-left:4px solid ${d.color};">
+              <div style="font-size:12px;color:#555;">${d.emoji} ${d.name}</div>
+              <div style="font-size:20px;font-weight:bold;color:${d.color};margin-top:2px;">${domAvg(d.name)} <span style="font-size:11px;color:#aaa;">/25</span></div>
+            </div>`).join("")}
+          </div>
+        </div>
+        <div class="card">
+          <h3 style="color:${NAVY};margin:0 0 12px;font-size:14px;">📋 참여자 목록 (${data.length}명)</h3>
+          ${data.length===0?`<div style="text-align:center;color:#aaa;padding:40px 0;">아직 참여 데이터가 없습니다.</div>`:`
+          <div style="overflow-x:auto;">
+            <table class="admin-table">
+              <thead><tr>
+                <th>이름</th><th>검사일</th><th>기대수명</th>
+                ${DD.map(d=>`<th>${d.name}</th>`).join("")}
+              </tr></thead>
+              <tbody>
+                ${[...data].reverse().map((r,i)=>`
+                <tr style="background:${i%2===0?'white':'#f9f7f4'};">
+                  <td>${r.name}</td>
+                  <td style="color:#aaa;">${r.date}</td>
+                  <td style="font-weight:bold;color:${NAVY};">${r.le}세</td>
+                  ${DD.map(d=>`<td style="color:${d.color};font-weight:bold;">${r.domains?.find(x=>x.name===d.name)?.score??"-"}</td>`).join("")}
+                </tr>`).join("")}
+              </tbody>
+            </table>
+          </div>`}
+        </div>
+        <div class="card" style="background:#fffbf0;border:1px solid ${GOLD};font-size:13px;color:#666;line-height:2;">
+          <strong style="color:${NAVY};">💡 데이터 관리 안내</strong><br/>
+          • 참여자 데이터는 브라우저 localStorage에 저장됩니다.<br/>
+          • 공용 기기 1대에서 진행 시 이 화면에서 모든 데이터 확인 가능합니다.<br/>
+          • CSV 다운로드 → Google Sheets로 누적 관리를 권장합니다.<br/>
+          • 관리자 비밀번호: HTML 파일의 <code>const PW="admin1234"</code> 수정
+        </div>
+      </div>
+    </div>`;
+    return;
+  }
+}
+
+// ── 스텝퍼 ──
+function stepper(step){
+  const steps=["기본정보","기대수명","생애진단","결과보고"];
+  return `<div class="stepper">
+    ${steps.map((s,i)=>`
+    <div class="step-item">
+      <div style="display:flex;flex-direction:column;align-items:center;">
+        <div class="step-circle" style="background:${i<step?GOLD:i===step?NAVY:'#ddd'};">${i<step?"✓":i+1}</div>
+        <div class="step-label" style="color:${i===step?NAVY:'#aaa'};font-weight:${i===step?'bold':'normal'};">${s}</div>
+      </div>
+      ${i<3?`<div class="step-line" style="background:${i<step?GOLD:'#ddd'};"></div>`:''}
+    </div>`).join("")}
+  </div>`;
+}
+
+function printReport(){
+  // 결과 내용 수집
+  const content = document.querySelector('.result-wrap');
+  if(!content){ alert('결과 화면에서 눌러주세요!'); return; }
+
+  // 새 창에서 인쇄
+  const win = window.open('', '_blank', 'width=900,height=700');
+  if(!win){ alert('팝업이 차단되었습니다.\n브라우저 팝업 허용 후 다시 시도해주세요.'); return; }
+
+  win.document.write(`
+    <!DOCTYPE html>
+    <html lang="ko">
+    <head>
+      <meta charset="UTF-8"/>
+      <title>생애설계 진단 보고서 | 커리어포레스트</title>
+      <style>
+        *{margin:0;padding:0;box-sizing:border-box;}
+        body{font-family:'Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',sans-serif;background:white;padding:20px;}
+        .no-print{display:none!important;}
+        button{display:none!important;}
+        @media print{
+          body{padding:0;}
+          *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}
+        }
+      </style>
+    </head>
+    <body>
+      ${content.innerHTML}
+      <script>
+        // 버튼 모두 숨기기
+        document.querySelectorAll('button').forEach(b=>b.style.display='none');
+        document.querySelectorAll('.no-print').forEach(el=>el.style.display='none');
+        setTimeout(()=>{ window.print(); }, 800);
+      </script>
+    </body>
+    </html>
+  `);
+  win.document.close();
+}
+
+// ── 이벤트 핸들러 ──
+function onLeAns(val){
+  state.leAns[state.leIdx]=val;
+  render();
+}
+function onLeNext(){
+  if(state.leIdx<LQ.length-1){
+    setState({leIdx:state.leIdx+1});
+  } else {
+    setState({screen:"domain_quiz",domIdx:0,domAns:Array(6).fill(null).map(()=>Array(5).fill(3))});
+  }
+}
+function onDomScore(qi,v){
+  const na=state.domAns.map((arr,i)=>i===state.domIdx?arr.map((a,j)=>j===qi?v:a):[...arr]);
+  setState({domAns:na});
+}
+function finish(){
+  const le=calcLE();
+  const doms=DD.map((d,i)=>({...d,score:state.domAns[i].reduce((s,v)=>s+v,0)}));
+  const rec={id:Date.now(),name:state.anon?"익명":(state.name||"익명"),date:new Date().toLocaleDateString("ko-KR"),le,domains:doms.map(d=>({name:d.name,score:d.score}))};
+  state.allData.push(rec);
+  save();
+  setState({results:{le,doms,rec},screen:"results"});
+}
+function adminLogin(){
+  const pw=document.getElementById("pwInput")?.value||state.pwIn;
+  if(pw===PW){setState({screen:"admin",pwIn:"",pwErr:false});}
+  else setState({pwErr:true,pwIn:pw});
+}
+function exportCSV(){
+  const h=["이름","검사일","기대수명",...DD.map(d=>d.name)];
+  const rows=state.allData.map(r=>[r.name,r.date,r.le,...(r.domains?.map(d=>d.score)||[])]);
+  const csv=[h,...rows].map(r=>r.join(",")).join("\n");
+  const url=URL.createObjectURL(new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8;"}));
+  Object.assign(document.createElement("a"),{href:url,download:"생애설계진단_데이터.csv"}).click();
+}
+
+// ── 시작 ──
+render();
+</script>
+</body>
+</html>

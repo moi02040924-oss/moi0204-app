@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>도움방 — 소상공인 재기 지원 사이트 모음</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600&family=Gowun+Batang:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:#1b2a4a; --teal:#2a7a6b; --gold:#c9973a;
+    --cream:#faf7f2; --border:rgba(27,42,74,0.1);
+    --text-dark:#1e1e2e; --text-mid:#4a4a5a; --text-soft:#7a7a8a;
+    --c-job-pub:#1a5a9a; --c-job-priv:#b86820;
+    --c-startup:#2a7a6b; --c-market:#7a4a10;
+    --c-edu:#6b3a9a; --c-mental:#2a8a5a;
+    --c-target:#b83225; --c-admin:#3a5a8a;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--cream);color:var(--text-dark);font-family:'Noto Sans KR',sans-serif;line-height:1.7;}
+
+  /* HEADER */
+  .page-header{background:var(--navy);padding:48px 32px 0;position:relative;overflow:hidden;}
+  .page-header::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 80% at 85% 40%,rgba(42,122,107,.2) 0%,transparent 60%),radial-gradient(ellipse 40% 60% at 5% 90%,rgba(201,151,58,.12) 0%,transparent 60%);pointer-events:none;}
+  .header-top{position:relative;z-index:1;text-align:center;padding-bottom:32px;}
+  .header-badge{display:inline-block;border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.55);font-size:11px;letter-spacing:.25em;padding:5px 16px;border-radius:20px;margin-bottom:16px;}
+  .page-title{font-family:'Gowun Batang',serif;font-size:clamp(24px,4vw,38px);color:#fff;font-weight:700;line-height:1.25;margin-bottom:8px;}
+  .page-title span{color:#e8c278;}
+  .page-desc{font-size:13px;color:rgba(255,255,255,.5);font-weight:300;max-width:480px;margin:0 auto 20px;}
+  .site-count{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:4px 14px;font-size:11px;color:rgba(255,255,255,.6);margin-bottom:24px;}
+
+  /* TAB BAR */
+  .tab-bar{position:relative;z-index:1;display:flex;overflow-x:auto;scrollbar-width:none;background:rgba(0,0,0,.2);border-top:1px solid rgba(255,255,255,.08);}
+  .tab-bar::-webkit-scrollbar{display:none;}
+  .tab-btn{flex-shrink:0;padding:13px 18px;border:none;background:transparent;color:rgba(255,255,255,.5);font-size:12.5px;font-weight:500;cursor:pointer;transition:all .2s;font-family:'Noto Sans KR',sans-serif;border-bottom:2px solid transparent;white-space:nowrap;}
+  .tab-btn:hover{color:rgba(255,255,255,.85);}
+  .tab-btn.active{color:#fff;font-weight:700;border-bottom-color:#e8c278;background:rgba(255,255,255,.05);}
+
+  /* CONTENT */
+  .content{max-width:1000px;margin:0 auto;padding:52px 32px 80px;}
+  .cat-block{margin-bottom:56px;}
+  .cat-block.hidden{display:none;}
+
+  .cat-header{display:flex;align-items:center;gap:12px;margin-bottom:18px;padding-bottom:12px;border-bottom:2px solid var(--cc);}
+  .cat-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;background:color-mix(in srgb,var(--cc) 12%,transparent);}
+  .cat-title{font-family:'Gowun Batang',serif;font-size:19px;font-weight:700;color:var(--cc);flex:1;}
+  .cat-count{font-size:11px;color:var(--text-soft);font-weight:300;}
+
+  /* 카테고리 변수 */
+  .cat-job-pub  {--cc:var(--c-job-pub);}
+  .cat-job-priv {--cc:var(--c-job-priv);}
+  .cat-startup  {--cc:var(--c-startup);}
+  .cat-market   {--cc:var(--c-market);}
+  .cat-edu      {--cc:var(--c-edu);}
+  .cat-mental   {--cc:var(--c-mental);}
+  .cat-target   {--cc:var(--c-target);}
+  .cat-admin    {--cc:var(--c-admin);}
+
+  /* SUB LABEL */
+  .sub-label{font-size:10.5px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--cc);opacity:.7;margin:18px 0 10px;padding-left:2px;}
+  .sub-label:first-of-type{margin-top:2px;}
+
+  /* CARD GRID */
+  .cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(205px,1fr));gap:10px;}
+
+  .lk{background:#fff;border:1px solid var(--border);border-radius:11px;padding:15px 17px;text-decoration:none;display:flex;flex-direction:column;gap:3px;transition:transform .2s,box-shadow .2s;position:relative;overflow:hidden;}
+  .lk::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--cc);border-radius:11px 11px 0 0;}
+  .lk:hover{transform:translateY(-3px);box-shadow:0 8px 28px rgba(0,0,0,.09);}
+
+  /* BADGES */
+  .lk-badge{display:inline-block;font-size:9px;font-weight:700;letter-spacing:.12em;padding:2px 7px;border-radius:10px;margin-bottom:2px;width:fit-content;}
+  .bg-pub   {background:rgba(27,42,74,.08);   color:#1b2a4a;}
+  .bg-priv  {background:rgba(184,104,32,.1);  color:#7a4010;}
+  .bg-local {background:rgba(42,122,107,.1);  color:#1a6050;}
+  .bg-seoul {background:rgba(0,80,180,.1);    color:#004a9a;}
+  .bg-cert  {background:rgba(107,58,154,.1);  color:#5a2a8a;}
+  .bg-free  {background:rgba(42,138,90,.12);  color:#1a6038;}
+  .bg-short {background:rgba(184,50,37,.1);   color:#8a2010;}
+  .bg-req   {background:rgba(201,151,58,.12); color:#7a5010;}
+
+  .lk-name{font-size:13px;font-weight:700;color:var(--text-dark);line-height:1.3;}
+  .lk-desc{font-size:10.5px;color:var(--text-soft);font-weight:300;line-height:1.5;flex:1;margin-bottom:5px;}
+  .lk-url {font-size:9.5px;font-weight:600;color:var(--cc);opacity:.65;}
+
+  /* FOOTER */
+  .page-footer{background:var(--navy);padding:22px 32px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;}
+  .footer-logo{font-family:'Gowun Batang',serif;color:rgba(255,255,255,.55);font-size:13px;}
+  .footer-note{font-size:11px;color:rgba(255,255,255,.3);font-weight:300;}
+
+  @media(max-width:600px){.content{padding:32px 16px 60px;}.cards-grid{grid-template-columns:1fr 1fr;}}
+  @media(max-width:380px){.cards-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<header class="page-header">
+  <div class="header-top">
+    <p class="header-badge">소상공인시장진흥공단 경기남부 · 직무직능 컨설턴트</p>
+    <h1 class="page-title">도움방 🗂️<br><span>재기에 필요한 모든 사이트</span></h1>
+    <p class="page-desc">취업·창업·상권·교육·심리·대상별 — 필요한 링크를 한곳에 모았습니다.</p>
+    <div class="site-count">✦ 총 70개+ 사이트 · 상담 무료</div>
+  </div>
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="filterCat('all',this)">전체</button>
+    <button class="tab-btn" onclick="filterCat('job-pub',this)">💼 공공 취업</button>
+    <button class="tab-btn" onclick="filterCat('job-priv',this)">🏢 민간 취업</button>
+    <button class="tab-btn" onclick="filterCat('startup',this)">🚀 창업·재기·소상공인</button>
+    <button class="tab-btn" onclick="filterCat('market',this)">📊 상권분석</button>
+    <button class="tab-btn" onclick="filterCat('edu',this)">🎓 교육·자격·교육청</button>
+    <button class="tab-btn" onclick="filterCat('mental',this)">💚 심리상담</button>
+    <button class="tab-btn" onclick="filterCat('target',this)">👥 대상별</button>
+    <button class="tab-btn" onclick="filterCat('admin',this)">📋 행정·세무</button>
+  </div>
+</header>
+
+<div class="content">
+
+<!-- ① 공공 취업 -->
+<div class="cat-block cat-job-pub" data-cat="job-pub">
+  <div class="cat-header"><div class="cat-icon">💼</div><h2 class="cat-title">공공 취업</h2><span class="cat-count">8개</span></div>
+  <div class="sub-label">통합 포털</div>
+  <div class="cards-grid">
+    <a href="https://www.work24.go.kr" target="_blank" class="lk"><span class="lk-badge bg-pub">공공</span><div class="lk-name">고용24</div><div class="lk-desc">국민취업지원제도 신청·구직급여·취업지원 통합포털 (워크넷 통합)</div><div class="lk-url">work24.go.kr →</div></a>
+    <a href="https://total.kcomwel.or.kr" target="_blank" class="lk"><span class="lk-badge bg-req">필수서류</span><div class="lk-name">고용산재보험 토탈서비스</div><div class="lk-desc">고용보험 피보험자격이력내역서 발급 — 전직장려수당 2차 신청 필수</div><div class="lk-url">total.kcomwel.or.kr →</div></a>
+    <a href="https://www.keis.or.kr" target="_blank" class="lk"><span class="lk-badge bg-pub">공공</span><div class="lk-name">한국고용정보원</div><div class="lk-desc">직업·진로 정보·고용통계·직업사전 제공</div><div class="lk-url">keis.or.kr →</div></a>
+    <a href="https://www.nosa.or.kr" target="_blank" class="lk"><span class="lk-badge bg-pub">공공</span><div class="lk-name">노사발전재단</div><div class="lk-desc">전직지원·재취업 프로그램·중장년 고용안정 지원. 폐업 소상공인 전직에 활용</div><div class="lk-url">nosa.or.kr →</div></a>
+  </div>
+  <div class="sub-label">지역 일자리</div>
+  <div class="cards-grid">
+    <a href="https://www.gjf.or.kr" target="_blank" class="lk"><span class="lk-badge bg-local">경기</span><div class="lk-name">경기일자리재단</div><div class="lk-desc">경기도 취업알선·직업훈련·일자리카페 운영</div><div class="lk-url">gjf.or.kr →</div></a>
+    <a href="https://www.incheonjob.or.kr" target="_blank" class="lk"><span class="lk-badge bg-local">인천</span><div class="lk-name">인천일자리센터</div><div class="lk-desc">인천 취업 상담·알선·직업훈련 연계</div><div class="lk-url">incheonjob.or.kr →</div></a>
+    <a href="https://job.seoul.go.kr" target="_blank" class="lk"><span class="lk-badge bg-seoul">서울</span><div class="lk-name">서울시 일자리포털</div><div class="lk-desc">서울시 공공·민간 채용정보 통합 검색</div><div class="lk-url">job.seoul.go.kr →</div></a>
+    <a href="https://www.seoulsmc.or.kr" target="_blank" class="lk"><span class="lk-badge bg-seoul">서울</span><div class="lk-name">서울시소상공인지원센터</div><div class="lk-desc">서울 소상공인 전용 취업·재기 지원 상담</div><div class="lk-url">seoulsmc.or.kr →</div></a>
+  </div>
+</div>
+
+<!-- ② 민간 취업 -->
+<div class="cat-block cat-job-priv" data-cat="job-priv">
+  <div class="cat-header"><div class="cat-icon">🏢</div><h2 class="cat-title">민간 취업</h2><span class="cat-count">18개</span></div>
+  <div class="sub-label">종합 플랫폼</div>
+  <div class="cards-grid">
+    <a href="https://www.saramin.co.kr" target="_blank" class="lk"><span class="lk-badge bg-priv">종합</span><div class="lk-name">사람인</div><div class="lk-desc">국내 최대 채용 플랫폼. 이력서·자기소개서 작성 도구 제공</div><div class="lk-url">saramin.co.kr →</div></a>
+    <a href="https://www.jobkorea.co.kr" target="_blank" class="lk"><span class="lk-badge bg-priv">종합</span><div class="lk-name">잡코리아</div><div class="lk-desc">채용공고·연봉정보·취업 커뮤니티</div><div class="lk-url">jobkorea.co.kr →</div></a>
+    <a href="https://www.incruit.com" target="_blank" class="lk"><span class="lk-badge bg-priv">종합</span><div class="lk-name">인크루트</div><div class="lk-desc">경력직·신입 공채·헤드헌팅 연계</div><div class="lk-url">incruit.com →</div></a>
+    <a href="https://www.scout.co.kr" target="_blank" class="lk"><span class="lk-badge bg-priv">종합</span><div class="lk-name">스카우트</div><div class="lk-desc">경력직 스카우트 제안·헤드헌팅 전문 서비스</div><div class="lk-url">scout.co.kr →</div></a>
+  </div>
+  <div class="sub-label">직무 · 업종 특화</div>
+  <div class="cards-grid">
+    <a href="https://www.wanted.co.kr" target="_blank" class="lk"><span class="lk-badge bg-priv">IT·스타트업</span><div class="lk-name">원티드</div><div class="lk-desc">IT·스타트업 중심. 지인 추천 보상금 제도 운영</div><div class="lk-url">wanted.co.kr →</div></a>
+    <a href="https://www.jumpit.co.kr" target="_blank" class="lk"><span class="lk-badge bg-priv">IT</span><div class="lk-name">점핏</div><div class="lk-desc">개발자·IT 직군 전문 채용 플랫폼</div><div class="lk-url">jumpit.co.kr →</div></a>
+    <a href="https://www.medijob.co.kr" target="_blank" class="lk"><span class="lk-badge bg-priv">의료·보건</span><div class="lk-name">메디잡</div><div class="lk-desc">의료·보건·요양·간호 직종 전문 채용</div><div class="lk-url">medijob.co.kr →</div></a>
+    <a href="https://www.foodjob.co.kr" target="_blank" class="lk"><span class="lk-badge bg-priv">식품·외식</span><div class="lk-name">푸드잡</div><div class="lk-desc">식품·외식·조리 분야 전문 채용. 전직 소상공인에 적합</div><div class="lk-url">foodjob.co.kr →</div></a>
+    <a href="https://www.catch.co.kr" target="_blank" class="lk"><span class="lk-badge bg-priv">종합</span><div class="lk-name">캐치</div><div class="lk-desc">기업 리뷰·연봉 정보·채용 공고 통합</div><div class="lk-url">catch.co.kr →</div></a>
+    <a href="https://www.linkedin.com" target="_blank" class="lk"><span class="lk-badge bg-priv">글로벌</span><div class="lk-name">링크드인</div><div class="lk-desc">외국계·글로벌 기업 취업·프로 네트워킹</div><div class="lk-url">linkedin.com →</div></a>
+  </div>
+  <div class="sub-label">단기 · 알바</div>
+  <div class="cards-grid">
+    <a href="https://www.albacheon.com" target="_blank" class="lk"><span class="lk-badge bg-short">알바</span><div class="lk-name">알바천국</div><div class="lk-desc">지역별·업종별 아르바이트 전문. 단기·주말·야간 포함</div><div class="lk-url">albacheon.com →</div></a>
+    <a href="https://www.albamon.com" target="_blank" class="lk"><span class="lk-badge bg-short">알바</span><div class="lk-name">알바몬</div><div class="lk-desc">단기·주말·시간제 아르바이트. 지역 필터 검색 가능</div><div class="lk-url">albamon.com →</div></a>
+    <a href="https://kr.indeed.com" target="_blank" class="lk"><span class="lk-badge bg-priv">글로벌</span><div class="lk-name">인디드 코리아</div><div class="lk-desc">단기·계약직·정규직 통합 검색. 다양한 직종 커버</div><div class="lk-url">kr.indeed.com →</div></a>
+    <a href="https://www.alba.co.kr" target="_blank" class="lk"><span class="lk-badge bg-short">알바</span><div class="lk-name">알바닷컴</div><div class="lk-desc">지역·업종·시급별 아르바이트 검색</div><div class="lk-url">alba.co.kr →</div></a>
+  </div>
+  <div class="sub-label">지역 특화</div>
+  <div class="cards-grid">
+    <a href="https://www.koreit.or.kr" target="_blank" class="lk"><span class="lk-badge bg-pub">중장년</span><div class="lk-name">중장년일자리희망센터</div><div class="lk-desc">만 40세 이상 재취업 전문 상담·훈련 연계</div><div class="lk-url">koreit.or.kr →</div></a>
+    <a href="https://www.seniorro.or.kr" target="_blank" class="lk"><span class="lk-badge bg-pub">시니어</span><div class="lk-name">노인일자리 여기</div><div class="lk-desc">만 60세 이상 일자리·사회참여 활동 전용</div><div class="lk-url">seniorro.or.kr →</div></a>
+    <a href="https://www.womenwork.or.kr" target="_blank" class="lk"><span class="lk-badge bg-pub">여성</span><div class="lk-name">여성새로일하기센터</div><div class="lk-desc">경력단절 여성 재취업 상담·직업훈련</div><div class="lk-url">womenwork.or.kr →</div></a>
+    <a href="https://www.gjf.or.kr" target="_blank" class="lk"><span class="lk-badge bg-local">경기</span><div class="lk-name">경기일자리재단</div><div class="lk-desc">경기도 맞춤 취업알선·일자리카페 운영</div><div class="lk-url">gjf.or.kr →</div></a>
+  </div>
+</div>
+
+<!-- ③ 창업·재기·소상공인 -->
+<div class="cat-block cat-startup" data-cat="startup">
+  <div class="cat-header"><div class="cat-icon">🚀</div><h2 class="cat-title">창업 · 재기 · 소상공인</h2><span class="cat-count">12개</span></div>
+  <div class="sub-label">희망리턴패키지 핵심</div>
+  <div class="cards-grid">
+    <a href="https://www.sbiz24.kr" target="_blank" class="lk"><span class="lk-badge bg-req">신청창구</span><div class="lk-name">소상공인24</div><div class="lk-desc">희망리턴패키지·점포철거비·전직장려수당 신청 통합창구</div><div class="lk-url">sbiz24.kr →</div></a>
+    <a href="https://hope.sbiz.or.kr" target="_blank" class="lk"><span class="lk-badge bg-pub">공공</span><div class="lk-name">희망리턴패키지 공식홈</div><div class="lk-desc">사업정리컨설팅·법률자문·채무조정·취업교육 신청</div><div class="lk-url">hope.sbiz.or.kr →</div></a>
+    <a href="https://www.sbiz.or.kr" target="_blank" class="lk"><span class="lk-badge bg-pub">공공</span><div class="lk-name">소상공인365</div><div class="lk-desc">소진공 전체 지원사업 통합 안내·신청</div><div class="lk-url">sbiz.or.kr →</div></a>
+    <a href="https://ols.semas.or.kr" target="_blank" class="lk"><span class="lk-badge bg-pub">공공</span><div class="lk-name">소상공인 정책자금</div><div class="lk-desc">융자·경영안정·재창업 자금 신청</div><div class="lk-url">ols.semas.or.kr →</div></a>
+  </div>
+  <div class="sub-label">서울 소상공인</div>
+  <div class="cards-grid">
+    <a href="https://www.seoulsmc.or.kr" target="_blank" class="lk"><span class="lk-badge bg-seoul">서울</span><div class="lk-name">서울시소상공인지원센터</div><div class="lk-desc">서울 소상공인 전용 자금·컨설팅·폐업 지원 통합</div><div class="lk-url">seoulsmc.or.kr →</div></a>
+    <a href="https://academy.seoulsmc.or.kr" target="_blank" class="lk"><span class="lk-badge bg-seoul">서울</span><div class="lk-name">서울시소상공인아카데미</div><div class="lk-desc">서울 소상공인 경영·마케팅·디지털 무료 교육</div><div class="lk-url">academy.seoulsmc.or.kr →</div></a>
+    <a href="https://gmr.or.kr" target="_blank" class="lk"><span class="lk-badge bg-local">경기</span><div class="lk-name">경기시장상권진흥원</div><div class="lk-desc">경기 전통시장·상권 활성화 지원 기관</div><div class="lk-url">gmr.or.kr →</div></a>
+  </div>
+  <div class="sub-label">금융 · 보증</div>
+  <div class="cards-grid">
+    <a href="https://www.newstartsupport.or.kr" target="_blank" class="lk"><span class="lk-badge bg-pub">공공</span><div class="lk-name">새출발기금</div><div class="lk-desc">소상공인 전용 채무조정. 원금·이자 감면 프로그램</div><div class="lk-url">newstartsupport.or.kr →</div></a>
+    <a href="https://www.kodit.co.kr" target="_blank" class="lk"><span class="lk-badge bg-pub">공공</span><div class="lk-name">신용보증기금</div><div class="lk-desc">소상공인·중소기업 보증 지원. 재창업 보증 프로그램</div><div class="lk-url">kodit.co.kr →</div></a>
+    <a href="https://www.cb.or.kr" target="_blank" class="lk"><span class="lk-badge bg-local">지역보증</span><div class="lk-name">신용보증재단 (지역)</div><div class="lk-desc">지역별 소상공인 보증 지원. 소액·긴급 보증으로 재기 자금 마련</div><div class="lk-url">cb.or.kr →</div></a>
+    <a href="https://www.semas.or.kr" target="_blank" class="lk"><span class="lk-badge bg-pub">공공</span><div class="lk-name">소상공인시장진흥공단</div><div class="lk-desc">소진공 공식홈. 전체 사업 공고·뉴스·컨설턴트 안내</div><div class="lk-url">semas.or.kr →</div></a>
+    <a href="https://www.k-startup.go.kr" target="_blank" class="lk"><span class="lk-badge bg-pub">공공</span><div class="lk-name">K-Startup (창업진흥원)</div><div class="lk-desc">청년·중장년 재창업 지원사업 공고·신청</div><div class="lk-url">k-startup.go.kr →</div></a>
+    <a href="https://www.bizinfo.go.kr" target="_blank" class="lk"><span class="lk-badge bg-pub">공공</span><div class="lk-name">기업마당</div><div class="lk-desc">정부·지자체 창업·재기 지원사업 통합 공고 검색</div><div class="lk-url">bizinfo.go.kr →</div></a>
+  </div>
+</div>
+
+<!-- ④ 상권분석 -->
+<div class="cat-block cat-market" data-cat="market">
+  <div class="cat-header"><div class="cat-icon">📊</div><h2 class="cat-title">상권분석</h2><span class="cat-count">5개</span></div>
+  <div class="cards-grid">
+    <a href="https://sg.sbiz.or.kr" target="_blank" class="lk"><span class="lk-badge bg-pub">공공</span><div class="lk-name">소상공인 상권정보</div><div class="lk-desc">업종별·지역별 상권 분석. 유동인구·매출 데이터 무료</div><div class="lk-url">sg.sbiz.or.kr →</div></a>
+    <a href="https://gmr.or.kr" target="_blank" class="lk"><span class="lk-badge bg-local">경기</span><div class="lk-name">경기시장상권진흥원</div><div class="lk-desc">경기도 전통시장·상권 현황 분석 지원</div><div class="lk-url">gmr.or.kr →</div></a>
+    <a href="https://data.seoul.go.kr" target="_blank" class="lk"><span class="lk-badge bg-seoul">서울</span><div class="lk-name">서울 열린데이터광장</div><div class="lk-desc">서울시 상권·유동인구·임대료 공공 데이터</div><div class="lk-url">data.seoul.go.kr →</div></a>
+    <a href="https://www.data.go.kr" target="_blank" class="lk"><span class="lk-badge bg-pub">공공</span><div class="lk-name">공공데이터포털</div><div class="lk-desc">폐업·창업 통계, 유동인구 등 원시 데이터</div><div class="lk-url">data.go.kr →</div></a>
+    <a href="https://www.mss.go.kr" target="_blank" class="lk"><span class="lk-badge bg-pub">공공</span><div class="lk-name">중소벤처기업부</div><div class="lk-desc">소상공인 정책 발표·상권 지원 공식 부처</div><div class="lk-url">mss.go.kr →</div></a>
+    <a href="https://www.fss.or.kr/fss/lifeplan/lifeplanIndex/index.do?menuNo=201101" target="_blank" class="lk"><span class="lk-badge bg-pub">공공</span><div class="lk-name">금융감독원 생애재무설계</div><div class="lk-desc">통합연금포털·재무설계·노후준비 정보. 폐업 후 재무 계획 수립에 활용</div><div class="lk-url">fss.or.kr 생애설계 →</div></a>
+    <a href="https://ggbaro.kr" target="_blank" class="lk"><span class="lk-badge bg-local">경기</span><div class="lk-name">경기바로</div><div class="lk-desc">경기도 소상공인 맞춤형 지원사업 통합 검색·신청. 지원사업 추천 서비스 제공</div><div class="lk-url">ggbaro.kr →</div></a>
+  </div>
+</div>
+
+<!-- ⑤ 교육·자격·교육청 -->
+<div class="cat-block cat-edu" data-cat="edu">
+  <div class="cat-header"><div class="cat-icon">🎓</div><h2 class="cat-title">교육 · 자격 · 교육청</h2><span class="cat-count">14개</span></div>
+  <div class="sub-label">자격증</div>
+  <div class="cards-grid">
+    <a href="https://www.q-net.or.kr" target="_blank" class="lk"><span class="lk-badge bg-cert">국가자격</span><div class="lk-name">Q-Net</div><div class="lk-desc">국가기술자격증 시험신청·합격조회·자격증 발급</div><div class="lk-url">q-net.or.kr →</div></a>
+    <a href="https://www.pqi.or.kr" target="_blank" class="lk"><span class="lk-badge bg-cert">민간자격</span><div class="lk-name">PQI (민간자격정보)</div><div class="lk-desc">민간자격 등록현황 조회. 심화교육 강사 자격 확인 활용</div><div class="lk-url">pqi.or.kr →</div></a>
+    <a href="https://www.cq.or.kr" target="_blank" class="lk"><span class="lk-badge bg-cert">NCS</span><div class="lk-name">CQ-Net</div><div class="lk-desc">국가직무능력표준 기반 자격·학습모듈 정보</div><div class="lk-url">cq.or.kr →</div></a>
+  </div>
+  <div class="sub-label">직업훈련 · 교육 플랫폼</div>
+  <div class="cards-grid">
+    <a href="https://www.hrd.go.kr" target="_blank" class="lk"><span class="lk-badge bg-pub">공공</span><div class="lk-name">HRD-Net (직업훈련포털)</div><div class="lk-desc">국비지원 직업훈련 과정 검색·신청. 훈련비 환급 가능</div><div class="lk-url">hrd.go.kr →</div></a>
+    <a href="https://edu.sbiz.or.kr" target="_blank" class="lk"><span class="lk-badge bg-pub">공공</span><div class="lk-name">소진공 지식배움터</div><div class="lk-desc">희망리턴패키지 취업 기초교육 (e러닝 10시간) 수강</div><div class="lk-url">edu.sbiz.or.kr →</div></a>
+    <a href="https://academy.seoulsmc.or.kr" target="_blank" class="lk"><span class="lk-badge bg-seoul">서울</span><div class="lk-name">서울시소상공인아카데미</div><div class="lk-desc">서울 소상공인 경영·마케팅·디지털 무료 교육</div><div class="lk-url">academy.seoulsmc.or.kr →</div></a>
+    <a href="https://www.ncs.go.kr" target="_blank" class="lk"><span class="lk-badge bg-pub">공공</span><div class="lk-name">NCS 학습포털</div><div class="lk-desc">국가직무능력표준 학습자료·직무 역량 정보</div><div class="lk-url">ncs.go.kr →</div></a>
+    <a href="https://www.kmooc.kr" target="_blank" class="lk"><span class="lk-badge bg-free">무료</span><div class="lk-name">K-MOOC</div><div class="lk-desc">대학 강의 무료 온라인 수강. 재취업 역량 강화에 활용</div><div class="lk-url">kmooc.kr →</div></a>
+    <a href="https://www.knou.ac.kr" target="_blank" class="lk"><span class="lk-badge bg-pub">대학</span><div class="lk-name">한국방송통신대학교</div><div class="lk-desc">원격 대학 학위 취득·전공 변경. 직장인·재취업자에 특화, 학비 저렴</div><div class="lk-url">knou.ac.kr →</div></a>
+    <a href="https://gseek.kr" target="_blank" class="lk"><span class="lk-badge bg-local">경기</span><div class="lk-name">경기도 지식 (GSEEK)</div><div class="lk-desc">경기도민 무료 온라인 교육. 직무·자격·창업 관련 강좌 다수 제공</div><div class="lk-url">gseek.kr →</div></a>
+    <a href="https://edu.gmr.or.kr" target="_blank" class="lk"><span class="lk-badge bg-local">경기</span><div class="lk-name">경기도 자영업아카데미</div><div class="lk-desc">경기도시장상권진흥원 운영. 소상공인 역량강화·경영개선 온라인·현장 교육. 경기도 정책자금 연계</div><div class="lk-url">edu.gmr.or.kr →</div></a>
+  </div>
+  <div class="sub-label">교육청 — 평생·직업교육</div>
+  <div class="cards-grid">
+    <a href="https://www.goe.go.kr" target="_blank" class="lk"><span class="lk-badge bg-local">경기</span><div class="lk-name">경기도교육청</div><div class="lk-desc">경기도 평생교육·직업교육·성인학습 프로그램</div><div class="lk-url">goe.go.kr →</div></a>
+    <a href="https://www.sen.go.kr" target="_blank" class="lk"><span class="lk-badge bg-seoul">서울</span><div class="lk-name">서울특별시교육청</div><div class="lk-desc">서울 평생교육·직업교육·성인학습 지원</div><div class="lk-url">sen.go.kr →</div></a>
+    <a href="https://www.ice.go.kr" target="_blank" class="lk"><span class="lk-badge bg-local">인천</span><div class="lk-name">인천광역시교육청</div><div class="lk-desc">인천 평생교육·직업훈련 과정 안내</div><div class="lk-url">ice.go.kr →</div></a>
+    <a href="https://www.cne.go.kr" target="_blank" class="lk"><span class="lk-badge bg-local">충남</span><div class="lk-name">충청남도교육청</div><div class="lk-desc">충남 평생교육·직업교육 지원 프로그램</div><div class="lk-url">cne.go.kr →</div></a>
+  </div>
+</div>
+
+<!-- ⑥ 심리상담 -->
+<div class="cat-block cat-mental" data-cat="mental">
+  <div class="cat-header"><div class="cat-icon">💚</div><h2 class="cat-title">심리상담</h2><span class="cat-count">7개</span></div>
+  <div class="sub-label">소상공인 특화 심리지원</div>
+  <div class="cards-grid">
+    <a href="https://hope.sbiz.or.kr" target="_blank" class="lk"><span class="lk-badge bg-free">무료</span><div class="lk-name">희망리턴패키지 심리지원</div><div class="lk-desc">사업정리컨설팅 중 심리 분야 선택. 산림치유 프로그램 포함</div><div class="lk-url">hope.sbiz.or.kr →</div></a>
+    <a href="https://www.seoulsmc.or.kr" target="_blank" class="lk"><span class="lk-badge bg-free">서울·무료</span><div class="lk-name">서울시소상공인지원센터</div><div class="lk-desc">서울 소상공인 대상 심리상담·힐링 프로그램 운영</div><div class="lk-url">seoulsmc.or.kr →</div></a>
+  </div>
+  <div class="sub-label">공공 정신건강 · 위기상담</div>
+  <div class="cards-grid">
+    <a href="https://www.mentalhealth.go.kr" target="_blank" class="lk"><span class="lk-badge bg-free">24시간·무료</span><div class="lk-name">정신건강 위기상담전화</div><div class="lk-desc">☎ 1577-0199 · 24시간. 폐업 우울·불안·스트레스 즉시 연결</div><div class="lk-url">mentalhealth.go.kr →</div></a>
+    <a href="https://www.129.go.kr" target="_blank" class="lk"><span class="lk-badge bg-free">24시간·무료</span><div class="lk-name">자살예방상담전화</div><div class="lk-desc">☎ 1393 · 24시간 익명 위기상담. 극심한 폐업 스트레스 시 연결</div><div class="lk-url">☎ 1393 →</div></a>
+    <a href="https://www.bluecare.or.kr" target="_blank" class="lk"><span class="lk-badge bg-free">무료</span><div class="lk-name">마음이음</div><div class="lk-desc">소상공인 전용 심리상담·힐링 프로그램 연계</div><div class="lk-url">bluecare.or.kr →</div></a>
+  </div>
+  <div class="sub-label">온라인 심리지원</div>
+  <div class="cards-grid">
+    <a href="https://www.nifds.go.kr" target="_blank" class="lk"><span class="lk-badge bg-free">무료</span><div class="lk-name">마음건강 자가진단</div><div class="lk-desc">우울·불안·스트레스 온라인 자가진단 도구 무료 제공</div><div class="lk-url">자가진단 →</div></a>
+    <a href="https://www.kfsh.or.kr" target="_blank" class="lk"><span class="lk-badge bg-free">무료</span><div class="lk-name">한국자살예방협회</div><div class="lk-desc">생명사랑 위기상담·자살예방 교육·상담사 연결</div><div class="lk-url">kfsh.or.kr →</div></a>
+  </div>
+</div>
+
+<!-- ⑦ 대상별 -->
+<div class="cat-block cat-target" data-cat="target">
+  <div class="cat-header"><div class="cat-icon">👥</div><h2 class="cat-title">대상별</h2><span class="cat-count">6개</span></div>
+  <div class="sub-label">시니어 · 중장년</div>
+  <div class="cards-grid">
+    <a href="https://www.seniorro.or.kr" target="_blank" class="lk"><span class="lk-badge bg-pub">시니어</span><div class="lk-name">노인일자리 여기</div><div class="lk-desc">만 60세 이상 시니어 일자리·사회참여 활동 전용 포털</div><div class="lk-url">seniorro.or.kr →</div></a>
+    <a href="https://www.koreit.or.kr" target="_blank" class="lk"><span class="lk-badge bg-pub">중장년</span><div class="lk-name">중장년일자리희망센터</div><div class="lk-desc">만 40세 이상 재취업 전문 상담·직업훈련 연계</div><div class="lk-url">koreit.or.kr →</div></a>
+    <a href="https://www.nscenter.or.kr" target="_blank" class="lk"><span class="lk-badge bg-pub">노후지원</span><div class="lk-name">중앙노후준비지원센터</div><div class="lk-desc">국민연금공단 운영. 노후 재무·건강·여가·사회참여 통합 상담. 무료</div><div class="lk-url">nscenter.or.kr →</div></a>
+  </div>
+  <div class="sub-label">여성 · 장애인 · 청년</div>
+  <div class="cards-grid">
+    <a href="https://www.womenwork.or.kr" target="_blank" class="lk"><span class="lk-badge bg-pub">여성</span><div class="lk-name">여성새로일하기센터</div><div class="lk-desc">경력단절 여성 재취업·직업훈련·창업 상담 전국 운영</div><div class="lk-url">womenwork.or.kr →</div></a>
+    <a href="https://www.mogef.go.kr" target="_blank" class="lk"><span class="lk-badge bg-pub">여성</span><div class="lk-name">여성가족부 (성평등가족부)</div><div class="lk-desc">여성 기업인·경력단절 여성 지원 정책 안내</div><div class="lk-url">mogef.go.kr →</div></a>
+    <a href="https://www.dream.go.kr/dream/index.do" target="_blank" class="lk"><span class="lk-badge bg-pub">여성·경기</span><div class="lk-name">꿈날개</div><div class="lk-desc">경기도 + 성평등가족부 운영. 온라인 여성경력개발센터. AI 모의면접·직업훈련·취업 연계</div><div class="lk-url">dream.go.kr →</div></a>
+    <a href="https://www.kead.or.kr" target="_blank" class="lk"><span class="lk-badge bg-pub">장애인</span><div class="lk-name">한국장애인고용공단</div><div class="lk-desc">장애인 취업지원·직업훈련·고용장려금 안내</div><div class="lk-url">kead.or.kr →</div></a>
+    <a href="https://www.k-startup.go.kr" target="_blank" class="lk"><span class="lk-badge bg-pub">청년·재창업</span><div class="lk-name">K-Startup (창업진흥원)</div><div class="lk-desc">청년·중장년 재창업 지원사업 공고·신청</div><div class="lk-url">k-startup.go.kr →</div></a>
+  </div>
+</div>
+
+<!-- ⑧ 행정·세무 -->
+<div class="cat-block cat-admin" data-cat="admin">
+  <div class="cat-header"><div class="cat-icon">📋</div><h2 class="cat-title">행정 · 세무</h2><span class="cat-count">8개</span></div>
+  <div class="sub-label">서류 발급 (희망리턴 필수)</div>
+  <div class="cards-grid">
+    <a href="https://www.hometax.go.kr" target="_blank" class="lk"><span class="lk-badge bg-req">필수</span><div class="lk-name">홈택스</div><div class="lk-desc">폐업신고·폐업사실증명원·사실증명(총사업자등록내역) 발급</div><div class="lk-url">hometax.go.kr →</div></a>
+    <a href="https://www.gov.kr" target="_blank" class="lk"><span class="lk-badge bg-pub">공공</span><div class="lk-name">정부24</div><div class="lk-desc">건축물대장·주민등록등본·가족관계증명서 온라인 발급</div><div class="lk-url">gov.kr →</div></a>
+    <a href="https://total.kcomwel.or.kr" target="_blank" class="lk"><span class="lk-badge bg-req">필수</span><div class="lk-name">고용산재보험 토탈서비스</div><div class="lk-desc">고용보험 피보험자격이력내역서 발급 (전직장려수당 2차 신청)</div><div class="lk-url">total.kcomwel.or.kr →</div></a>
+    <a href="https://www.nhis.or.kr" target="_blank" class="lk"><span class="lk-badge bg-pub">공공</span><div class="lk-name">국민건강보험공단</div><div class="lk-desc">건강보험자격득실확인서·상시근로자 확인서류 발급</div><div class="lk-url">nhis.or.kr →</div></a>
+  </div>
+  <div class="sub-label">세무 정보</div>
+  <div class="cards-grid">
+    <a href="https://www.nts.go.kr" target="_blank" class="lk"><span class="lk-badge bg-pub">공공</span><div class="lk-name">국세청</div><div class="lk-desc">세금 정책·세무 정보·사업자 등록·폐업 관련 공식 안내</div><div class="lk-url">nts.go.kr →</div></a>
+    <a href="https://www.kacpta.or.kr" target="_blank" class="lk"><span class="lk-badge bg-pub">공공</span><div class="lk-name">한국세무사회</div><div class="lk-desc">지역별 세무사 찾기·무료 세무 상담 신청</div><div class="lk-url">kacpta.or.kr →</div></a>
+    <a href="https://www.taxmedicenter.go.kr" target="_blank" class="lk"><span class="lk-badge bg-free">무료</span><div class="lk-name">영세납세자 지원단</div><div class="lk-desc">영세 소상공인 무료 세무지원·폐업 세무 처리 도움</div><div class="lk-url">taxmedicenter.go.kr →</div></a>
+    <a href="https://www.easylaw.go.kr" target="_blank" class="lk"><span class="lk-badge bg-pub">공공</span><div class="lk-name">찾기쉬운 생활법령</div><div class="lk-desc">소상공인 폐업·재기 법적 근거 (소상공인기본법 제25조 등) 안내</div><div class="lk-url">easylaw.go.kr →</div></a>
+  </div>
+</div>
+
+</div><!-- /content -->
+
+<footer class="page-footer">
+  <span class="footer-logo">소상공인시장진흥공단 경기남부 · 직무직능 컨설턴트 · 도움방</span>
+  <span class="footer-note">상담 무료 · 2026년 기준 · 정보 제공 목적으로 제작</span>
+</footer>
+
+<script>
+function filterCat(cat, el) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('.cat-block').forEach(block => {
+    block.classList.toggle('hidden', cat !== 'all' && block.dataset.cat !== cat);
+  });
+  if (cat !== 'all') {
+    setTimeout(() => {
+      const target = document.querySelector(`.cat-block[data-cat="${cat}"]`);
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 60);
+  }
+}
+</script>
+</body>
+</html>

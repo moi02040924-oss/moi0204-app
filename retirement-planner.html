@@ -1,0 +1,4082 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>생애자산 플래너 · 나의 노후 재무 진단</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  /* ── SURVEY & PIN OVERLAY ── */
+  .gate-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: var(--cream);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    overflow-y: auto;
+  }
+
+  .gate-overlay.hidden { display: none; }
+
+  .gate-card {
+    width: 100%;
+    max-width: 480px;
+    background: var(--white);
+    border-radius: 24px;
+    box-shadow: 0 20px 60px rgba(74,54,32,0.18);
+    overflow: hidden;
+    animation: gateIn 0.5s cubic-bezier(0.34,1.56,0.64,1);
+  }
+
+  @keyframes gateIn {
+    from { opacity: 0; transform: translateY(24px) scale(0.97); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  .gate-top {
+    background: linear-gradient(135deg, #2D2010 0%, #4A3620 60%, #C9962A 100%);
+    padding: 36px 32px 28px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .gate-top::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 160px; height: 160px;
+    border-radius: 50%;
+    background: rgba(201,150,42,0.15);
+  }
+
+  .gate-logo {
+    font-size: 32px;
+    margin-bottom: 10px;
+  }
+
+  .gate-title {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 6px;
+    letter-spacing: -0.5px;
+  }
+
+  .gate-subtitle {
+    font-size: 13px;
+    color: rgba(255,255,255,0.7);
+  }
+
+  .gate-step-bar {
+    display: flex;
+    gap: 0;
+    background: #f5ede0;
+  }
+
+  .gate-step {
+    flex: 1;
+    padding: 10px;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--slate-light);
+    border-bottom: 3px solid transparent;
+    transition: all 0.3s;
+  }
+
+  .gate-step.active {
+    color: var(--gold);
+    border-bottom-color: var(--gold);
+    background: var(--gold-pale);
+  }
+
+  .gate-step.done {
+    color: var(--green);
+    border-bottom-color: var(--green);
+  }
+
+  .gate-body {
+    padding: 28px 32px 32px;
+  }
+
+  /* ── SURVEY FIELDS ── */
+  .sv-field {
+    margin-bottom: 18px;
+  }
+
+  .sv-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--warm-mid);
+    margin-bottom: 8px;
+  }
+
+  .sv-required {
+    color: var(--red);
+    font-size: 11px;
+    background: #FDECEA;
+    padding: 1px 5px;
+    border-radius: 4px;
+  }
+
+  .sv-optional {
+    color: var(--slate-light);
+    font-size: 11px;
+  }
+
+  .sv-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 15px;
+    color: var(--warm-text);
+    background: var(--white);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    -webkit-appearance: none;
+  }
+
+  .sv-input:focus {
+    outline: none;
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(201,150,42,0.12);
+  }
+
+  .sv-input.error { border-color: var(--red); }
+
+  .sv-select-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .sv-chip {
+    padding: 8px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: 99px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--slate);
+    background: var(--white);
+    cursor: pointer;
+    transition: all 0.18s;
+  }
+
+  .sv-chip:hover { border-color: var(--gold); color: var(--gold); }
+  .sv-chip.selected { background: var(--gold); border-color: var(--gold); color: #fff; font-weight: 700; }
+
+  .sv-check-row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 14px;
+    background: #F8F4EE;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+
+  .sv-check-row input[type="checkbox"] {
+    width: 18px; height: 18px;
+    flex-shrink: 0;
+    accent-color: var(--gold);
+    margin-top: 1px;
+    cursor: pointer;
+  }
+
+  .sv-check-text {
+    font-size: 12.5px;
+    color: var(--slate);
+    line-height: 1.6;
+  }
+
+  .sv-check-text a {
+    color: var(--gold);
+    text-decoration: underline;
+  }
+
+  .sv-error-msg {
+    font-size: 11.5px;
+    color: var(--red);
+    margin-top: 5px;
+    display: none;
+  }
+
+  /* ── PIN DISPLAY ── */
+  .pin-display {
+    text-align: center;
+    padding: 8px 0;
+  }
+
+  .pin-icon { font-size: 48px; margin-bottom: 12px; }
+
+  .pin-message {
+    font-size: 14px;
+    color: var(--slate);
+    margin-bottom: 20px;
+    line-height: 1.7;
+  }
+
+  .pin-message strong { color: var(--warm-dark); }
+
+  .pin-box {
+    background: linear-gradient(135deg, var(--warm-dark), var(--warm-mid));
+    border-radius: 16px;
+    padding: 28px;
+    margin: 0 auto 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .pin-box::before {
+    content: '';
+    position: absolute;
+    top: -20px; right: -20px;
+    width: 100px; height: 100px;
+    border-radius: 50%;
+    background: rgba(201,150,42,0.15);
+  }
+
+  .pin-label {
+    font-size: 12px;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 8px;
+    letter-spacing: 2px;
+  }
+
+  .pin-number {
+    font-family: 'Courier New', monospace;
+    font-size: 42px;
+    font-weight: 900;
+    color: var(--gold-light);
+    letter-spacing: 10px;
+    text-shadow: 0 0 20px rgba(201,150,42,0.5);
+  }
+
+  .pin-validity {
+    font-size: 11px;
+    color: rgba(255,255,255,0.5);
+    margin-top: 10px;
+  }
+
+  .pin-copy-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 20px;
+    background: var(--gold-pale);
+    border: 1px solid rgba(201,150,42,0.3);
+    border-radius: 99px;
+    font-size: 13px;
+    color: var(--gold);
+    cursor: pointer;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-weight: 600;
+    margin-bottom: 20px;
+    transition: all 0.2s;
+  }
+
+  .pin-copy-btn:hover { background: var(--gold); color: #fff; }
+
+  /* ── PIN ENTRY ── */
+  .pin-entry-wrap {
+    text-align: center;
+  }
+
+  .pin-entry-title {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--warm-dark);
+    margin-bottom: 6px;
+  }
+
+  .pin-entry-sub {
+    font-size: 13px;
+    color: var(--slate-light);
+    margin-bottom: 24px;
+    line-height: 1.6;
+  }
+
+  .pin-input-row {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 8px;
+  }
+
+  .pin-digit {
+    width: 56px;
+    height: 64px;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    font-size: 28px;
+    font-weight: 900;
+    text-align: center;
+    font-family: 'Courier New', monospace;
+    color: var(--warm-dark);
+    background: var(--white);
+    transition: all 0.2s;
+  }
+
+  .pin-digit:focus {
+    outline: none;
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(201,150,42,0.15);
+    transform: scale(1.05);
+  }
+
+  .pin-digit.filled { border-color: var(--gold); background: var(--gold-pale); }
+  .pin-digit.error  { border-color: var(--red);  background: var(--red-light); animation: shake 0.3s; }
+
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    75% { transform: translateX(6px); }
+  }
+
+  .pin-error-text {
+    font-size: 13px;
+    color: var(--red);
+    margin-bottom: 16px;
+    min-height: 20px;
+  }
+
+  .pin-hint {
+    font-size: 12px;
+    color: var(--slate-light);
+    margin-top: 16px;
+    line-height: 1.6;
+  }
+
+  .pin-hint a {
+    color: var(--gold);
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  /* ── GATE BUTTON ── */
+  .gate-btn {
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(135deg, var(--gold), var(--gold-light));
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 16px rgba(201,150,42,0.35);
+    margin-top: 4px;
+  }
+
+  .gate-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(201,150,42,0.45); }
+  .gate-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+  /* ── ADMIN PANEL ── */
+  .admin-panel {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    background: rgba(0,0,0,0.85);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  .admin-panel.open { display: flex; }
+
+  .admin-card {
+    background: var(--warm-dark);
+    border-radius: 20px;
+    padding: 32px;
+    width: 100%;
+    max-width: 420px;
+    color: #fff;
+    animation: gateIn 0.3s ease;
+  }
+
+  .admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+  }
+
+  .admin-title {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--gold-light);
+  }
+
+  .admin-close {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.1);
+    border: none;
+    color: #fff;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .admin-info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .admin-info-label { font-size: 12px; color: rgba(255,255,255,0.5); }
+  .admin-info-val   { font-size: 15px; font-weight: 700; color: var(--gold-light); }
+
+  .admin-pin-big {
+    text-align: center;
+    background: rgba(201,150,42,0.15);
+    border: 1px solid rgba(201,150,42,0.3);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+  }
+
+  .admin-pin-label { font-size: 11px; color: rgba(255,255,255,0.5); letter-spacing: 2px; margin-bottom: 8px; }
+  .admin-pin-number {
+    font-family: 'Courier New', monospace;
+    font-size: 48px;
+    font-weight: 900;
+    color: var(--gold-light);
+    letter-spacing: 12px;
+  }
+
+  .admin-pin-next {
+    font-size: 11px;
+    color: rgba(255,255,255,0.4);
+    margin-top: 8px;
+  }
+
+  .admin-tip {
+    background: rgba(255,255,255,0.05);
+    border-radius: 10px;
+    padding: 14px;
+    font-size: 12px;
+    color: rgba(255,255,255,0.6);
+    line-height: 1.7;
+  }
+
+  .admin-survey-list {
+    max-height: 200px;
+    overflow-y: auto;
+    margin: 16px 0;
+  }
+
+  .asl-item {
+    background: rgba(255,255,255,0.05);
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    font-size: 12px;
+    color: rgba(255,255,255,0.75);
+    line-height: 1.5;
+  }
+
+  .asl-item span { color: var(--gold-light); font-weight: 600; }
+
+  /* 관리자 접근 숨김 버튼 */
+  .admin-trigger {
+    position: fixed;
+    bottom: 16px;
+    left: 16px;
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    z-index: 200;
+    opacity: 0;
+    font-size: 0;
+  }
+
+  :root {
+    --gold: #C9962A;
+    --gold-light: #E8B84B;
+    --gold-pale: #FDF6E7;
+    --warm-dark: #1A1209;
+    --warm-mid: #4A3620;
+    --warm-text: #2D2010;
+    --slate: #3D4B5C;
+    --slate-light: #6B7A8D;
+    --cream: #FEFAF3;
+    --white: #FFFFFF;
+    --green: #2E7D5E;
+    --green-light: #E8F5EE;
+    --red: #C0392B;
+    --red-light: #FDECEA;
+    --blue: #2C5F8A;
+    --blue-light: #EBF3FB;
+    --border: #E8DDD0;
+    --shadow: rgba(74, 54, 32, 0.12);
+    --radius: 16px;
+    --radius-sm: 10px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--cream);
+    color: var(--warm-text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── HEADER ── */
+  .app-header {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    background: rgba(254, 250, 243, 0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .logo-icon {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, var(--gold), var(--gold-light));
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+
+  .logo-text {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--warm-dark);
+    letter-spacing: -0.3px;
+  }
+
+  .logo-text span { color: var(--gold); }
+
+  .step-indicator {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--slate-light);
+  }
+
+  .step-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--border);
+    transition: all 0.3s;
+  }
+
+  .step-dot.active { background: var(--gold); transform: scale(1.3); }
+  .step-dot.done { background: var(--gold-light); }
+
+  /* ── MAIN ── */
+  main {
+    padding-top: 64px;
+    min-height: 100vh;
+  }
+
+  .screen {
+    display: none;
+    min-height: calc(100vh - 64px);
+    animation: fadeSlide 0.4s ease;
+  }
+
+  .screen.active { display: block; }
+
+  @keyframes fadeSlide {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── HERO / WELCOME ── */
+  .hero {
+    min-height: calc(100vh - 64px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 24px;
+    background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(201,150,42,0.12) 0%, transparent 70%);
+    text-align: center;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--gold-pale);
+    border: 1px solid rgba(201,150,42,0.3);
+    border-radius: 999px;
+    padding: 6px 16px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--gold);
+    margin-bottom: 28px;
+  }
+
+  .hero h1 {
+    font-family: 'Noto Serif KR', serif;
+    font-size: clamp(28px, 5vw, 48px);
+    font-weight: 700;
+    line-height: 1.3;
+    color: var(--warm-dark);
+    margin-bottom: 16px;
+    letter-spacing: -1px;
+  }
+
+  .hero h1 em {
+    font-style: normal;
+    color: var(--gold);
+  }
+
+  .hero p {
+    font-size: 16px;
+    color: var(--slate);
+    line-height: 1.7;
+    max-width: 440px;
+    margin-bottom: 40px;
+  }
+
+  .feature-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 44px;
+  }
+
+  .pill {
+    display: flex; align-items: center; gap: 6px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 8px 16px;
+    font-size: 13px;
+    color: var(--slate);
+    box-shadow: 0 2px 8px var(--shadow);
+  }
+
+  .pill span { font-size: 16px; }
+
+  /* ── BUTTONS ── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 32px;
+    border-radius: var(--radius-sm);
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--gold), var(--gold-light));
+    color: var(--white);
+    box-shadow: 0 4px 16px rgba(201,150,42,0.35);
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(201,150,42,0.45);
+  }
+
+  .btn-outline {
+    background: transparent;
+    border: 1.5px solid var(--border);
+    color: var(--slate);
+  }
+
+  .btn-outline:hover { border-color: var(--gold); color: var(--gold); }
+
+  .btn-lg {
+    width: 100%;
+    max-width: 320px;
+    padding: 16px 32px;
+    font-size: 16px;
+    border-radius: var(--radius);
+  }
+
+  /* ── FORM SCREENS ── */
+  .form-screen {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+
+  .step-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--gold-pale);
+    color: var(--gold);
+    font-size: 12px;
+    font-weight: 500;
+    padding: 5px 12px;
+    border-radius: 999px;
+    margin-bottom: 16px;
+  }
+
+  .screen-title {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--warm-dark);
+    line-height: 1.4;
+    margin-bottom: 6px;
+    letter-spacing: -0.5px;
+  }
+
+  .screen-sub {
+    font-size: 14px;
+    color: var(--slate-light);
+    margin-bottom: 32px;
+    line-height: 1.6;
+  }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 16px;
+    box-shadow: 0 2px 12px var(--shadow);
+  }
+
+  .card-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--warm-mid);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .card-title .icon {
+    width: 28px; height: 28px;
+    border-radius: 8px;
+    background: var(--gold-pale);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+  }
+
+  /* ── FORM FIELDS ── */
+  .field { margin-bottom: 20px; }
+
+  .field label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--slate);
+    margin-bottom: 8px;
+  }
+
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  input[type="number"], input[type="text"], select {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 15px;
+    color: var(--warm-text);
+    background: var(--white);
+    transition: border-color 0.2s;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  input:focus, select:focus {
+    outline: none;
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(201,150,42,0.1);
+  }
+
+  .input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .input-wrap input {
+    padding-right: 48px;
+  }
+
+  .input-suffix {
+    position: absolute;
+    right: 14px;
+    font-size: 13px;
+    color: var(--slate-light);
+    font-weight: 500;
+    pointer-events: none;
+  }
+
+  /* toggle buttons */
+  .toggle-group {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .toggle-btn {
+    flex: 1;
+    padding: 10px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--white);
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--slate);
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+  }
+
+  .toggle-btn.active {
+    background: var(--gold-pale);
+    border-color: var(--gold);
+    color: var(--gold);
+    font-weight: 700;
+  }
+
+  .hidden { display: none !important; }
+
+  /* ── RESULT CARD ── */
+  .result-highlight {
+    background: linear-gradient(135deg, var(--gold), var(--gold-light));
+    color: var(--white);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .result-highlight::before {
+    content: '';
+    position: absolute;
+    top: -30px; right: -30px;
+    width: 120px; height: 120px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.1);
+  }
+
+  .result-highlight .label {
+    font-size: 12px;
+    opacity: 0.85;
+    margin-bottom: 6px;
+    font-weight: 500;
+  }
+
+  .result-highlight .amount {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -1px;
+  }
+
+  .result-highlight .amount .unit {
+    font-size: 16px;
+    font-weight: 400;
+    margin-left: 4px;
+    opacity: 0.85;
+  }
+
+  .result-highlight .sub-info {
+    margin-top: 14px;
+    display: flex;
+    gap: 20px;
+    font-size: 13px;
+    opacity: 0.9;
+  }
+
+  /* ── BREAKDOWN TABLE ── */
+  .breakdown {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-bottom: 16px;
+  }
+
+  .breakdown-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    border-bottom: 1px solid #F5EFE6;
+    font-size: 14px;
+    transition: background 0.15s;
+  }
+
+  .breakdown-row:last-child { border-bottom: none; }
+  .breakdown-row:hover { background: var(--gold-pale); }
+
+  .breakdown-row .row-label {
+    display: flex; align-items: center; gap: 10px;
+    color: var(--slate);
+  }
+
+  .breakdown-row .row-icon {
+    width: 28px; height: 28px;
+    border-radius: 7px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px;
+    background: var(--gold-pale);
+  }
+
+  .breakdown-row .row-val {
+    font-weight: 700;
+    color: var(--warm-dark);
+    font-size: 15px;
+  }
+
+  /* ── FINAL ANALYSIS ── */
+  .status-banner {
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 20px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+  }
+
+  .status-banner.ok {
+    background: var(--green-light);
+    border: 1.5px solid #A8D8C0;
+  }
+
+  .status-banner.warn {
+    background: var(--red-light);
+    border: 1.5px solid #F2BCBA;
+  }
+
+  .status-emoji {
+    font-size: 36px;
+    flex-shrink: 0;
+  }
+
+  .status-text h3 {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .status-banner.ok .status-text h3 { color: var(--green); }
+  .status-banner.warn .status-text h3 { color: var(--red); }
+
+  .status-text p {
+    font-size: 13px;
+    color: var(--slate);
+    line-height: 1.7;
+  }
+
+  /* ── CHART BAR ── */
+  .bar-chart {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+
+  .bar-chart-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--slate);
+    margin-bottom: 16px;
+  }
+
+  .bar-item {
+    margin-bottom: 12px;
+  }
+
+  .bar-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--slate-light);
+    margin-bottom: 5px;
+  }
+
+  .bar-track {
+    background: #F0EAE0;
+    border-radius: 99px;
+    height: 10px;
+    overflow: hidden;
+  }
+
+  .bar-fill {
+    height: 100%;
+    border-radius: 99px;
+    transition: width 1s cubic-bezier(0.34,1.56,0.64,1);
+  }
+
+  .bar-fill.income { background: linear-gradient(90deg, var(--gold), var(--gold-light)); }
+  .bar-fill.expense { background: linear-gradient(90deg, #C0392B, #E74C3C); }
+
+  /* ── METER ── */
+  .meter-wrap {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 16px;
+    text-align: center;
+  }
+
+  .meter-label {
+    font-size: 13px;
+    color: var(--slate);
+    margin-bottom: 16px;
+  }
+
+  .meter-ring-outer {
+    width: 140px;
+    height: 140px;
+    margin: 0 auto 16px;
+    position: relative;
+  }
+
+  .meter-ring-outer svg {
+    transform: rotate(-90deg);
+  }
+
+  .meter-center-text {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .meter-pct {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 26px;
+    font-weight: 700;
+  }
+
+  .meter-pct.ok { color: var(--green); }
+  .meter-pct.warn { color: var(--red); }
+
+  .meter-pct-label {
+    font-size: 11px;
+    color: var(--slate-light);
+  }
+
+  /* ── NAV BUTTONS ── */
+  .nav-row {
+    display: flex;
+    gap: 12px;
+    margin-top: 32px;
+  }
+
+  .nav-row .btn-back {
+    flex-shrink: 0;
+    width: 52px; height: 52px;
+    padding: 0;
+    border-radius: 50%;
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    color: var(--slate);
+    font-size: 18px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+  }
+
+  .nav-row .btn-back:hover { border-color: var(--gold); color: var(--gold); }
+
+  .nav-row .btn-next {
+    flex: 1;
+    background: linear-gradient(135deg, var(--gold), var(--gold-light));
+    color: var(--white);
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 15px;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 14px rgba(201,150,42,0.3);
+  }
+
+  .nav-row .btn-next:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(201,150,42,0.4);
+  }
+
+  /* ── PROGRESS BAR ── */
+  .progress-bar {
+    position: fixed;
+    top: 64px; left: 0; right: 0;
+    height: 3px;
+    background: #EDE4D5;
+    z-index: 99;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold), var(--gold-light));
+    transition: width 0.5s ease;
+  }
+
+  /* ── INFO BOX ── */
+  .info-box {
+    background: var(--blue-light);
+    border-left: 3px solid var(--blue);
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    padding: 12px 16px;
+    font-size: 12.5px;
+    color: var(--blue);
+    line-height: 1.6;
+    margin-bottom: 16px;
+  }
+
+  /* ── SECTION DIVIDER ── */
+  .section-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 28px 0 20px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--slate-light);
+  }
+
+  .section-divider::before, .section-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ── TOOLTIP ── */
+  .tooltip-text {
+    font-size: 11.5px;
+    color: var(--slate-light);
+    margin-top: 5px;
+    line-height: 1.5;
+  }
+
+  /* ── SUMMARY GRID ── */
+  .summary-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .summary-item {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 16px;
+    text-align: center;
+  }
+
+  .summary-item .s-label {
+    font-size: 11px;
+    color: var(--slate-light);
+    margin-bottom: 6px;
+  }
+
+  .summary-item .s-val {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--warm-dark);
+  }
+
+  .summary-item .s-unit { font-size: 12px; color: var(--slate); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 480px) {
+    .field-row { grid-template-columns: 1fr; }
+    .summary-grid { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 26px; }
+    .two-col, .agency-grid, .job-type-grid { grid-template-columns: 1fr; }
+  }
+
+  @media print {
+    .app-header, .progress-bar, .nav-row { display: none !important; }
+    .screen { display: block !important; }
+    body { background: white; }
+  }
+
+  /* ── GUIDE SECTIONS ── */
+  .guide-section {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 12px var(--shadow);
+  }
+
+  .guide-header {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    margin-bottom: 20px;
+  }
+
+  .guide-icon {
+    font-size: 28px;
+    flex-shrink: 0;
+    width: 48px; height: 48px;
+    background: var(--gold-pale);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .guide-title {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--warm-dark);
+    margin-bottom: 3px;
+  }
+
+  .guide-subtitle {
+    font-size: 12px;
+    color: var(--slate-light);
+  }
+
+  /* ── TABLE ── */
+  .guide-table-wrap {
+    margin-bottom: 16px;
+  }
+
+  .guide-table-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--slate);
+    margin-bottom: 8px;
+  }
+
+  .guide-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+
+  .guide-table thead {
+    background: var(--gold-pale);
+  }
+
+  .guide-table th {
+    padding: 10px 12px;
+    text-align: center;
+    font-weight: 700;
+    color: var(--warm-mid);
+    font-size: 12px;
+  }
+
+  .guide-table td {
+    padding: 9px 12px;
+    text-align: center;
+    border-top: 1px solid #F0EAE0;
+    color: var(--slate);
+  }
+
+  .guide-table .highlight-row td {
+    background: rgba(201,150,42,0.07);
+    font-weight: 700;
+    color: var(--warm-dark);
+  }
+
+  /* ── STRATEGY CARDS ── */
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  @media (max-width: 500px) { .two-col { grid-template-columns: 1fr; } }
+
+  .strategy-card {
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    border: 1.5px solid var(--border);
+  }
+
+  .strategy-header {
+    padding: 10px 14px;
+    font-weight: 700;
+    font-size: 13px;
+  }
+
+  .strategy-early .strategy-header { background: #FDECEA; color: var(--red); }
+  .strategy-late .strategy-header { background: var(--green-light); color: var(--green); }
+
+  .strategy-body {
+    padding: 14px;
+  }
+
+  .strategy-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 8px;
+    font-size: 13px;
+    color: var(--slate);
+  }
+
+  .s-badge {
+    flex-shrink: 0;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+
+  .s-badge.red { background: #FDECEA; color: var(--red); }
+  .s-badge.green { background: var(--green-light); color: var(--green); }
+  .s-badge.gray { background: #F0F0F0; color: var(--slate); }
+
+  .strategy-tip {
+    margin-top: 10px;
+    font-size: 12px;
+    color: var(--slate-light);
+    line-height: 1.6;
+    padding: 8px;
+    background: #FAF7F2;
+    border-radius: 6px;
+  }
+
+  .strategy-tip em { font-style: normal; color: var(--gold); font-weight: 700; }
+
+  /* ── FORMULA BOX ── */
+  .formula-box {
+    background: #F8F4EE;
+    border-radius: var(--radius-sm);
+    padding: 16px;
+    margin-bottom: 14px;
+  }
+
+  .formula-title {
+    font-family: 'Noto Serif KR', serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--warm-dark);
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .formula-row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    margin-bottom: 8px;
+    font-size: 13px;
+  }
+
+  .f-label {
+    flex-shrink: 0;
+    background: var(--gold-pale);
+    color: var(--gold);
+    font-weight: 700;
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 4px;
+    min-width: 60px;
+    text-align: center;
+  }
+
+  .f-val { color: var(--slate); line-height: 1.5; }
+
+  /* ── CHECKLIST ── */
+  .checklist-box {
+    background: var(--green-light);
+    border-radius: var(--radius-sm);
+    padding: 16px;
+    margin-bottom: 14px;
+  }
+
+  .cl-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--green);
+    margin-bottom: 10px;
+  }
+
+  .cl-item {
+    font-size: 13px;
+    color: var(--slate);
+    margin-bottom: 7px;
+    line-height: 1.6;
+    padding-left: 4px;
+  }
+
+  /* ── ACTION LINKS ── */
+  .action-link-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 4px;
+  }
+
+  .action-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 16px;
+    background: var(--gold-pale);
+    border: 1px solid rgba(201,150,42,0.25);
+    border-radius: 8px;
+    font-size: 13px;
+    color: var(--warm-mid);
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s;
+  }
+
+  .action-link:hover { background: var(--gold); color: white; }
+
+  /* ── AGENCY GRID ── */
+  .agency-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 4px;
+  }
+
+  @media (max-width: 540px) { .agency-grid { grid-template-columns: 1fr; } }
+
+  .agency-card {
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    transition: box-shadow 0.2s;
+  }
+
+  .agency-card:hover { box-shadow: 0 4px 16px var(--shadow); }
+
+  .agency-icon { font-size: 24px; }
+
+  .agency-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--warm-dark);
+  }
+
+  .agency-desc {
+    font-size: 12px;
+    color: var(--slate);
+    line-height: 1.6;
+    flex: 1;
+  }
+
+  .agency-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+
+  .atag {
+    font-size: 10px;
+    padding: 2px 8px;
+    background: var(--blue-light);
+    color: var(--blue);
+    border-radius: 99px;
+    font-weight: 500;
+  }
+
+  .agency-contact {
+    display: flex;
+    gap: 12px;
+    font-size: 11px;
+    color: var(--slate-light);
+  }
+
+  .agency-btn {
+    display: block;
+    text-align: center;
+    padding: 8px;
+    background: linear-gradient(135deg, var(--gold), var(--gold-light));
+    color: white;
+    border-radius: 7px;
+    font-size: 12px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: opacity 0.2s;
+  }
+
+  .agency-btn:hover { opacity: 0.85; }
+
+  /* ── JOB TYPE CARDS ── */
+  .job-type-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  @media (max-width: 500px) { .job-type-grid { grid-template-columns: 1fr; } }
+
+  .job-card {
+    border-radius: var(--radius-sm);
+    padding: 16px;
+    border: 1.5px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .jt-badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 99px;
+    width: fit-content;
+    background: var(--gold-pale);
+    color: var(--gold);
+  }
+
+  .jt-badge.badge-blue { background: var(--blue-light); color: var(--blue); }
+  .jt-badge.badge-green { background: var(--green-light); color: var(--green); }
+  .jt-badge.badge-orange { background: #FEF3E2; color: #E67E22; }
+
+  .jt-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--warm-dark);
+  }
+
+  .jt-desc {
+    font-size: 12px;
+    color: var(--slate);
+    line-height: 1.6;
+    flex: 1;
+  }
+
+  .jt-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 11px;
+    color: var(--slate-light);
+    background: #F8F4EE;
+    padding: 8px 10px;
+    border-radius: 6px;
+  }
+
+  /* ── PRODUCT GRID ── */
+  .product-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+
+  @media (max-width: 560px) { .product-grid { grid-template-columns: 1fr; } }
+
+  .product-card {
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+  }
+
+  .pc-header {
+    padding: 12px 14px;
+  }
+
+  .pc-badge {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 99px;
+    margin-bottom: 6px;
+  }
+
+  .pc-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--warm-dark);
+  }
+
+  .pc-body {
+    padding: 12px 14px;
+    background: var(--white);
+  }
+
+  .pc-row {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    margin-bottom: 7px;
+    font-size: 12.5px;
+  }
+
+  .pc-k {
+    flex-shrink: 0;
+    color: var(--slate-light);
+    min-width: 70px;
+    font-weight: 500;
+  }
+
+  .pc-v {
+    color: var(--slate);
+    line-height: 1.5;
+  }
+
+  .pc-v.highlight-g { color: var(--green); font-weight: 700; }
+
+  .pc-tip {
+    margin-top: 10px;
+    font-size: 11.5px;
+    color: var(--slate-light);
+    line-height: 1.6;
+    background: #F9F6F1;
+    padding: 8px;
+    border-radius: 6px;
+  }
+
+  .age-strategy {
+    background: #F9F6F1;
+    border-radius: var(--radius-sm);
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+
+  .ast-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--warm-mid);
+    margin-bottom: 12px;
+  }
+
+  .ast-table-wrap .guide-table .highlight-row td {
+    background: rgba(201,150,42,0.1);
+    font-weight: 700;
+    color: var(--warm-dark);
+  }
+
+  /* ── HEALTH INSURANCE ── */
+  .hins-compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+
+  @media (max-width: 560px) { .hins-compare { grid-template-columns: 1fr; } }
+
+  .hins-box {
+    border-radius: var(--radius-sm);
+    padding: 16px;
+    border: 1.5px solid var(--border);
+  }
+
+  .hins-good { border-color: #A8D8C0; background: var(--green-light); }
+  .hins-warn { border-color: #F2BCBA; background: var(--red-light); }
+
+  .hins-title {
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .hins-good .hins-title { color: var(--green); }
+  .hins-warn .hins-title { color: var(--red); }
+
+  .hins-desc {
+    font-size: 12px;
+    color: var(--slate);
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+  }
+
+  .hi-row {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    margin-bottom: 6px;
+    font-size: 12px;
+  }
+
+  .hi-label {
+    flex-shrink: 0;
+    font-weight: 600;
+    color: var(--warm-mid);
+    min-width: 70px;
+  }
+
+  .hi-val { color: var(--slate); line-height: 1.5; }
+
+  .text-green { color: var(--green) !important; font-weight: 700; }
+
+  /* ── TIMELINE ── */
+  .timeline-section {
+    margin-bottom: 16px;
+  }
+
+  .timeline-items {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    position: relative;
+  }
+
+  .timeline-items::before {
+    content: '';
+    position: absolute;
+    left: 20px;
+    top: 20px;
+    bottom: 20px;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--gold), var(--gold-light));
+    border-radius: 99px;
+  }
+
+  .tl-item {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    padding: 12px 0 12px 0;
+    position: relative;
+  }
+
+  .tl-step {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold), var(--gold-light));
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+    box-shadow: 0 2px 8px rgba(201,150,42,0.3);
+  }
+
+  .tl-content {
+    flex: 1;
+    padding: 10px 14px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+  }
+
+  .tl-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--warm-dark);
+    margin-bottom: 5px;
+  }
+
+  .tl-desc {
+    font-size: 12.5px;
+    color: var(--slate);
+    line-height: 1.6;
+  }
+  .strategy-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .sl-item {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    padding: 14px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    transition: background 0.2s;
+  }
+
+  .sl-item:hover { background: var(--gold-pale); }
+
+  .sl-icon {
+    font-size: 24px;
+    flex-shrink: 0;
+    width: 40px; height: 40px;
+    background: var(--gold-pale);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .sl-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--warm-dark);
+    margin-bottom: 5px;
+  }
+
+  .sl-desc {
+    font-size: 13px;
+    color: var(--slate);
+    line-height: 1.6;
+  }
+</style>
+</head>
+<body>
+
+<!-- ══ 관리자 숨김 트리거 (좌하단 5번 클릭) ══ -->
+<button class="admin-trigger" id="adminTrigger" onclick="adminClick()"></button>
+
+<!-- ══ 관리자 패널 ══ -->
+<div class="admin-panel" id="adminPanel">
+  <div class="admin-card">
+    <div class="admin-header">
+      <div class="admin-title">⚙️ 관리자 대시보드</div>
+      <button class="admin-close" onclick="closeAdmin()">✕</button>
+    </div>
+
+    <div class="admin-info-row">
+      <div class="admin-info-label">적용 기간</div>
+      <div class="admin-info-val" id="adminPeriod">-</div>
+    </div>
+    <div class="admin-info-row">
+      <div class="admin-info-label">다음 PIN 변경일</div>
+      <div class="admin-info-val" id="adminNextChange">-</div>
+    </div>
+    <div class="admin-info-row">
+      <div class="admin-info-label">이번 달 설문 제출 수</div>
+      <div class="admin-info-val" id="adminSurveyCount">-</div>
+    </div>
+
+    <div class="admin-pin-big">
+      <div class="admin-pin-label">THIS MONTH'S PIN</div>
+      <div class="admin-pin-number" id="adminPinDisplay">----</div>
+      <div class="admin-pin-next" id="adminPinNext"></div>
+    </div>
+
+    <div class="admin-survey-list" id="adminSurveyList">
+      <div style="font-size:12px; color:rgba(255,255,255,0.4); text-align:center; padding:20px;">설문 데이터 없음</div>
+    </div>
+
+    <div class="admin-tip">
+      💡 PIN은 매월 1일 자동 변경됩니다.<br>
+      고객에게 PIN을 안내할 때 이 번호를 공유하세요.<br>
+      설문 데이터는 브라우저를 닫으면 초기화됩니다.
+    </div>
+  </div>
+</div>
+
+<!-- ══ GATE: STEP 1 — 설문 ══ -->
+<div class="gate-overlay" id="gateOverlay">
+  <div class="gate-card" id="gateCard">
+
+    <div class="gate-top">
+      <div class="gate-logo">🌿</div>
+      <div class="gate-title">생애자산 플래너</div>
+      <div class="gate-subtitle">노후 재무 진단 서비스 이용 신청</div>
+    </div>
+
+    <div class="gate-step-bar">
+      <div class="gate-step active" id="gstep1">① 정보 입력</div>
+      <div class="gate-step" id="gstep2">② PIN 확인</div>
+      <div class="gate-step" id="gstep3">③ 서비스 입장</div>
+    </div>
+
+    <!-- STEP 1: 설문 -->
+    <div class="gate-body" id="surveyForm">
+      <div class="sv-field">
+        <div class="sv-label">성함 <span class="sv-required">필수</span></div>
+        <input class="sv-input" id="sv_name" type="text" placeholder="홍길동">
+        <div class="sv-error-msg" id="err_name">이름을 입력해주세요</div>
+      </div>
+
+      <div class="sv-field">
+        <div class="sv-label">연락처 <span class="sv-required">필수</span></div>
+        <input class="sv-input" id="sv_phone" type="tel" placeholder="010-0000-0000" maxlength="13">
+        <div class="sv-error-msg" id="err_phone">연락처를 입력해주세요</div>
+      </div>
+
+      <div class="sv-field">
+        <div class="sv-label">회사명·소속 <span class="sv-optional">선택</span></div>
+        <input class="sv-input" id="sv_company" type="text" placeholder="(주)○○○">
+      </div>
+
+      <div class="sv-field">
+        <div class="sv-label">연령대 <span class="sv-required">필수</span></div>
+        <div class="sv-select-group" id="sv_age_group">
+          <div class="sv-chip" onclick="selectChip(this, 'age')">40대</div>
+          <div class="sv-chip" onclick="selectChip(this, 'age')">50대 초반</div>
+          <div class="sv-chip" onclick="selectChip(this, 'age')">50대 후반</div>
+          <div class="sv-chip" onclick="selectChip(this, 'age')">60대</div>
+          <div class="sv-chip" onclick="selectChip(this, 'age')">70대 이상</div>
+        </div>
+        <div class="sv-error-msg" id="err_age">연령대를 선택해주세요</div>
+      </div>
+
+      <div class="sv-field">
+        <div class="sv-label">상담 목적 <span class="sv-required">필수</span></div>
+        <div class="sv-select-group" id="sv_purpose_group">
+          <div class="sv-chip" onclick="selectChip(this, 'purpose')">노후 준비 점검</div>
+          <div class="sv-chip" onclick="selectChip(this, 'purpose')">은퇴 설계</div>
+          <div class="sv-chip" onclick="selectChip(this, 'purpose')">절세 전략</div>
+          <div class="sv-chip" onclick="selectChip(this, 'purpose')">연금 분석</div>
+          <div class="sv-chip" onclick="selectChip(this, 'purpose')">건강보험료 관리</div>
+          <div class="sv-chip" onclick="selectChip(this, 'purpose')">종합 재무설계</div>
+        </div>
+        <div class="sv-error-msg" id="err_purpose">상담 목적을 선택해주세요</div>
+      </div>
+
+      <div class="sv-field">
+        <div class="sv-label">현재 가장 큰 재무 고민 <span class="sv-optional">선택</span></div>
+        <input class="sv-input" id="sv_concern" type="text" placeholder="예: 퇴직 후 소득 공백이 걱정됩니다">
+      </div>
+
+      <div class="sv-field">
+        <label class="sv-check-row" for="sv_agree">
+          <input type="checkbox" id="sv_agree">
+          <div class="sv-check-text">
+            <strong>개인정보 수집·이용 동의 (필수)</strong><br>
+            상기 정보는 노후 재무 진단 서비스 제공 목적으로만 활용되며, 제3자에게 제공되지 않습니다.
+            서비스 이용 후 즉시 파기될 수 있습니다.
+          </div>
+        </label>
+        <div class="sv-error-msg" id="err_agree">개인정보 수집·이용에 동의해주세요</div>
+      </div>
+
+      <button class="gate-btn" onclick="submitSurvey()">설문 제출하고 PIN 받기 →</button>
+    </div>
+
+    <!-- STEP 2: PIN 표시 -->
+    <div class="gate-body hidden" id="pinShowPanel">
+      <div class="pin-display">
+        <div class="pin-icon">🎉</div>
+        <div class="pin-message">
+          <strong id="pinShowName">홍길동</strong>님, 설문이 완료되었습니다!<br>
+          아래 PIN 번호는 <strong style="color:var(--red);">1시간 이내</strong>에만 사용 가능합니다.
+        </div>
+
+        <div class="pin-box">
+          <div class="pin-label">YOUR PIN NUMBER</div>
+          <div class="pin-number" id="generatedPinDisplay">----</div>
+          <div class="pin-validity" id="pinValidityText"></div>
+          <!-- 카운트다운 -->
+          <div style="margin-top:12px; display:flex; align-items:center; justify-content:center; gap:8px;">
+            <div style="font-size:11px; color:rgba(255,255,255,0.5);">남은 시간</div>
+            <div id="pinCountdown" style="font-family:'Courier New',monospace; font-size:22px; font-weight:700; color:#fff; background:rgba(0,0,0,0.3); padding:4px 14px; border-radius:8px; letter-spacing:2px;">60:00</div>
+          </div>
+          <!-- 진행 바 -->
+          <div style="margin-top:10px; background:rgba(255,255,255,0.15); border-radius:99px; height:4px; overflow:hidden;">
+            <div id="pinTimerBar" style="height:100%; width:100%; background:var(--gold-light); border-radius:99px; transition:width 1s linear;"></div>
+          </div>
+        </div>
+
+        <button class="pin-copy-btn" onclick="copyPin()">📋 PIN 복사하기</button>
+
+        <div style="font-size:12px; color:var(--slate-light); margin-bottom:20px; line-height:1.6;">
+          ⚠️ 이 PIN은 <strong>1회 사용 후 즉시 소멸</strong>되며 타인에게 공유해도 재사용이 불가합니다.<br>
+          지금 바로 다음 화면에서 입력해주세요.
+        </div>
+
+        <button class="gate-btn" onclick="goToPinEntry()">PIN 입력 화면으로 →</button>
+      </div>
+    </div>
+
+    <!-- STEP 3: PIN 입력 -->
+    <div class="gate-body hidden" id="pinEntryPanel">
+      <div class="pin-entry-wrap">
+        <div class="pin-entry-title">🔐 PIN 번호 입력</div>
+        <div class="pin-entry-sub">
+          설문 완료 후 받은 4자리 PIN을 입력하세요.<br>
+          <span id="entryTimerWrap" style="display:inline-block; margin-top:6px; padding:4px 12px; background:var(--red-light); border-radius:99px; font-size:12px; color:var(--red); font-weight:600;">⏱ 남은 시간: <span id="entryCountdown">60:00</span></span>
+        </div>
+
+        <div class="pin-input-row">
+          <input class="pin-digit" id="pd0" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]" oninput="pinInput(this,0)">
+          <input class="pin-digit" id="pd1" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]" oninput="pinInput(this,1)">
+          <input class="pin-digit" id="pd2" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]" oninput="pinInput(this,2)">
+          <input class="pin-digit" id="pd3" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]" oninput="pinInput(this,3)">
+        </div>
+
+        <div class="pin-error-text" id="pinErrorText"></div>
+
+        <button class="gate-btn" id="pinEntryBtn" onclick="verifyPin()">입장하기 →</button>
+
+        <div class="pin-hint">
+          PIN을 분실하셨나요?<br>
+          <a href="tel:1588-0000">📞 담당자에게 문의하기</a>
+        </div>
+      </div>
+    </div>
+
+
+
+<!-- ══ 이하 기존 콘텐츠 ══ -->
+
+<!-- HEADER -->
+<header class="app-header">
+  <div class="logo">
+    <div class="logo-icon">🌿</div>
+    <div class="logo-text">생애자산 <span>플래너</span></div>
+  </div>
+  <div class="step-indicator" id="stepIndicator"></div>
+</header>
+
+<!-- PROGRESS -->
+<div class="progress-bar">
+  <div class="progress-fill" id="progressFill" style="width:0%"></div>
+</div>
+
+<main>
+
+  <!-- ■ SCREEN 0: WELCOME -->
+  <div class="screen active" id="screen-0">
+    <div class="hero">
+      <div class="hero-badge">✨ 무료 · 약 5분 소요</div>
+      <h1>나의 노후, 얼마나<br><em>준비되어 있을까요?</em></h1>
+      <p>출생연도부터 은퇴 후 지출까지 — 6단계 진단으로 노후 재무 상태를<br>한눈에 확인하세요.</p>
+      <div class="feature-pills">
+        <div class="pill"><span>📅</span> 예상 노후 기간</div>
+        <div class="pill"><span>💰</span> 수입 6가지 분석</div>
+        <div class="pill"><span>🏠</span> 지출 8가지 분석</div>
+        <div class="pill"><span>📊</span> 종합 자산 진단</div>
+      </div>
+      <button class="btn btn-primary btn-lg" onclick="gotoScreen(1)">진단 시작하기 →</button>
+    </div>
+  </div>
+
+  <!-- ■ SCREEN 1: 예상 노후 생활 기간 -->
+  <div class="screen" id="screen-1">
+    <div class="form-screen">
+      <div class="step-tag">STEP 1 · 노후 생활 기간</div>
+      <div class="screen-title">예상 노후 생활 기간을<br>계산해 볼까요?</div>
+      <div class="screen-sub">출생연도와 기대수명 나이를 입력하면 노후 생활 기간이 자동 계산됩니다.</div>
+
+      <div class="card">
+        <div class="card-title"><div class="icon">🎂</div> 기본 정보</div>
+
+        <div class="field">
+          <label>이름 (선택)</label>
+          <input type="text" id="userName" placeholder="홍길동">
+        </div>
+
+        <div class="field">
+          <label>출생연도</label>
+          <select id="birthYear">
+            <option value="">출생연도를 선택하세요</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>은퇴 예상 나이</label>
+          <div class="input-wrap">
+            <input type="number" id="retireAge" placeholder="60" min="50" max="80" value="60">
+            <span class="input-suffix">세</span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>기대 수명 나이</label>
+          <div class="input-wrap">
+            <input type="number" id="lifeExp" placeholder="85" min="70" max="110" value="85">
+            <span class="input-suffix">세</span>
+          </div>
+          <div class="tooltip-text">※ 2024년 대한민국 기대수명: 남성 81.6세, 여성 87.6세 (통계청 기준)</div>
+        </div>
+      </div>
+
+      <div class="card" id="retirementResultCard" style="display:none;">
+        <div class="result-highlight">
+          <div class="label">예상 노후 생활 기간</div>
+          <div class="amount"><span id="retirePeriod">0</span><span class="unit">년</span></div>
+          <div class="sub-info">
+            <div>현재 나이: <strong id="currentAge">-</strong>세</div>
+            <div>은퇴까지: <strong id="yearsToRetire">-</strong>년</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-box">
+        💡 기대수명 나이를 선택하면 노후 생활 기간이 자동 계산됩니다. 더 안전한 계획을 위해 기대수명보다 5~10년 더 길게 설정하는 것을 권장합니다.
+      </div>
+
+      <div class="nav-row">
+        <button class="btn-back" onclick="gotoScreen(0)">←</button>
+        <button class="btn-next" onclick="goNext1()">수입 항목 입력하기 →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ■ SCREEN 2: 본인 수입 -->
+  <div class="screen" id="screen-2">
+    <div class="form-screen">
+      <div class="step-tag">STEP 2 · 본인 수입</div>
+      <div class="screen-title">노후 생활 기간<br>수입 항목을 입력해주세요</div>
+      <div class="screen-sub">퇴직 전 급여, 퇴직금, 국민·개인연금, 현금, 기타수입 6가지 항목을 입력합니다.</div>
+
+      <!-- 1. 퇴직 전 급여 -->
+      <div class="card">
+        <div class="card-title"><div class="icon">👔</div> 퇴직 전 급여</div>
+        <div class="field">
+          <label>월 급여 (세후)</label>
+          <div class="input-wrap">
+            <input type="number" id="salary" placeholder="400" min="0">
+            <span class="input-suffix">만원</span>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>급여 수령 시작 나이</label>
+            <div class="input-wrap">
+              <input type="number" id="salaryFrom" placeholder="현재나이" min="20" max="80">
+              <span class="input-suffix">세</span>
+            </div>
+          </div>
+          <div class="field">
+            <label>급여 수령 종료 나이</label>
+            <div class="input-wrap">
+              <input type="number" id="salaryTo" placeholder="60" min="20" max="80">
+              <span class="input-suffix">세</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. 퇴직금 -->
+      <div class="card">
+        <div class="card-title"><div class="icon">💼</div> 퇴직금</div>
+        <div class="toggle-group">
+          <button class="toggle-btn active" onclick="setToggle('severance','일시금')" id="sev-일시금">일시금</button>
+          <button class="toggle-btn" onclick="setToggle('severance','퇴직연금')" id="sev-퇴직연금">퇴직연금</button>
+          <button class="toggle-btn" onclick="setToggle('severance','없음')" id="sev-없음">없음</button>
+        </div>
+        <div id="severanceFields">
+          <div class="field">
+            <label>퇴직금 총액</label>
+            <div class="input-wrap">
+              <input type="number" id="severanceAmt" placeholder="3000" min="0">
+              <span class="input-suffix">만원</span>
+            </div>
+          </div>
+          <div class="field">
+            <label>수령 나이</label>
+            <div class="input-wrap">
+              <input type="number" id="severanceAge" placeholder="60" min="40" max="80">
+              <span class="input-suffix">세</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. 국민연금 -->
+      <div class="card">
+        <div class="card-title"><div class="icon">🏛️</div> 국민연금</div>
+        <div class="toggle-group">
+          <button class="toggle-btn" onclick="setToggle('nps','국민연금')" id="nps-국민연금">자동계산</button>
+          <button class="toggle-btn active" onclick="setToggle('nps','직접입력')" id="nps-직접입력">직접입력</button>
+          <button class="toggle-btn" onclick="setToggle('nps','없음')" id="nps-없음">없음</button>
+        </div>
+        <div id="npsAutoFields" class="hidden">
+          <div class="field-row">
+            <div class="field">
+              <label>가입 기간</label>
+              <select id="npsYears">
+                <option value="">선택</option>
+                <option value="10">10년 미만</option>
+                <option value="10">10년</option>
+                <option value="15">15년</option>
+                <option value="20">20년</option>
+                <option value="25">25년</option>
+                <option value="30">30년</option>
+                <option value="35">35년 이상</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>가입 기간 중 월평균 급여</label>
+              <div class="input-wrap">
+                <input type="number" id="npsAvgSalary" placeholder="300" min="0">
+                <span class="input-suffix">만원</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div id="npsDirectFields">
+          <div class="field">
+            <label>월 국민연금 수령 금액</label>
+            <div class="input-wrap">
+              <input type="number" id="npsMonthly" placeholder="80" min="0">
+              <span class="input-suffix">만원</span>
+            </div>
+          </div>
+        </div>
+        <div class="tooltip-text">※ 국민연금공단 '내 국민연금 알아보기'를 통해 정확한 수령액을 확인하실 수 있습니다.</div>
+      </div>
+
+      <!-- 4. 개인연금 -->
+      <div class="card">
+        <div class="card-title"><div class="icon">💎</div> 개인연금</div>
+        <div class="toggle-group">
+          <button class="toggle-btn active" onclick="setToggle('pension','일시금수령')" id="pen-일시금수령">일시금 수령</button>
+          <button class="toggle-btn" onclick="setToggle('pension','분할수령')" id="pen-분할수령">분할 수령</button>
+          <button class="toggle-btn" onclick="setToggle('pension','없음')" id="pen-없음">없음</button>
+        </div>
+        <div id="pensionFields">
+          <div class="field">
+            <label>총 수령 금액</label>
+            <div class="input-wrap">
+              <input type="number" id="pensionAmt" placeholder="2000" min="0">
+              <span class="input-suffix">만원</span>
+            </div>
+          </div>
+          <div class="field" id="pensionSplitField" style="display:none;">
+            <label>분할 수령 기간</label>
+            <div class="field-row">
+              <div class="input-wrap">
+                <input type="number" id="pensionFrom" placeholder="65" min="40" max="100">
+                <span class="input-suffix">세</span>
+              </div>
+              <div class="input-wrap">
+                <input type="number" id="pensionTo" placeholder="85" min="50" max="110">
+                <span class="input-suffix">세</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. 현금보유 -->
+      <div class="card">
+        <div class="card-title"><div class="icon">💵</div> 현금보유</div>
+        <div class="toggle-group">
+          <button class="toggle-btn active" onclick="setToggle('cash','현금')" id="cash-현금">현금</button>
+          <button class="toggle-btn" onclick="setToggle('cash','없음')" id="cash-없음">없음</button>
+        </div>
+        <div id="cashFields">
+          <div class="field">
+            <label>현재 보유 현금 총액</label>
+            <div class="input-wrap">
+              <input type="number" id="cashAmt" placeholder="10000" min="0">
+              <span class="input-suffix">만원</span>
+            </div>
+          </div>
+          <div class="tooltip-text">※ 실물현금으로 전환 가능한 모든 금액 (현금, 적금, 예금, 주식, 채권 등)</div>
+        </div>
+      </div>
+
+      <!-- 6. 기타수입 -->
+      <div class="card">
+        <div class="card-title"><div class="icon">🏘️</div> 기타수입 (임대, 자녀용돈 등)</div>
+        <div class="toggle-group">
+          <button class="toggle-btn active" onclick="setToggle('other','기타수입금액')" id="oth-기타수입금액">있음</button>
+          <button class="toggle-btn" onclick="setToggle('other','없음')" id="oth-없음">없음</button>
+        </div>
+        <div id="otherFields">
+          <div class="field">
+            <label>연간 수입 금액</label>
+            <div class="input-wrap">
+              <input type="number" id="otherAmt" placeholder="500" min="0">
+              <span class="input-suffix">만원</span>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>수입 시작 나이</label>
+              <div class="input-wrap">
+                <input type="number" id="otherFrom" placeholder="60" min="20" max="100">
+                <span class="input-suffix">세</span>
+              </div>
+            </div>
+            <div class="field">
+              <label>수입 종료 나이</label>
+              <div class="input-wrap">
+                <input type="number" id="otherTo" placeholder="80" min="20" max="110">
+                <span class="input-suffix">세</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-row">
+        <button class="btn-back" onclick="gotoScreen(1)">←</button>
+        <button class="btn-next" onclick="goNext2()">배우자 수입 입력하기 →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ■ SCREEN 3: 배우자 수입 -->
+  <div class="screen" id="screen-3">
+    <div class="form-screen">
+      <div class="step-tag">STEP 3 · 배우자 수입</div>
+      <div class="screen-title">배우자의 수입 항목도<br>함께 살펴볼까요?</div>
+      <div class="screen-sub">배우자의 퇴직 전 급여, 퇴직금, 국민연금 3가지 항목을 입력합니다. (없으면 건너뜁니다)</div>
+
+      <div class="card">
+        <div class="card-title"><div class="icon">👫</div> 배우자 유무</div>
+        <div class="toggle-group">
+          <button class="toggle-btn active" onclick="toggleSpouse(true)" id="sp-yes">배우자 있음</button>
+          <button class="toggle-btn" onclick="toggleSpouse(false)" id="sp-no">배우자 없음</button>
+        </div>
+      </div>
+
+      <div id="spouseFields">
+        <!-- 배우자 퇴직 전 급여 -->
+        <div class="card">
+          <div class="card-title"><div class="icon">👔</div> 배우자 퇴직 전 급여</div>
+          <div class="field">
+            <label>월 급여 (세후)</label>
+            <div class="input-wrap">
+              <input type="number" id="spSalary" placeholder="300" min="0">
+              <span class="input-suffix">만원</span>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>급여 수령 종료 나이</label>
+              <div class="input-wrap">
+                <input type="number" id="spSalaryTo" placeholder="60" min="20" max="80">
+                <span class="input-suffix">세</span>
+              </div>
+              <div class="tooltip-text">※ 배우자 나이 기준으로 입력</div>
+            </div>
+            <div class="field">
+              <label>배우자 현재 나이</label>
+              <div class="input-wrap">
+                <input type="number" id="spAge" placeholder="52" min="20" max="90">
+                <span class="input-suffix">세</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 배우자 퇴직금 -->
+        <div class="card">
+          <div class="card-title"><div class="icon">💼</div> 배우자 퇴직금</div>
+          <div class="toggle-group">
+            <button class="toggle-btn active" onclick="setToggle('spSev','퇴직금')" id="spsev-퇴직금">퇴직금</button>
+            <button class="toggle-btn" onclick="setToggle('spSev','퇴직연금')" id="spsev-퇴직연금">퇴직연금</button>
+            <button class="toggle-btn" onclick="setToggle('spSev','없음')" id="spsev-없음">없음</button>
+          </div>
+          <div id="spSevFields">
+            <div class="field">
+              <label>배우자 퇴직금 총액</label>
+              <div class="input-wrap">
+                <input type="number" id="spSevAmt" placeholder="1800" min="0">
+                <span class="input-suffix">만원</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 배우자 국민연금 -->
+        <div class="card">
+          <div class="card-title"><div class="icon">🏛️</div> 배우자 국민연금</div>
+          <div class="toggle-group">
+            <button class="toggle-btn" onclick="setToggle('spNps','자동계산')" id="spnps-자동계산">자동계산</button>
+            <button class="toggle-btn active" onclick="setToggle('spNps','직접입력')" id="spnps-직접입력">직접입력</button>
+            <button class="toggle-btn" onclick="setToggle('spNps','없음')" id="spnps-없음">없음</button>
+          </div>
+          <div id="spNpsDirectFields">
+            <div class="field">
+              <label>배우자 월 국민연금 수령액</label>
+              <div class="input-wrap">
+                <input type="number" id="spNpsMonthly" placeholder="60" min="0">
+                <span class="input-suffix">만원</span>
+              </div>
+            </div>
+          </div>
+          <div id="spNpsAutoFields" class="hidden">
+            <div class="field-row">
+              <div class="field">
+                <label>가입 기간</label>
+                <select id="spNpsYears">
+                  <option value="10">10년</option>
+                  <option value="15">15년</option>
+                  <option value="20">20년</option>
+                  <option value="25">25년</option>
+                  <option value="30">30년</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>월평균 급여</label>
+                <div class="input-wrap">
+                  <input type="number" id="spNpsAvg" placeholder="250" min="0">
+                  <span class="input-suffix">만원</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-row">
+        <button class="btn-back" onclick="gotoScreen(2)">←</button>
+        <button class="btn-next" onclick="goNext3()">지출 항목 입력하기 →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ■ SCREEN 4: 지출 항목 -->
+  <div class="screen" id="screen-4">
+    <div class="form-screen">
+      <div class="step-tag">STEP 4 · 지출 항목</div>
+      <div class="screen-title">노후 생활 기간<br>지출 항목을 입력해주세요</div>
+      <div class="screen-sub">생활비, 부채, 자녀교육비, 결혼지원비, 여행비, 의료비, 보험료, 기타 8가지 항목입니다.</div>
+
+      <!-- 생활비 -->
+      <div class="card">
+        <div class="card-title"><div class="icon">🏠</div> 예상 노후 생활비</div>
+        <div class="toggle-group">
+          <button class="toggle-btn active" onclick="setLivingCost('부부기준')" id="lc-부부기준">부부 기준 (306만원)</button>
+          <button class="toggle-btn" onclick="setLivingCost('개인기준')" id="lc-개인기준">개인 기준 (198만원)</button>
+          <button class="toggle-btn" onclick="setLivingCost('직접입력')" id="lc-직접입력">직접 입력</button>
+        </div>
+        <div class="field">
+          <label>월 생활비</label>
+          <div class="input-wrap">
+            <input type="number" id="livingCost" value="306" min="0">
+            <span class="input-suffix">만원</span>
+          </div>
+          <div class="tooltip-text">※ 국민연금연구원 2024년 적정 노후 생활비 기준</div>
+        </div>
+      </div>
+
+      <!-- 부채 -->
+      <div class="card">
+        <div class="card-title"><div class="icon">🏦</div> 부채 (이자)</div>
+        <div class="toggle-group">
+          <button class="toggle-btn active" onclick="setToggle('debt','있음')" id="dbt-있음">있음</button>
+          <button class="toggle-btn" onclick="setToggle('debt','없음')" id="dbt-없음">없음</button>
+        </div>
+        <div id="debtFields">
+          <div class="field">
+            <label>월 이자 금액</label>
+            <div class="input-wrap">
+              <input type="number" id="debtMonthly" placeholder="30" min="0">
+              <span class="input-suffix">만원</span>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>이자 지출 시작 나이</label>
+              <div class="input-wrap">
+                <input type="number" id="debtFrom" placeholder="현재나이" min="20" max="100">
+                <span class="input-suffix">세</span>
+              </div>
+            </div>
+            <div class="field">
+              <label>이자 지출 종료 나이</label>
+              <div class="input-wrap">
+                <input type="number" id="debtTo" placeholder="70" min="20" max="110">
+                <span class="input-suffix">세</span>
+              </div>
+            </div>
+          </div>
+          <div class="field">
+            <label>만기 상환 원금</label>
+            <div class="input-wrap">
+              <input type="number" id="debtPrincipal" placeholder="0" min="0">
+              <span class="input-suffix">만원</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 자녀 교육비 -->
+      <div class="card">
+        <div class="card-title"><div class="icon">🎓</div> 자녀 교육비</div>
+        <div class="toggle-group">
+          <button class="toggle-btn active" onclick="setToggle('edu','있음')" id="edu-있음">있음</button>
+          <button class="toggle-btn" onclick="setToggle('edu','없음')" id="edu-없음">없음</button>
+        </div>
+        <div id="eduFields">
+          <div class="field">
+            <label>연간 자녀 교육비</label>
+            <div class="input-wrap">
+              <input type="number" id="eduAmt" placeholder="1200" min="0">
+              <span class="input-suffix">만원</span>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>교육비 지출 종료 나이</label>
+              <div class="input-wrap">
+                <input type="number" id="eduTo" placeholder="65" min="20" max="80">
+                <span class="input-suffix">세</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 자녀 결혼지원비 -->
+      <div class="card">
+        <div class="card-title"><div class="icon">💒</div> 자녀 결혼 지원비</div>
+        <div class="toggle-group">
+          <button class="toggle-btn active" onclick="setToggle('wedding','있음')" id="wed-있음">있음</button>
+          <button class="toggle-btn" onclick="setToggle('wedding','없음')" id="wed-없음">없음</button>
+        </div>
+        <div id="weddingFields">
+          <div class="field">
+            <label>자녀 1인당 결혼 지원금</label>
+            <div class="input-wrap">
+              <input type="number" id="weddingAmt" placeholder="5000" min="0">
+              <span class="input-suffix">만원</span>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>자녀 수</label>
+              <div class="input-wrap">
+                <input type="number" id="weddingCount" placeholder="2" min="0" max="10">
+                <span class="input-suffix">명</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 여행비 -->
+      <div class="card">
+        <div class="card-title"><div class="icon">✈️</div> 여행비</div>
+        <div class="toggle-group">
+          <button class="toggle-btn active" onclick="setToggle('travel','있음')" id="trv-있음">있음</button>
+          <button class="toggle-btn" onclick="setToggle('travel','없음')" id="trv-없음">없음</button>
+        </div>
+        <div id="travelFields">
+          <div class="field">
+            <label>연간 여행비</label>
+            <div class="input-wrap">
+              <input type="number" id="travelAmt" placeholder="500" min="0">
+              <span class="input-suffix">만원</span>
+            </div>
+          </div>
+          <div class="field-row">
+            <div class="field">
+              <label>여행 종료 나이</label>
+              <div class="input-wrap">
+                <input type="number" id="travelTo" placeholder="75" min="50" max="100">
+                <span class="input-suffix">세</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 의료비 -->
+      <div class="card">
+        <div class="card-title"><div class="icon">🏥</div> 의료비</div>
+        <div class="toggle-group">
+          <button class="toggle-btn active" onclick="setToggle('medical','있음')" id="med-있음">있음</button>
+          <button class="toggle-btn" onclick="setToggle('medical','없음')" id="med-없음">없음</button>
+        </div>
+        <div id="medicalFields">
+          <div class="field">
+            <label>월 평균 의료비</label>
+            <div class="input-wrap">
+              <input type="number" id="medicalAmt" placeholder="20" min="0">
+              <span class="input-suffix">만원</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 국민건강보험료 -->
+      <div class="card">
+        <div class="card-title"><div class="icon">🏷️</div> 국민건강보험료</div>
+        <div class="toggle-group">
+          <button class="toggle-btn active" onclick="setToggle('health','있음')" id="hlt-있음">있음</button>
+          <button class="toggle-btn" onclick="setToggle('health','없음')" id="hlt-없음">없음</button>
+        </div>
+        <div id="healthFields">
+          <div class="field">
+            <label>월 보험료</label>
+            <div class="input-wrap">
+              <input type="number" id="healthAmt" placeholder="25" min="0">
+              <span class="input-suffix">만원</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 기타 지출 -->
+      <div class="card">
+        <div class="card-title"><div class="icon">📦</div> 기타 지출</div>
+        <div class="toggle-group">
+          <button class="toggle-btn active" onclick="setToggle('misc','있음')" id="mis-있음">있음</button>
+          <button class="toggle-btn" onclick="setToggle('misc','없음')" id="mis-없음">없음</button>
+        </div>
+        <div id="miscFields">
+          <div class="field">
+            <label>월 기타 지출</label>
+            <div class="input-wrap">
+              <input type="number" id="miscAmt" placeholder="50" min="0">
+              <span class="input-suffix">만원</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-row">
+        <button class="btn-back" onclick="gotoScreen(3)">←</button>
+        <button class="btn-next" onclick="goNext4()">종합 분석 결과 보기 →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ■ SCREEN 5: 종합 분석 결과 -->
+  <div class="screen" id="screen-5">
+    <div class="form-screen">
+      <div class="step-tag">STEP 5 · 종합 분석</div>
+      <div class="screen-title" id="resultTitle">노후 자산<br>종합 분석 결과</div>
+      <div class="screen-sub" id="resultSub">수입과 지출을 분석하여 노후 생활에 충분한지 확인합니다.</div>
+
+      <!-- 상태 배너 -->
+      <div class="status-banner" id="statusBanner">
+        <div class="status-emoji" id="statusEmoji">😊</div>
+        <div class="status-text">
+          <h3 id="statusTitle">자산 상태 분석 중...</h3>
+          <p id="statusDesc">잠시만 기다려 주세요.</p>
+        </div>
+      </div>
+
+      <!-- 요약 -->
+      <div class="summary-grid" id="summaryGrid">
+        <div class="summary-item">
+          <div class="s-label">노후 생활 기간</div>
+          <div class="s-val" id="r-period">-<span class="s-unit">년</span></div>
+        </div>
+        <div class="summary-item">
+          <div class="s-label">월평균 지출 비용</div>
+          <div class="s-val" id="r-monthly">-<span class="s-unit">만원</span></div>
+        </div>
+        <div class="summary-item">
+          <div class="s-label">총 예상 수입</div>
+          <div class="s-val" id="r-income">-<span class="s-unit">만원</span></div>
+        </div>
+        <div class="summary-item">
+          <div class="s-label">총 예상 지출</div>
+          <div class="s-val" id="r-expense">-<span class="s-unit">만원</span></div>
+        </div>
+      </div>
+
+      <!-- 수입/지출 커버리지 -->
+      <div class="meter-wrap" id="coverMeter">
+        <div class="meter-label">지출 대비 수입 충당률</div>
+        <div class="meter-ring-outer">
+          <svg width="140" height="140" viewBox="0 0 140 140">
+            <circle cx="70" cy="70" r="56" fill="none" stroke="#EDE4D5" stroke-width="12"/>
+            <circle id="meterCircle" cx="70" cy="70" r="56" fill="none" stroke="#C9962A" stroke-width="12"
+              stroke-dasharray="352" stroke-dashoffset="352" stroke-linecap="round"/>
+          </svg>
+          <div class="meter-center-text">
+            <div class="meter-pct" id="meterPct" style="color:var(--gold)">0%</div>
+            <div class="meter-pct-label">충당률</div>
+          </div>
+        </div>
+        <div id="meterMsg" style="font-size:12px; color:var(--slate-light); line-height:1.6;"></div>
+      </div>
+
+      <!-- 수입 내역 -->
+      <div class="section-divider">수입 내역</div>
+      <div class="result-highlight" id="totalIncomeCard">
+        <div class="label">부부 합산 총 예상 수입</div>
+        <div class="amount"><span id="r-totalIncome">0</span><span class="unit">만원</span></div>
+        <div class="sub-info">
+          <div>수입 기간: <strong id="r-incPeriod">-</strong>년</div>
+          <div>연평균: <strong id="r-incAvg">-</strong>만원</div>
+        </div>
+      </div>
+
+      <div class="breakdown" id="incomeBreakdown"></div>
+
+      <!-- 지출 내역 -->
+      <div class="section-divider">지출 내역</div>
+      <div class="result-highlight" style="background: linear-gradient(135deg, #C0392B, #E74C3C);" id="totalExpenseCard">
+        <div class="label">총 예상 지출</div>
+        <div class="amount"><span id="r-totalExpense">0</span><span class="unit">만원</span></div>
+        <div class="sub-info">
+          <div>지출 기간: <strong id="r-expPeriod">-</strong>년</div>
+          <div>월평균: <strong id="r-expAvg">-</strong>만원</div>
+        </div>
+      </div>
+
+      <div class="breakdown" id="expenseBreakdown"></div>
+
+      <!-- 수입/지출 비교 차트 -->
+      <div class="bar-chart" id="compareChart"></div>
+
+      <!-- 최종 남은 자산 -->
+      <div class="card" id="finalCard">
+        <div class="card-title"><div class="icon">🏁</div> 최종 잔여 자산 예상</div>
+        <div style="text-align:center; padding: 16px 0;">
+          <div style="font-size:12px; color:var(--slate-light); margin-bottom:8px;">노후 생활 후 남은 자산</div>
+          <div style="font-family:'Noto Serif KR',serif; font-size:28px; font-weight:700;" id="r-surplus"></div>
+        </div>
+        <div style="font-size:13px; color:var(--slate); line-height:1.7;" id="r-adviceText"></div>
+      </div>
+
+      <!-- ══ 부족분 해결 방법 GUIDE ══ -->
+      <div class="section-divider" style="margin-top:32px;">부족분 채우는 방법 가이드</div>
+
+      <!-- 1. 국민연금 전략 -->
+      <div class="guide-section">
+        <div class="guide-header">
+          <div class="guide-icon">🏛️</div>
+          <div>
+            <div class="guide-title">국민연금 수령 전략</div>
+            <div class="guide-subtitle">출생연도별 개시연령 · 조기연금 · 연기연금</div>
+          </div>
+        </div>
+
+        <div class="info-box" style="margin-bottom:16px;">
+          💡 국민연금은 <strong>수령 시기를 최대 5년 앞당기거나 늦출 수 있어</strong> 개인의 재무 상황에 따라 전략적으로 활용할 수 있습니다.
+        </div>
+
+        <!-- 출생연도별 개시 연령 표 -->
+        <div class="guide-table-wrap">
+          <div class="guide-table-title">📅 출생연도별 국민연금 수령 개시연령</div>
+          <table class="guide-table">
+            <thead>
+              <tr><th>출생연도</th><th>정상 수령</th><th>조기 수령</th><th>최대 연기</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>1952년생 이전</td><td>60세</td><td>55세</td><td>65세</td></tr>
+              <tr><td>1953~1956년생</td><td>61세</td><td>56세</td><td>66세</td></tr>
+              <tr><td>1957~1960년생</td><td>62세</td><td>57세</td><td>67세</td></tr>
+              <tr><td>1961~1964년생</td><td>63세</td><td>58세</td><td>68세</td></tr>
+              <tr><td>1965~1968년생</td><td>64세</td><td>59세</td><td>69세</td></tr>
+              <tr class="highlight-row"><td>1969년생 이후</td><td>65세</td><td>60세</td><td>70세</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="two-col">
+          <div class="strategy-card strategy-early">
+            <div class="strategy-header">⏩ 조기노령연금</div>
+            <div class="strategy-body">
+              <div class="strategy-item">
+                <span class="s-badge red">감액</span>
+                <span>1년 당길 때마다 <strong>6% 감액</strong></span>
+              </div>
+              <div class="strategy-item">
+                <span class="s-badge red">최대</span>
+                <span>5년 앞당기면 <strong>30% 감액</strong> (70%만 수령)</span>
+              </div>
+              <div class="strategy-item">
+                <span class="s-badge gray">조건</span>
+                <span>월 소득 286만원 이하 (A값 기준)</span>
+              </div>
+              <div class="strategy-tip">💬 소득이 없고 당장 생활자금이 필요할 때 유리, 단 <em>장기적으로는 손해</em>일 수 있어 신중히 결정</div>
+            </div>
+          </div>
+          <div class="strategy-card strategy-late">
+            <div class="strategy-header">⏪ 연기연금 (추천)</div>
+            <div class="strategy-body">
+              <div class="strategy-item">
+                <span class="s-badge green">증액</span>
+                <span>1년 늦출 때마다 <strong>7.2% 증액</strong></span>
+              </div>
+              <div class="strategy-item">
+                <span class="s-badge green">최대</span>
+                <span>5년 연기 시 <strong>36% 증액</strong> (월 0.6%)</span>
+              </div>
+              <div class="strategy-item">
+                <span class="s-badge gray">조건</span>
+                <span>소득 있는 경우 연기 후 수령 시 유리</span>
+              </div>
+              <div class="strategy-tip">💬 건강하고 소득이 있다면 연기연금이 <em>장수할수록 절대적으로 유리</em>. 물가상승분까지 추가 반영</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="action-link-row">
+          <a class="action-link" href="https://minwon.nps.or.kr" target="_blank">🔗 내 국민연금 알아보기 (국민연금공단)</a>
+          <a class="action-link" href="tel:1355">📞 국민연금 콜센터 1355</a>
+        </div>
+      </div>
+
+      <!-- 2. 기초연금 -->
+      <div class="guide-section">
+        <div class="guide-header">
+          <div class="guide-icon">🎗️</div>
+          <div>
+            <div class="guide-title">기초연금 수급 가이드</div>
+            <div class="guide-subtitle">2026년 기준 · 만 65세 이상 소득 하위 70%</div>
+          </div>
+        </div>
+
+        <div class="info-box">
+          💡 기초연금은 <strong>신청하지 않으면 자동 지급되지 않습니다.</strong> 만 65세 생일 한 달 전부터 신청 가능하며, 소급 지급 없으므로 미리 준비하세요.
+        </div>
+
+        <div class="summary-grid" style="margin-top:16px;">
+          <div class="summary-item">
+            <div class="s-label">단독가구 최대 수령액</div>
+            <div class="s-val" style="color:var(--green);">34.97<span class="s-unit">만원/월</span></div>
+          </div>
+          <div class="summary-item">
+            <div class="s-label">부부가구 최대 수령액</div>
+            <div class="s-val" style="color:var(--green);">55.95<span class="s-unit">만원/월</span></div>
+          </div>
+          <div class="summary-item">
+            <div class="s-label">2026 단독 선정기준액</div>
+            <div class="s-val">247<span class="s-unit">만원</span></div>
+          </div>
+          <div class="summary-item">
+            <div class="s-label">2026 부부 선정기준액</div>
+            <div class="s-val">395.2<span class="s-unit">만원</span></div>
+          </div>
+        </div>
+
+        <div class="guide-table-wrap">
+          <div class="guide-table-title">💰 소득인정액 계산 방법</div>
+          <div class="formula-box">
+            <div class="formula-title">소득인정액 = 소득평가액 + 재산의 소득환산액</div>
+            <div class="formula-row"><span class="f-label">근로소득</span><span class="f-val">(근로소득 - 116만원) × 0.7 = 실제 인정소득</span></div>
+            <div class="formula-row"><span class="f-label">일반재산</span><span class="f-val">(재산 - 기본재산액*) × 4% ÷ 12개월</span></div>
+            <div class="formula-row"><span class="f-label">금융재산</span><span class="f-val">(금융재산 - 2,000만원) × 4% ÷ 12개월</span></div>
+            <div class="formula-row"><span class="f-label">자동차</span><span class="f-val">4,000만원 이상 고급차만 전액 산정 (배기량 기준 2024년 폐지)</span></div>
+            <div style="font-size:11px; color:var(--slate-light); margin-top:8px;">* 기본재산 공제: 대도시 1억 3,500만원 / 중소도시 8,500만원 / 농어촌 7,250만원</div>
+          </div>
+        </div>
+
+        <div class="checklist-box">
+          <div class="cl-title">✅ 기초연금 수급을 위한 체크리스트</div>
+          <div class="cl-item">🏠 고가 아파트라도 기본재산 공제 후 4% 환산이므로 포기하지 말고 계산 먼저</div>
+          <div class="cl-item">🚗 자동차는 4,000만원 미만이면 일반재산과 동일 기준 (배기량 기준 폐지)</div>
+          <div class="cl-item">💼 근로소득은 월 116만원 공제 + 추가 30% 공제로 실제 반영 비율 낮음</div>
+          <div class="cl-item">👴 국민연금 많이 받아도 소득인정액 기준이면 일부 감액 후 수급 가능</div>
+          <div class="cl-item">📅 만 65세 생일 <strong>1개월 전</strong>부터 신청 가능. 늦으면 소급 없음!</div>
+        </div>
+
+        <div class="action-link-row">
+          <a class="action-link" href="https://www.bokjiro.go.kr/ssis-tbu/twatbz/mkclAsis/mkclInsertBspnPage.do" target="_blank">🔗 복지로 기초연금 모의계산</a>
+          <a class="action-link" href="tel:129">📞 복지로 129</a>
+        </div>
+      </div>
+
+      <!-- 3. 상담 기관 -->
+      <div class="guide-section">
+        <div class="guide-header">
+          <div class="guide-icon">🏢</div>
+          <div>
+            <div class="guide-title">노후 자산 상담 기관 안내</div>
+            <div class="guide-subtitle">무료 전문 상담 · 재무 설계 · 종합 진단</div>
+          </div>
+        </div>
+
+        <div class="agency-grid">
+          <div class="agency-card">
+            <div class="agency-icon">🏛️</div>
+            <div class="agency-name">중앙노후준비지원센터</div>
+            <div class="agency-desc">국민연금공단 운영. 재무·건강·여가·대인관계 4대 영역 종합 진단 및 맞춤형 1:1 상담. 전국 누구나 무료 이용.</div>
+            <div class="agency-tags">
+              <span class="atag">무료</span><span class="atag">1:1 상담</span><span class="atag">재무설계</span>
+            </div>
+            <div class="agency-contact">
+              <span>🌐 csa.nps.or.kr</span>
+              <span>📞 1355</span>
+            </div>
+            <a class="agency-btn" href="https://csa.nps.or.kr" target="_blank">바로가기 →</a>
+          </div>
+
+          <div class="agency-card">
+            <div class="agency-icon">🔍</div>
+            <div class="agency-name">금융감독원 통합연금포털</div>
+            <div class="agency-desc">내가 가입한 국민연금·퇴직연금·개인연금을 한번에 조회. 예상 연금액 확인 및 금융상품 비교.</div>
+            <div class="agency-tags">
+              <span class="atag">연금통합조회</span><span class="atag">비교공시</span>
+            </div>
+            <div class="agency-contact">
+              <span>🌐 100lifeplan.fss.or.kr</span>
+              <span>📞 1332</span>
+            </div>
+            <a class="agency-btn" href="https://100lifeplan.fss.or.kr" target="_blank">바로가기 →</a>
+          </div>
+
+          <div class="agency-card">
+            <div class="agency-icon">💊</div>
+            <div class="agency-name">국민연금공단 지역 센터</div>
+            <div class="agency-desc">전국 40개 거점 지사 + 지자체 9개소에서 지역노후준비 서비스 제공. 방문 및 온라인 예약 상담.</div>
+            <div class="agency-tags">
+              <span class="atag">방문상담</span><span class="atag">비대면 가능</span>
+            </div>
+            <div class="agency-contact">
+              <span>🌐 nps.or.kr</span>
+              <span>📞 1355</span>
+            </div>
+            <a class="agency-btn" href="https://www.nps.or.kr" target="_blank">바로가기 →</a>
+          </div>
+
+          <div class="agency-card">
+            <div class="agency-icon">🏠</div>
+            <div class="agency-name">복지로</div>
+            <div class="agency-desc">정부 복지 서비스 원스톱 통합 포털. 기초연금·노인일자리·의료급여 등 신청 및 모의계산.</div>
+            <div class="agency-tags">
+              <span class="atag">복지통합</span><span class="atag">온라인신청</span>
+            </div>
+            <div class="agency-contact">
+              <span>🌐 bokjiro.go.kr</span>
+              <span>📞 129</span>
+            </div>
+            <a class="agency-btn" href="https://www.bokjiro.go.kr" target="_blank">바로가기 →</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. 노인일자리 -->
+      <div class="guide-section">
+        <div class="guide-header">
+          <div class="guide-icon">💼</div>
+          <div>
+            <div class="guide-title">노인일자리 · 시니어 취업 프로그램</div>
+            <div class="guide-subtitle">2026년 역대 최대 115만 2천개 일자리 제공</div>
+          </div>
+        </div>
+
+        <div class="info-box">
+          💡 노인일자리는 단순한 수입을 넘어 <strong>삶의 만족도 증가, 우울감 개선, 의료비 절감</strong> 효과가 있습니다. 60세부터 신청 가능합니다.
+        </div>
+
+        <div class="job-type-grid">
+          <div class="job-card type-public">
+            <div class="jt-badge">공익활동형</div>
+            <div class="jt-title">사회 기여 활동</div>
+            <div class="jt-desc">환경정비, 취약계층 안부 확인, 경로당 배식 지원, 지역사회 통합돌봄 지원 등</div>
+            <div class="jt-info">
+              <span>👤 65세 이상 기초연금 수급자</span>
+              <span>💵 월 29만원~</span>
+              <span>⏱️ 월 30시간 (일 3시간)</span>
+            </div>
+          </div>
+
+          <div class="job-card type-service">
+            <div class="jt-badge badge-blue">사회서비스형</div>
+            <div class="jt-title">돌봄 · 교육 보조</div>
+            <div class="jt-desc">돌봄서비스, 보육보조, 교육시설 학습보조, 시니어 컨설턴트, 공익서비스 등 경력 활용</div>
+            <div class="jt-info">
+              <span>👤 60세 이상</span>
+              <span>💵 월 71만원~</span>
+              <span>⏱️ 주 15~40시간</span>
+            </div>
+          </div>
+
+          <div class="job-card type-market">
+            <div class="jt-badge badge-green">시장형</div>
+            <div class="jt-title">자영업 · 사업단</div>
+            <div class="jt-desc">공동작업장형, 제조판매형, 프리랜서형. 수익에 따라 150만원 이상 수령 가능한 사례도 있음</div>
+            <div class="jt-info">
+              <span>👤 60세 이상</span>
+              <span>💵 성과에 따라 상이</span>
+              <span>⏱️ 자율 근무</span>
+            </div>
+          </div>
+
+          <div class="job-card type-intern">
+            <div class="jt-badge badge-orange">시니어인턴십</div>
+            <div class="jt-title">민간 취업 연계</div>
+            <div class="jt-desc">고령자 친화 기업에 인턴십 후 정규 채용 연계. 한국노인인력개발원에서 운영하는 취업 지원 프로그램</div>
+            <div class="jt-info">
+              <span>👤 60세 이상</span>
+              <span>💵 최저임금 이상</span>
+              <span>⏱️ 정규 근무</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="checklist-box">
+          <div class="cl-title">📋 신청 방법</div>
+          <div class="cl-item">🌐 <strong>온라인:</strong> 노인일자리 여기(seniorro.or.kr) 또는 복지로(bokjiro.go.kr)</div>
+          <div class="cl-item">🏢 <strong>방문:</strong> 주소지 읍·면·동 행정복지센터, 시니어클럽, 노인복지관</div>
+          <div class="cl-item">📞 <strong>상담전화:</strong> 1544-3388 (가까운 수행기관 자동 연결)</div>
+          <div class="cl-item">📅 <strong>집중 모집:</strong> 매년 11~12월 / 수시 모집도 수시로 확인</div>
+        </div>
+
+        <div class="action-link-row">
+          <a class="action-link" href="https://www.seniorro.or.kr" target="_blank">🔗 노인일자리 여기 포털</a>
+          <a class="action-link" href="tel:1544-3388">📞 노인일자리 상담 1544-3388</a>
+        </div>
+      </div>
+
+      <!-- 5. 추가 수입 전략 -->
+      <div class="guide-section">
+        <div class="guide-header">
+          <div class="guide-icon">📈</div>
+          <div>
+            <div class="guide-title">부족분 보충을 위한 추가 전략</div>
+            <div class="guide-subtitle">재무 개선을 위한 실천 가이드</div>
+          </div>
+        </div>
+
+        <div class="strategy-list">
+          <div class="sl-item">
+            <div class="sl-icon">🔁</div>
+            <div class="sl-content">
+              <div class="sl-title">국민연금 추납 & 임의계속가입</div>
+              <div class="sl-desc">과거 실직·휴직 기간의 보험료를 소급 납부(추납)하면 가입기간이 늘어 수령액 증가. 60세 이후에도 임의계속가입으로 납부 지속 가능.</div>
+            </div>
+          </div>
+          <div class="sl-item">
+            <div class="sl-icon">🏦</div>
+            <div class="sl-content">
+              <div class="sl-title">IRP · 연금저축 활용</div>
+              <div class="sl-desc">개인형 퇴직연금(IRP)과 연금저축으로 최대 연간 900만원까지 세액공제. 55세 이후 연금 형태로 수령 시 3.3~5.5% 저율 과세.</div>
+            </div>
+          </div>
+          <div class="sl-item">
+            <div class="sl-icon">🏠</div>
+            <div class="sl-content">
+              <div class="sl-title">주택연금 활용</div>
+              <div class="sl-desc">보유 주택을 담보로 매달 연금 수령. 만 55세 이상, 공시가 12억원 이하 주택 소유자 신청 가능. 한국주택금융공사 운영.</div>
+            </div>
+          </div>
+          <div class="sl-item">
+            <div class="sl-icon">✂️</div>
+            <div class="sl-content">
+              <div class="sl-title">지출 구조 재설계</div>
+              <div class="sl-desc">노후 생활비는 나이가 들수록 서서히 감소(활동기→안정기→쇠약기). 70대 이후 여행비·교육비 감소, 의료비 증가를 반영해 구간별 재설계 권장.</div>
+            </div>
+          </div>
+          <div class="sl-item">
+            <div class="sl-icon">📊</div>
+            <div class="sl-content">
+              <div class="sl-title">금융감독원 금융소비자포털 활용</div>
+              <div class="sl-desc">은행·보험·증권 등 다양한 금융 상품의 비교공시 확인. 수익률 높은 연금 상품으로 갈아타기(이전) 지원 서비스 이용 가능.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6. 연령별 비과세 금융상품 -->
+      <div class="guide-section">
+        <div class="guide-header">
+          <div class="guide-icon">💰</div>
+          <div>
+            <div class="guide-title">연령별 비과세·절세 금융상품</div>
+            <div class="guide-subtitle">금융소득 없는(비과세) 상품으로 실수익 극대화</div>
+          </div>
+        </div>
+
+        <div class="info-box">
+          💡 일반 금융상품은 이자·배당소득에 <strong>15.4% 세금</strong>이 부과되지만, 아래 절세 계좌를 활용하면 세금을 크게 줄이거나 없앨 수 있습니다. <em>건강보험료에도 영향을 주지 않는 상품</em>을 우선 활용하세요.
+        </div>
+
+        <!-- 상품 카드 그리드 -->
+        <div class="product-grid">
+
+          <div class="product-card">
+            <div class="pc-header" style="background:#FEF3E2;">
+              <div class="pc-badge" style="background:#E67E22; color:#fff;">만 65세 이상 (기초연금 수급자)</div>
+              <div class="pc-name">비과세종합저축</div>
+            </div>
+            <div class="pc-body">
+              <div class="pc-row"><span class="pc-k">비과세 한도</span><span class="pc-v highlight-g">1인당 5,000만원 (부부 1억원)</span></div>
+              <div class="pc-row"><span class="pc-k">세율 혜택</span><span class="pc-v highlight-g">이자·배당소득 15.4% → 0%</span></div>
+              <div class="pc-row"><span class="pc-k">가입 조건</span><span class="pc-v">65세 이상 기초연금 수급자 (2026년 이후 기준)</span></div>
+              <div class="pc-row"><span class="pc-k">가입 금지</span><span class="pc-v">직전 3년 내 금융소득 2,000만원 초과자</span></div>
+              <div class="pc-row"><span class="pc-k">가입 가능 상품</span><span class="pc-v">예금·적금·펀드·채권·RP 등</span></div>
+              <div class="pc-row"><span class="pc-k">건강보험료</span><span class="pc-v highlight-g">영향 없음 (비과세 소득)</span></div>
+              <div class="pc-tip">💬 증권사 계좌는 만기 없이 평생 비과세 유지 가능. 은행·보험은 만기 후 일반과세 전환에 주의</div>
+            </div>
+          </div>
+
+          <div class="product-card">
+            <div class="pc-header" style="background:#E8F5EE;">
+              <div class="pc-badge" style="background:#2E7D5E; color:#fff;">만 19세 이상 누구나</div>
+              <div class="pc-name">ISA (개인종합자산관리계좌)</div>
+            </div>
+            <div class="pc-body">
+              <div class="pc-row"><span class="pc-k">연 납입 한도</span><span class="pc-v">2,000만원 (연간, 미납분 이월 가능)</span></div>
+              <div class="pc-row"><span class="pc-k">총 납입 한도</span><span class="pc-v">최대 1억원</span></div>
+              <div class="pc-row"><span class="pc-k">비과세 한도</span><span class="pc-v highlight-g">일반형 200만원 / 서민형 400만원</span></div>
+              <div class="pc-row"><span class="pc-k">초과분 과세</span><span class="pc-v highlight-g">9.9% 분리과세 (금융소득종합과세 제외)</span></div>
+              <div class="pc-row"><span class="pc-k">의무 가입기간</span><span class="pc-v">3년 이상</span></div>
+              <div class="pc-row"><span class="pc-k">건강보험료</span><span class="pc-v highlight-g">분리과세 → 건보료 부과 없음</span></div>
+              <div class="pc-tip">💬 만기 후 IRP로 이전 시 추가 10% 세액공제(최대 300만원). '절세 3대장(연금저축→IRP→ISA)' 순서로 채울 것</div>
+            </div>
+          </div>
+
+          <div class="product-card">
+            <div class="pc-header" style="background:var(--blue-light);">
+              <div class="pc-badge" style="background:var(--blue); color:#fff;">만 55세 이상 수령</div>
+              <div class="pc-name">연금저축 + IRP</div>
+            </div>
+            <div class="pc-body">
+              <div class="pc-row"><span class="pc-k">연간 세액공제</span><span class="pc-v highlight-g">연금저축 600만원 + IRP 300만원 = 총 900만원</span></div>
+              <div class="pc-row"><span class="pc-k">세액공제율</span><span class="pc-v">총급여 5,500만원 이하 16.5% / 초과 13.2%</span></div>
+              <div class="pc-row"><span class="pc-k">수령 시 세율</span><span class="pc-v highlight-g">연금소득세 3.3~5.5% (일반 15.4% 대비 절감)</span></div>
+              <div class="pc-row"><span class="pc-k">건강보험료</span><span class="pc-v">연금소득 연 2,000만원 초과 시 보험료 부과</span></div>
+              <div class="pc-row"><span class="pc-k">2,000만원 이하</span><span class="pc-v highlight-g">건강보험료 부과 없음</span></div>
+              <div class="pc-tip">💬 연금 수령액을 연간 2,000만원 이하로 조절하면 건강보험료 피부양자 자격 유지에 유리</div>
+            </div>
+          </div>
+
+          <div class="product-card">
+            <div class="pc-header" style="background:#F5EEF8;">
+              <div class="pc-badge" style="background:#7D3C98; color:#fff;">만 55세 이상</div>
+              <div class="pc-name">주택연금</div>
+            </div>
+            <div class="pc-body">
+              <div class="pc-row"><span class="pc-k">운영 기관</span><span class="pc-v">한국주택금융공사</span></div>
+              <div class="pc-row"><span class="pc-k">가입 조건</span><span class="pc-v">만 55세 이상, 주택공시가 12억원 이하</span></div>
+              <div class="pc-row"><span class="pc-k">혜택</span><span class="pc-v highlight-g">주택 보유하면서 매달 연금 수령 (종신)</span></div>
+              <div class="pc-row"><span class="pc-k">세금</span><span class="pc-v highlight-g">이자비용 연 200만원 소득공제 가능</span></div>
+              <div class="pc-row"><span class="pc-k">건강보험료</span><span class="pc-v highlight-g">주택연금 수령액 → 건보료 부과 없음</span></div>
+              <div class="pc-tip">💬 집을 보유하고 있다면 자산을 유동화하여 현금흐름을 만드는 대표 상품. 연금 수령 후에도 계속 거주 가능</div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- 연령대별 추천 전략 -->
+        <div class="age-strategy">
+          <div class="ast-title">📊 연령대별 추천 절세 전략</div>
+          <div class="ast-table-wrap">
+            <table class="guide-table">
+              <thead>
+                <tr><th>연령대</th><th>우선 활용 상품</th><th>핵심 전략</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>50대 초반</strong></td>
+                  <td>연금저축 + IRP + ISA</td>
+                  <td>세액공제 최대화, 절세 3계좌 모두 채우기</td>
+                </tr>
+                <tr>
+                  <td><strong>55~64세</strong></td>
+                  <td>ISA + 연금저축 + IRP</td>
+                  <td>ISA 만기 후 IRP 이전으로 추가 공제, 연금 수령 준비</td>
+                </tr>
+                <tr class="highlight-row">
+                  <td><strong>65세 이상</strong></td>
+                  <td>비과세종합저축 + ISA</td>
+                  <td>비과세종합저축 5,000만원 우선 채우기, 건보료 관리</td>
+                </tr>
+                <tr>
+                  <td><strong>은퇴 후 전 연령</strong></td>
+                  <td>주택연금 + 연금 분산 수령</td>
+                  <td>연금 소득을 연 2,000만원 이하로 유지 → 피부양자 자격 유지</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="action-link-row">
+          <a class="action-link" href="https://www.hf.go.kr" target="_blank">🔗 주택금융공사 주택연금</a>
+          <a class="action-link" href="https://100lifeplan.fss.or.kr" target="_blank">🔗 금감원 통합연금포털</a>
+        </div>
+      </div>
+
+      <!-- 7. 건강보험료 재산 기준 -->
+      <div class="guide-section">
+        <div class="guide-header">
+          <div class="guide-icon">🏥</div>
+          <div>
+            <div class="guide-title">재산·소득에 따른 건강보험료 납부 기준</div>
+            <div class="guide-subtitle">집·차·현금성 자산이 건보료에 미치는 영향 (2026년 기준)</div>
+          </div>
+        </div>
+
+        <div class="info-box" style="border-color: var(--red); border-left-color: var(--red); background: #FDECEA; color: #922b21;">
+          ⚠️ 은퇴 후 직장 탈퇴 시 <strong>지역가입자로 자동 전환</strong>되며, 집·차·금융자산이 모두 건보료 산정에 포함됩니다. 퇴직 전 반드시 확인하세요.
+        </div>
+
+        <!-- 피부양자 vs 지역가입자 -->
+        <div class="hins-compare">
+          <div class="hins-box hins-good">
+            <div class="hins-title">✅ 피부양자 유지 조건</div>
+            <div class="hins-desc">자녀(직장가입자) 피부양자로 등록 → 건보료 0원</div>
+            <div class="hins-items">
+              <div class="hi-row"><span class="hi-label">소득 기준</span><span class="hi-val">모든 소득 합산 연 2,000만원 이하</span></div>
+              <div class="hi-row"><span class="hi-label">재산 기준 ①</span><span class="hi-val">재산세 과세표준 5.4억원 이하</span></div>
+              <div class="hi-row"><span class="hi-label">재산 기준 ②</span><span class="hi-val">5.4억~9억원이면 연 소득 1,000만원 이하</span></div>
+              <div class="hi-row"><span class="hi-label">재산 기준 ③</span><span class="hi-val">9억원 초과 시 소득 무관 탈락</span></div>
+              <div class="hi-row"><span class="hi-label">사업소득</span><span class="hi-val">사업자등록 시 즉시 탈락. 미등록은 연 500만원 이하 허용</span></div>
+            </div>
+          </div>
+          <div class="hins-box hins-warn">
+            <div class="hins-title">⚠️ 지역가입자 보험료 산정 방식 (2026년)</div>
+            <div class="hins-desc">소득 + 재산 기준으로 합산 산정</div>
+            <div class="hins-items">
+              <div class="hi-row"><span class="hi-label">보험료율</span><span class="hi-val">7.19% (2026년 기준)</span></div>
+              <div class="hi-row"><span class="hi-label">소득 산정</span><span class="hi-val">이자·배당·연금·사업·근로소득 합산</span></div>
+              <div class="hi-row"><span class="hi-label">재산 공제</span><span class="hi-val">대도시 1억원 / 중소도시 6,500만원 / 농어촌 3,500만원</span></div>
+              <div class="hi-row"><span class="hi-label">자동차</span><span class="hi-val">4,000만원 이상 고가차 → 재산 점수 합산</span></div>
+              <div class="hi-row"><span class="hi-label">최저 보험료</span><span class="hi-val">월 20,160원 (2026년 하한액)</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 재산 종류별 건보료 영향 -->
+        <div class="guide-table-wrap" style="margin-top:20px;">
+          <div class="guide-table-title">🏠 재산 종류별 건강보험료 영향 분석</div>
+          <table class="guide-table">
+            <thead>
+              <tr><th>재산 종류</th><th>건보료 반영 방식</th><th>절세 팁</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>🏠 주택(아파트·단독)</td>
+                <td>재산세 과세표준 × 부과점수 → 건보료 산정</td>
+                <td>지역별 기본공제(최대 1억원) 차감 후 계산</td>
+              </tr>
+              <tr>
+                <td>🚗 자동차</td>
+                <td>4,000만원 이상 고가차만 재산 점수 합산 (2025년부터 배기량 기준 폐지)</td>
+                <td>4,000만원 미만 차량은 건보료 영향 없음</td>
+              </tr>
+              <tr>
+                <td>💵 예금·적금 (일반)</td>
+                <td>이자소득이 연 2,000만원 초과 시 건보료 부과 대상</td>
+                <td>ISA·비과세종합저축 활용 시 건보료 무관</td>
+              </tr>
+              <tr>
+                <td>📈 주식·펀드 배당</td>
+                <td>배당소득이 금융소득 합산 2,000만원 초과 시 반영</td>
+                <td>ISA·비과세종합저축 계좌 내 운용 시 제외</td>
+              </tr>
+              <tr>
+                <td>🏛️ 국민연금·공적연금</td>
+                <td>연 2,000만원 초과분부터 건보료 부과</td>
+                <td>2,000만원 이하 유지 시 피부양자 자격 유지 가능</td>
+              </tr>
+              <tr>
+                <td>💎 개인연금·퇴직연금(IRP)</td>
+                <td>연금 수령 시 사적연금은 건보료 부과 없음 (종합소득 미포함)</td>
+                <td class="text-green">IRP·연금저축 연금 수령분은 건보료 부과 없음</td>
+              </tr>
+              <tr>
+                <td>🏠 주택연금 수령액</td>
+                <td>건강보험료 부과 대상 아님</td>
+                <td class="text-green">건보료 걱정 없이 안정적 현금흐름 확보</td>
+              </tr>
+              <tr>
+                <td>🏘️ 임대소득</td>
+                <td>연 2,000만원 이하: 분리과세, 초과: 종합과세 → 건보료 영향</td>
+                <td>임대소득 2,000만원 이하 유지 시 영향 최소화</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- 퇴직 후 건보료 단계별 전략 -->
+        <div class="timeline-section">
+          <div class="guide-table-title" style="margin-bottom:14px;">📋 퇴직 후 건강보험료 절감 단계별 전략</div>
+          <div class="timeline-items">
+            <div class="tl-item">
+              <div class="tl-step">1단계</div>
+              <div class="tl-content">
+                <div class="tl-title">퇴직 직후 — 임의계속가입 신청</div>
+                <div class="tl-desc">퇴직 후 최대 3년간 현직 시절 보험료 수준으로 유지 가능. 지역가입자 전환 시 보험료가 2~3배 오를 수 있으므로 퇴직 후 즉시 신청. 건강보험공단 1577-1000으로 문의</div>
+              </div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-step">2단계</div>
+              <div class="tl-content">
+                <div class="tl-title">자녀 피부양자 등록 검토</div>
+                <div class="tl-desc">소득 연 2,000만원 이하 + 재산세 과표 5.4억원 이하면 피부양자 등록 가능. 건보료 0원. 단, 소득 기준 초과 시 부부 동반 탈락 주의</div>
+              </div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-step">3단계</div>
+              <div class="tl-content">
+                <div class="tl-title">금융소득 2,000만원 이하 관리</div>
+                <div class="tl-desc">ISA·비과세종합저축에서 발생하는 소득은 건보료 산정 제외. 일반 예금·주식 배당은 이자·배당 합계를 2,000만원 이하로 관리</div>
+              </div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-step">4단계</div>
+              <div class="tl-content">
+                <div class="tl-title">고가 자동차·부동산 정리 고려</div>
+                <div class="tl-desc">차량가액 4,000만원 이상 차량은 건보료 재산 점수에 합산. 재산세 과표 9억원 초과 시 피부양자 자격 자동 탈락. 은퇴 전 자산 정리 계획 수립 권장</div>
+              </div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-step">5단계</div>
+              <div class="tl-content">
+                <div class="tl-title">퇴직금은 IRP로 이전, 연금으로 분산 수령</div>
+                <div class="tl-desc">퇴직금 일시수령 시 해당 연도 소득 급증 → 건보료 급등. IRP에 이전 후 55세 이후 연금으로 분산 수령하면 세율 절감 + 건보료 절감 이중 효과</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 건보료 절감 팁 박스 -->
+        <div class="checklist-box" style="background:#FEF3E2;">
+          <div class="cl-title" style="color:#E67E22;">💡 건강보험료 절감 핵심 포인트</div>
+          <div class="cl-item">✔ 퇴직 후 <strong>임의계속가입</strong>(3년) 또는 자녀 <strong>피부양자 등록</strong> 중 유리한 방법 선택</div>
+          <div class="cl-item">✔ <strong>사적연금(IRP·연금저축) 수령액</strong>은 건보료 부과 없음 → 적극 활용</div>
+          <div class="cl-item">✔ <strong>주택연금</strong> 수령액도 건보료 부과 없음</div>
+          <div class="cl-item">✔ <strong>ISA 계좌</strong> 내 이익은 분리과세 → 건보료 산정에서 제외</div>
+          <div class="cl-item">✔ 금융소득이 2,000만원에 근접하면 <strong>배우자 계좌 분산</strong> 고려</div>
+          <div class="cl-item">✔ 피부양자 탈락 시 <strong>4년 한시 경감</strong> 제도 확인(~2026년 8월, 1년차 80% 감면)</div>
+        </div>
+
+        <div class="action-link-row">
+          <a class="action-link" href="https://www.nhis.or.kr/nhis/minwon/initCtrbCalcView.do" target="_blank">🔗 건강보험료 모의계산 (건보공단)</a>
+          <a class="action-link" href="tel:1577-1000">📞 건강보험 고객센터 1577-1000</a>
+        </div>
+      </div>
+
+      <!-- 인쇄 버튼 -->
+      <div style="text-align:center; margin: 32px 0 16px;">
+        <button class="btn btn-outline" onclick="window.print()" style="margin-right:12px;">🖨️ 보고서 인쇄</button>
+      </div>
+
+      <div class="nav-row" style="margin-top: 20px;">
+        <button class="btn-back" onclick="gotoScreen(4)">←</button>
+        <button class="btn-next" onclick="location.reload()">처음으로 다시 시작</button>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+// ══════════════════════════════════════════
+//  SURVEY & PIN SYSTEM — 1시간 제한 1회용
+// ══════════════════════════════════════════
+
+const PIN_VALIDITY_MS = 60 * 60 * 1000; // 1시간
+
+let sessionPin   = null;
+let pinExpiresAt = null;
+let pinUsed      = false;
+let countdownTimer = null;
+let surveyData = JSON.parse(localStorage.getItem('sv_responses') || '[]');
+
+function generateOnetimePin(name, phone) {
+  const ts   = Date.now();
+  const rand = Math.floor(Math.random() * 10000);
+  const mix  = (name.charCodeAt(0) || 0) + (parseInt(phone.replace(/\D/g,'').slice(-4)) || 0) + ts + rand;
+  return String(1000 + (mix % 9000)).padStart(4, '0');
+}
+
+const chipSelections = { age: null, purpose: null };
+function selectChip(el, group) {
+  document.querySelectorAll('#sv_' + group + '_group .sv-chip').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  chipSelections[group] = el.textContent;
+  document.getElementById('err_' + group).style.display = 'none';
+}
+
+document.getElementById('sv_phone')?.addEventListener('input', function() {
+  let v = this.value.replace(/\D/g, '');
+  if      (v.length <= 3)  this.value = v;
+  else if (v.length <= 7)  this.value = v.slice(0,3) + '-' + v.slice(3);
+  else                     this.value = v.slice(0,3) + '-' + v.slice(3,7) + '-' + v.slice(7,11);
+});
+
+function submitSurvey() {
+  let valid = true;
+  const name  = document.getElementById('sv_name').value.trim();
+  const phone = document.getElementById('sv_phone').value.trim();
+  const agree = document.getElementById('sv_agree').checked;
+
+  if (!name)             { showErr('name');    valid = false; } else hideErr('name');
+  if (phone.length < 10) { showErr('phone');   valid = false; } else hideErr('phone');
+  if (!chipSelections.age)     { showErr('age');     valid = false; } else hideErr('age');
+  if (!chipSelections.purpose) { showErr('purpose'); valid = false; } else hideErr('purpose');
+  if (!agree)            { showErr('agree');   valid = false; } else hideErr('agree');
+  if (!valid) return;
+
+  sessionPin   = generateOnetimePin(name, phone);
+  pinExpiresAt = Date.now() + PIN_VALIDITY_MS;
+  pinUsed      = false;
+
+  const record = {
+    name, phone,
+    company : document.getElementById('sv_company').value.trim(),
+    age     : chipSelections.age,
+    purpose : chipSelections.purpose,
+    concern : document.getElementById('sv_concern').value.trim(),
+    time    : new Date().toLocaleString('ko-KR'),
+    pin     : sessionPin,
+    expires : new Date(pinExpiresAt).toLocaleTimeString('ko-KR')
+  };
+  surveyData.push(record);
+  try { localStorage.setItem('sv_responses', JSON.stringify(surveyData)); } catch(e) {}
+
+  document.getElementById('pinShowName').textContent         = name;
+  document.getElementById('generatedPinDisplay').textContent = sessionPin;
+  document.getElementById('pinValidityText').textContent     =
+    '발급: ' + new Date().toLocaleTimeString('ko-KR') + ' · 만료: ' + new Date(pinExpiresAt).toLocaleTimeString('ko-KR');
+
+  document.getElementById('surveyForm').classList.add('hidden');
+  document.getElementById('pinShowPanel').classList.remove('hidden');
+  setGateStep(1);
+  startCountdown();
+}
+
+function showErr(id) {
+  const el = document.getElementById('err_' + id);   if (el)  el.style.display = 'block';
+  const inp = document.getElementById('sv_' + id);   if (inp) inp.classList.add('error');
+}
+function hideErr(id) {
+  const el = document.getElementById('err_' + id);   if (el)  el.style.display = 'none';
+  const inp = document.getElementById('sv_' + id);   if (inp) inp.classList.remove('error');
+}
+
+function startCountdown() {
+  clearInterval(countdownTimer);
+  countdownTimer = setInterval(function() {
+    const left = pinExpiresAt - Date.now();
+    if (left <= 0) { clearInterval(countdownTimer); onPinExpired(); return; }
+    const mm   = String(Math.floor(left / 60000)).padStart(2,'0');
+    const ss   = String(Math.floor((left % 60000) / 1000)).padStart(2,'0');
+    const text = mm + ':' + ss;
+    const pct  = (left / PIN_VALIDITY_MS * 100).toFixed(1) + '%';
+    const cd   = document.getElementById('pinCountdown');
+    const bar  = document.getElementById('pinTimerBar');
+    const ecd  = document.getElementById('entryCountdown');
+    if (cd)  { cd.textContent = text; if (left < 300000) cd.style.color = '#E74C3C'; }
+    if (bar)   bar.style.width = pct;
+    if (ecd)   ecd.textContent = text;
+  }, 1000);
+}
+
+function onPinExpired() {
+  sessionPin = null;
+  alert('⏰ PIN 유효 시간(1시간)이 만료되었습니다.\n설문을 다시 제출해 새 PIN을 받아주세요.');
+  location.reload();
+}
+
+function copyPin() {
+  if (!sessionPin) return;
+  navigator.clipboard?.writeText(sessionPin).then(function() {
+    const btn = document.querySelector('.pin-copy-btn');
+    if (btn) { btn.textContent = '✅ 복사 완료!'; setTimeout(function(){ btn.innerHTML = '📋 PIN 복사하기'; }, 2000); }
+  });
+}
+
+function goToPinEntry() {
+  document.getElementById('pinShowPanel').classList.add('hidden');
+  document.getElementById('pinEntryPanel').classList.remove('hidden');
+  setGateStep(2);
+  document.getElementById('pd0').focus();
+}
+
+function setGateStep(step) {
+  ['gstep1','gstep2','gstep3'].forEach(function(id, i) {
+    const el = document.getElementById(id);
+    el.classList.remove('active','done');
+    if (i < step)        el.classList.add('done');
+    else if (i === step) el.classList.add('active');
+  });
+}
+
+function pinInput(el, idx) {
+  el.value = el.value.replace(/\D/g,'').slice(-1);
+  if (el.value) {
+    el.classList.add('filled');
+    el.classList.remove('error');
+    document.getElementById('pinErrorText').textContent = '';
+    if (idx < 3) document.getElementById('pd' + (idx+1)).focus();
+    else         verifyPin();
+  } else {
+    el.classList.remove('filled');
+  }
+}
+
+function verifyPin() {
+  const entered = [0,1,2,3].map(function(i){ return document.getElementById('pd'+i).value; }).join('');
+  if (entered.length < 4) {
+    document.getElementById('pinErrorText').textContent = '4자리를 모두 입력해주세요.';
+    return;
+  }
+  if (!sessionPin || Date.now() > pinExpiresAt) { onPinExpired(); return; }
+  if (pinUsed) { showPinFail('이미 사용된 PIN입니다. 설문을 다시 제출해주세요.'); return; }
+
+  if (entered === sessionPin) {
+    pinUsed    = true;
+    sessionPin = null;
+    clearInterval(countdownTimer);
+    document.getElementById('gateOverlay').classList.add('hidden');
+    const last = surveyData[surveyData.length - 1];
+    if (last) {
+      const nameEl = document.getElementById('userName');
+      if (nameEl) nameEl.value = last.name;
+      const badge = document.querySelector('.hero-badge');
+      if (badge) badge.textContent = '✨ ' + last.name + '님, 환영합니다!';
+    }
+  } else {
+    showPinFail('❌ PIN이 올바르지 않습니다. 다시 확인해주세요.');
+  }
+}
+
+function showPinFail(msg) {
+  [0,1,2,3].forEach(function(i){
+    const el = document.getElementById('pd'+i);
+    el.classList.add('error'); el.classList.remove('filled');
+  });
+  document.getElementById('pinErrorText').textContent = msg;
+  setTimeout(function(){
+    [0,1,2,3].forEach(function(i){
+      const el = document.getElementById('pd'+i);
+      el.value = ''; el.classList.remove('error');
+    });
+    document.getElementById('pd0').focus();
+  }, 1400);
+}
+
+document.addEventListener('keydown', function(e) {
+  if (e.key !== 'Backspace') return;
+  const focused = document.activeElement;
+  if (focused && focused.classList.contains('pin-digit')) {
+    const idx = parseInt(focused.id.replace('pd',''));
+    if (!focused.value && idx > 0) document.getElementById('pd' + (idx-1)).focus();
+  }
+});
+
+let adminClickCount = 0, adminClickTimer = null;
+function adminClick() {
+  adminClickCount++;
+  clearTimeout(adminClickTimer);
+  adminClickTimer = setTimeout(function(){ adminClickCount = 0; }, 2000);
+  if (adminClickCount >= 5) { adminClickCount = 0; openAdminWithPw(); }
+}
+
+function openAdminWithPw() {
+  const pw = prompt('관리자 비밀번호를 입력하세요:');
+  if (pw === 'admin1234') openAdmin();
+  else if (pw !== null)   alert('비밀번호가 올바르지 않습니다.');
+}
+
+function openAdmin() {
+  const now = new Date();
+  document.getElementById('adminPeriod').textContent      = now.getFullYear() + '년 ' + (now.getMonth()+1) + '월 ' + now.getDate() + '일';
+  document.getElementById('adminNextChange').textContent  = '설문 제출 후 1시간';
+  document.getElementById('adminSurveyCount').textContent = surveyData.length + '건';
+
+  const pinEl  = document.getElementById('adminPinDisplay');
+  const nextEl = document.getElementById('adminPinNext');
+  if (sessionPin && !pinUsed && Date.now() < pinExpiresAt) {
+    pinEl.textContent  = sessionPin;
+    const leftMin = Math.ceil((pinExpiresAt - Date.now()) / 60000);
+    nextEl.textContent = '남은 유효시간: ' + leftMin + '분 · 1회 사용 후 소멸';
+  } else {
+    pinEl.textContent  = '----';
+    nextEl.textContent = '현재 유효한 PIN 없음 (설문 제출 대기 중)';
+  }
+
+  const listEl = document.getElementById('adminSurveyList');
+  if (surveyData.length === 0) {
+    listEl.innerHTML = '<div style="font-size:12px;color:rgba(255,255,255,0.4);text-align:center;padding:20px;">설문 데이터 없음</div>';
+  } else {
+    listEl.innerHTML = [...surveyData].reverse().slice(0,10).map(function(d){
+      return '<div class="asl-item">' +
+        '<span>' + d.name + '</span> · ' + d.phone + ' · ' + (d.age||'-') + ' · ' + (d.purpose||'-') + '<br>' +
+        '<span style="color:rgba(255,255,255,0.4);font-weight:400;">' + d.time + ' · PIN 만료: ' + d.expires + '</span>' +
+        (d.concern ? '<br><em style="color:rgba(255,255,255,0.4);">"' + d.concern + '"</em>' : '') +
+        '</div>';
+    }).join('');
+  }
+  document.getElementById('adminPanel').classList.add('open');
+}
+
+function closeAdmin() { document.getElementById('adminPanel').classList.remove('open'); }
+
+// ESC로 관리자 패널 닫기
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeAdmin();
+});
+
+
+const state = {
+  currentScreen: 0,
+  totalScreens: 6,
+  toggles: {
+    severance: '일시금',
+    nps: '직접입력',
+    pension: '일시금수령',
+    cash: '현금',
+    other: '기타수입금액',
+    spSev: '퇴직금',
+    spNps: '직접입력',
+    debt: '있음',
+    edu: '있음',
+    wedding: '있음',
+    travel: '있음',
+    medical: '있음',
+    health: '있음',
+    misc: '있음',
+  },
+  hasSpouse: true,
+  livingCostMode: '부부기준',
+};
+
+// ─── INIT ───
+(function init() {
+  const sel = document.getElementById('birthYear');
+  for (let y = 1940; y <= 1990; y++) {
+    const opt = document.createElement('option');
+    opt.value = y;
+    opt.textContent = `${y}년생`;
+    sel.appendChild(opt);
+  }
+  buildStepIndicator();
+  updateProgress(0);
+
+  // Auto-update retirement period
+  ['birthYear','retireAge','lifeExp'].forEach(id => {
+    document.getElementById(id)?.addEventListener('change', updateRetirePeriod);
+    document.getElementById(id)?.addEventListener('input', updateRetirePeriod);
+  });
+})();
+
+function buildStepIndicator() {
+  const el = document.getElementById('stepIndicator');
+  el.innerHTML = '';
+  for (let i = 1; i <= 5; i++) {
+    const d = document.createElement('div');
+    d.className = 'step-dot';
+    d.id = `dot-${i}`;
+    el.appendChild(d);
+  }
+}
+
+function updateProgress(screen) {
+  const pct = screen === 0 ? 0 : Math.round((screen / 5) * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+  for (let i = 1; i <= 5; i++) {
+    const dot = document.getElementById(`dot-${i}`);
+    if (!dot) continue;
+    dot.className = 'step-dot';
+    if (i < screen) dot.classList.add('done');
+    else if (i === screen) dot.classList.add('active');
+  }
+}
+
+function gotoScreen(n) {
+  document.querySelector('.screen.active')?.classList.remove('active');
+  document.getElementById(`screen-${n}`)?.classList.add('active');
+  state.currentScreen = n;
+  updateProgress(n);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ─── RETIREMENT PERIOD ───
+function updateRetirePeriod() {
+  const birth = parseInt(document.getElementById('birthYear').value);
+  const retire = parseInt(document.getElementById('retireAge').value) || 60;
+  const life = parseInt(document.getElementById('lifeExp').value) || 85;
+  if (!birth) return;
+  const now = new Date().getFullYear();
+  const currentAge = now - birth;
+  const period = life - retire;
+  const yearsToRetire = Math.max(0, retire - currentAge);
+  document.getElementById('currentAge').textContent = currentAge;
+  document.getElementById('retirePeriod').textContent = period;
+  document.getElementById('yearsToRetire').textContent = yearsToRetire;
+  document.getElementById('retirementResultCard').style.display = 'block';
+}
+
+function goNext1() {
+  const birth = parseInt(document.getElementById('birthYear').value);
+  if (!birth) { alert('출생연도를 선택해주세요.'); return; }
+  gotoScreen(2);
+}
+
+function goNext2() { gotoScreen(3); }
+function goNext3() { gotoScreen(4); }
+
+// ─── TOGGLES ───
+function setToggle(group, val) {
+  state.toggles[group] = val;
+  const btns = document.querySelectorAll(`[id^="${group.replace(/([A-Z])/g, m => m.toLowerCase())}-"], [id^="${group}-"]`);
+  // find matching pattern
+  document.querySelectorAll('.toggle-btn').forEach(b => {
+    if (b.id && b.id.startsWith(groupToPrefix(group) + '-')) {
+      b.classList.toggle('active', b.id === `${groupToPrefix(group)}-${val}`);
+    }
+  });
+  updateFieldVisibility(group, val);
+}
+
+function groupToPrefix(g) {
+  const map = {
+    severance: 'sev', nps: 'nps', pension: 'pen', cash: 'cash', other: 'oth',
+    spSev: 'spsev', spNps: 'spnps',
+    debt: 'dbt', edu: 'edu', wedding: 'wed', travel: 'trv', medical: 'med', health: 'hlt', misc: 'mis',
+  };
+  return map[g] || g;
+}
+
+function updateFieldVisibility(group, val) {
+  const fieldMap = {
+    severance: () => toggle('severanceFields', val !== '없음'),
+    nps: () => {
+      toggle('npsAutoFields', val === '국민연금');
+      toggle('npsDirectFields', val === '직접입력');
+    },
+    pension: () => {
+      toggle('pensionFields', val !== '없음');
+      toggle('pensionSplitField', val === '분할수령');
+    },
+    cash: () => toggle('cashFields', val !== '없음'),
+    other: () => toggle('otherFields', val !== '없음'),
+    spSev: () => toggle('spSevFields', val !== '없음'),
+    spNps: () => {
+      toggle('spNpsAutoFields', val === '자동계산');
+      toggle('spNpsDirectFields', val === '직접입력');
+    },
+    debt: () => toggle('debtFields', val !== '없음'),
+    edu: () => toggle('eduFields', val !== '없음'),
+    wedding: () => toggle('weddingFields', val !== '없음'),
+    travel: () => toggle('travelFields', val !== '없음'),
+    medical: () => toggle('medicalFields', val !== '없음'),
+    health: () => toggle('healthFields', val !== '없음'),
+    misc: () => toggle('miscFields', val !== '없음'),
+  };
+  fieldMap[group]?.();
+}
+
+function toggle(id, show) {
+  const el = document.getElementById(id);
+  if (el) el.classList.toggle('hidden', !show);
+}
+
+function toggleSpouse(has) {
+  state.hasSpouse = has;
+  document.getElementById('sp-yes').classList.toggle('active', has);
+  document.getElementById('sp-no').classList.toggle('active', !has);
+  document.getElementById('spouseFields').classList.toggle('hidden', !has);
+}
+
+function setLivingCost(mode) {
+  state.livingCostMode = mode;
+  document.getElementById('lc-부부기준').classList.toggle('active', mode === '부부기준');
+  document.getElementById('lc-개인기준').classList.toggle('active', mode === '개인기준');
+  document.getElementById('lc-직접입력').classList.toggle('active', mode === '직접입력');
+  if (mode === '부부기준') document.getElementById('livingCost').value = 306;
+  else if (mode === '개인기준') document.getElementById('livingCost').value = 198;
+}
+
+// ─── CALCULATE ───
+function goNext4() {
+  const data = collectData();
+  renderResults(data);
+  gotoScreen(5);
+}
+
+function collectData() {
+  const birth = parseInt(document.getElementById('birthYear').value) || 1967;
+  const now = new Date().getFullYear();
+  const currentAge = now - birth;
+  const retireAge = parseInt(document.getElementById('retireAge').value) || 60;
+  const lifeAge = parseInt(document.getElementById('lifeExp').value) || 85;
+  const period = lifeAge - retireAge;
+
+  const v = id => parseFloat(document.getElementById(id)?.value) || 0;
+
+  // ── INCOME ──
+  const salary = v('salary');
+  const salaryFrom = v('salaryFrom') || currentAge;
+  const salaryTo = v('salaryTo') || retireAge;
+  const salaryTotal = salary * 12 * Math.max(0, salaryTo - salaryFrom);
+
+  const sevAmt = state.toggles.severance !== '없음' ? v('severanceAmt') : 0;
+  
+  // NPS
+  let npsMonthly = 0;
+  if (state.toggles.nps === '직접입력') npsMonthly = v('npsMonthly');
+  else if (state.toggles.nps === '국민연금') {
+    const yrs = parseInt(document.getElementById('npsYears').value) || 20;
+    const avg = v('npsAvgSalary') || 300;
+    npsMonthly = Math.round(avg * 0.018 * yrs / 12 * 10) / 10;
+  }
+  const npsTotal = npsMonthly * 12 * period;
+
+  const pensionAmt = state.toggles.pension !== '없음' ? v('pensionAmt') : 0;
+  const cashAmt = state.toggles.cash !== '없음' ? v('cashAmt') : 0;
+  
+  const otherAmt = state.toggles.other !== '없음' ? v('otherAmt') : 0;
+  const otherFrom = v('otherFrom') || retireAge;
+  const otherTo = v('otherTo') || lifeAge;
+  const otherTotal = otherAmt * Math.max(0, otherTo - otherFrom);
+
+  // ── SPOUSE INCOME ──
+  let spouseTotal = 0;
+  let spSalaryTotal = 0, spSevTotal = 0, spNpsTotal = 0;
+  if (state.hasSpouse) {
+    const spSalary = v('spSalary');
+    const spAge = v('spAge') || (currentAge - 2);
+    const spSalaryTo = v('spSalaryTo') || 60;
+    spSalaryTotal = spSalary * 12 * Math.max(0, spSalaryTo - spAge);
+
+    spSevTotal = state.toggles.spSev !== '없음' ? v('spSevAmt') : 0;
+
+    let spNpsMonthly = 0;
+    if (state.toggles.spNps === '직접입력') spNpsMonthly = v('spNpsMonthly');
+    else if (state.toggles.spNps === '자동계산') {
+      const yrs = parseInt(document.getElementById('spNpsYears').value) || 20;
+      const avg = v('spNpsAvg') || 250;
+      spNpsMonthly = Math.round(avg * 0.018 * yrs / 12 * 10) / 10;
+    }
+    spNpsTotal = spNpsMonthly * 12 * period;
+    spouseTotal = spSalaryTotal + spSevTotal + spNpsTotal;
+  }
+
+  const totalIncome = salaryTotal + sevAmt + npsTotal + pensionAmt + cashAmt + otherTotal + spouseTotal;
+
+  // ── EXPENSES ──
+  const livingCost = v('livingCost') || 306;
+  const livingTotal = livingCost * 12 * period;
+
+  let debtTotal = 0;
+  if (state.toggles.debt !== '없음') {
+    const m = v('debtMonthly');
+    const df = v('debtFrom') || currentAge;
+    const dt = v('debtTo') || retireAge;
+    debtTotal = m * 12 * Math.max(0, dt - df) + v('debtPrincipal');
+  }
+
+  let eduTotal = 0;
+  if (state.toggles.edu !== '없음') {
+    const et = v('eduTo') || (currentAge + 5);
+    eduTotal = v('eduAmt') * Math.max(0, et - currentAge);
+  }
+
+  let weddingTotal = 0;
+  if (state.toggles.wedding !== '없음') {
+    weddingTotal = v('weddingAmt') * (v('weddingCount') || 1);
+  }
+
+  let travelTotal = 0;
+  if (state.toggles.travel !== '없음') {
+    const tt = v('travelTo') || 75;
+    travelTotal = v('travelAmt') * Math.max(0, tt - retireAge);
+  }
+
+  const medicalTotal = state.toggles.medical !== '없음' ? v('medicalAmt') * 12 * period : 0;
+  const healthTotal = state.toggles.health !== '없음' ? v('healthAmt') * 12 * period : 0;
+  const miscTotal = state.toggles.misc !== '없음' ? v('miscAmt') * 12 * period : 0;
+
+  const totalExpense = livingTotal + debtTotal + eduTotal + weddingTotal + travelTotal + medicalTotal + healthTotal + miscTotal;
+
+  return {
+    currentAge, retireAge, lifeAge, period,
+    income: {
+      salary: salaryTotal,
+      severance: sevAmt,
+      nps: npsTotal,
+      pension: pensionAmt,
+      cash: cashAmt,
+      other: otherTotal,
+      spSalary: spSalaryTotal,
+      spSev: spSevTotal,
+      spNps: spNpsTotal,
+      total: totalIncome,
+    },
+    expense: {
+      living: livingTotal,
+      debt: debtTotal,
+      edu: eduTotal,
+      wedding: weddingTotal,
+      travel: travelTotal,
+      medical: medicalTotal,
+      health: healthTotal,
+      misc: miscTotal,
+      total: totalExpense,
+    },
+    surplus: totalIncome - totalExpense,
+  };
+}
+
+function fmt(n) {
+  if (n >= 100000000) return `${(n/100000000).toFixed(1)}억 ${Math.round((n%100000000)/10000).toLocaleString()}만원`;
+  if (n >= 10000) return `${Math.floor(n/10000).toLocaleString()}억 ${Math.round((n%10000)).toLocaleString()}만원`;
+  return `${Math.round(n).toLocaleString()}만원`;
+}
+
+function fmtM(n) { return `${Math.round(n).toLocaleString()}`; }
+
+function renderResults(d) {
+  const userName = document.getElementById('userName')?.value || '고객';
+  const coverPct = d.expense.total > 0 ? Math.min(Math.round(d.income.total / d.expense.total * 100), 200) : 100;
+  const isOk = d.surplus >= 0;
+
+  // Title
+  document.getElementById('resultTitle').textContent = `${userName}님의\n노후 자산 종합 분석 결과`;
+
+  // Status
+  const banner = document.getElementById('statusBanner');
+  banner.className = `status-banner ${isOk ? 'ok' : 'warn'}`;
+  document.getElementById('statusEmoji').textContent = isOk ? '😊' : '😰';
+  document.getElementById('statusTitle').textContent = isOk
+    ? `${userName}님의 자산은 노후 생활 기간 동안 사용하기에 적정한 상태입니다.`
+    : `${userName}님의 자산은 노후 생활 기간 동안 사용하기에 부족한 상태입니다.`;
+  document.getElementById('statusDesc').textContent = isOk
+    ? `재정적인 안정에 대한 기준은 사람마다 다르나 더욱 안정적이며 건전한 재무 상태로 강화하고자 한다면 재설계를 고려해 보세요.`
+    : `월 생활비만으로는 충족되지만 예상되는 다른 지출 비용을 사용하기에는 충분하지 않을 수 있습니다. 추가 자금 마련 계획을 세워보세요.`;
+
+  // Summary
+  const monthlyExp = Math.round(d.expense.total / (d.period * 12));
+  document.getElementById('r-period').innerHTML = `${d.period}<span class="s-unit">년</span>`;
+  document.getElementById('r-monthly').innerHTML = `${fmtM(monthlyExp)}<span class="s-unit">만원</span>`;
+  document.getElementById('r-income').innerHTML = `${fmtM(d.income.total)}<span class="s-unit">만원</span>`;
+  document.getElementById('r-expense').innerHTML = `${fmtM(d.expense.total)}<span class="s-unit">만원</span>`;
+
+  // Meter
+  document.getElementById('meterPct').textContent = `${Math.min(coverPct, 200)}%`;
+  document.getElementById('meterPct').className = `meter-pct ${isOk ? 'ok' : 'warn'}`;
+  const circle = document.getElementById('meterCircle');
+  circle.style.stroke = isOk ? 'var(--green)' : 'var(--red)';
+  const circ = 2 * Math.PI * 56;
+  const offset = circ - (Math.min(coverPct, 100) / 100) * circ;
+  setTimeout(() => {
+    circle.style.transition = 'stroke-dashoffset 1.2s cubic-bezier(0.34,1.56,0.64,1)';
+    circle.style.strokeDashoffset = offset;
+  }, 300);
+  document.getElementById('meterMsg').textContent = isOk
+    ? `수입이 지출을 ${coverPct - 100}% 초과합니다. 안정적인 노후 생활이 예상됩니다.`
+    : `지출이 수입보다 ${100 - coverPct}% 많습니다. 추가 수입원 또는 지출 감소가 필요합니다.`;
+
+  // Income card
+  const avgInc = d.period > 0 ? Math.round(d.income.total / d.period) : 0;
+  document.getElementById('r-totalIncome').textContent = fmtM(d.income.total);
+  document.getElementById('r-incPeriod').textContent = d.period;
+  document.getElementById('r-incAvg').textContent = fmtM(avgInc);
+
+  // Income breakdown
+  const incRows = [
+    { label:'퇴직 전 급여', icon:'👔', val:d.income.salary },
+    { label:'퇴직금', icon:'💼', val:d.income.severance },
+    { label:'국민연금', icon:'🏛️', val:d.income.nps },
+    { label:'개인연금', icon:'💎', val:d.income.pension },
+    { label:'현금 보유', icon:'💵', val:d.income.cash },
+    { label:'기타 수입', icon:'🏘️', val:d.income.other },
+  ];
+  if (state.hasSpouse) {
+    incRows.push(
+      { label:'배우자 급여', icon:'👔', val:d.income.spSalary },
+      { label:'배우자 퇴직금', icon:'💼', val:d.income.spSev },
+      { label:'배우자 국민연금', icon:'🏛️', val:d.income.spNps },
+    );
+  }
+  document.getElementById('incomeBreakdown').innerHTML = incRows.filter(r => r.val > 0).map(r => `
+    <div class="breakdown-row">
+      <div class="row-label"><div class="row-icon">${r.icon}</div>${r.label}</div>
+      <div class="row-val">${fmtM(r.val)}만원</div>
+    </div>`).join('');
+
+  // Expense card
+  const avgExp = monthlyExp;
+  document.getElementById('r-totalExpense').textContent = fmtM(d.expense.total);
+  document.getElementById('r-expPeriod').textContent = d.period;
+  document.getElementById('r-expAvg').textContent = fmtM(avgExp);
+
+  const expRows = [
+    { label:'생활비', icon:'🏠', val:d.expense.living },
+    { label:'부채(이자)', icon:'🏦', val:d.expense.debt },
+    { label:'자녀 교육비', icon:'🎓', val:d.expense.edu },
+    { label:'자녀 결혼지원비', icon:'💒', val:d.expense.wedding },
+    { label:'여행비', icon:'✈️', val:d.expense.travel },
+    { label:'의료비', icon:'🏥', val:d.expense.medical },
+    { label:'국민건강보험료', icon:'🏷️', val:d.expense.health },
+    { label:'기타 지출', icon:'📦', val:d.expense.misc },
+  ];
+  document.getElementById('expenseBreakdown').innerHTML = expRows.filter(r => r.val > 0).map(r => `
+    <div class="breakdown-row">
+      <div class="row-label"><div class="row-icon">${r.icon}</div>${r.label}</div>
+      <div class="row-val">${fmtM(r.val)}만원</div>
+    </div>`).join('');
+
+  // Bar chart
+  const maxVal = Math.max(d.income.total, d.expense.total, 1);
+  const chartItems = [
+    ...incRows.filter(r=>r.val>0).map(r => ({ ...r, type:'income' })),
+    ...expRows.filter(r=>r.val>0).map(r => ({ ...r, type:'expense' })),
+  ];
+  document.getElementById('compareChart').innerHTML = `
+    <div class="bar-chart-title">항목별 금액 비교 (단위: 만원)</div>
+    ${chartItems.map(r => `
+      <div class="bar-item">
+        <div class="bar-label"><span>${r.icon} ${r.label}</span><span>${fmtM(r.val).toLocaleString()}</span></div>
+        <div class="bar-track">
+          <div class="bar-fill ${r.type}" style="width: 0%" data-w="${Math.round(r.val/maxVal*100)}%"></div>
+        </div>
+      </div>`).join('')}
+  `;
+  setTimeout(() => {
+    document.querySelectorAll('.bar-fill[data-w]').forEach(el => {
+      el.style.transition = 'width 0.9s cubic-bezier(0.34,1.56,0.64,1)';
+      el.style.width = el.dataset.w;
+    });
+  }, 200);
+
+  // Final surplus
+  const surplus = d.surplus;
+  const surplusEl = document.getElementById('r-surplus');
+  if (surplus >= 0) {
+    surplusEl.style.color = 'var(--green)';
+    surplusEl.textContent = `+ ${fmtM(surplus)}만원`;
+  } else {
+    surplusEl.style.color = 'var(--red)';
+    surplusEl.textContent = `− ${fmtM(Math.abs(surplus))}만원 부족`;
+  }
+
+  const shortfall = Math.abs(surplus);
+  const extraWork = surplus < 0 ? Math.ceil(shortfall / (v('salary') * 12) * 10) / 10 : 0;
+  document.getElementById('r-adviceText').innerHTML = isOk
+    ? `👍 현재 계획대로라면 노후 생활 기간 동안 재정적으로 안정된 상태를 유지할 수 있습니다.<br><br>
+       💡 더욱 안정적인 노후를 위해 개인연금, 적금 등의 추가 자산 형성을 고려해보시면 좋습니다.`
+    : `⚠️ 현재 계획으로는 <strong>${fmtM(shortfall)}만원</strong>이 부족합니다.<br><br>
+       💡 부족분을 채우기 위한 방법을 고려해 보세요:<br>
+       · 은퇴 시기를 연장하거나 부업 수입 추가<br>
+       · 생활비 절감 계획 수립<br>
+       · 개인연금 납입 증가<br>
+       · 금융감독원 통합연금포털에서 추가 상품 검색`;
+}
+
+function v(id) { return parseFloat(document.getElementById(id)?.value) || 0; }
+</script>
+</body>
+</html>

@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>직업심리검사 — 나를 알면 길이 보입니다</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600&family=Gowun+Batang:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy:#1b2a4a; --teal:#2a7a6b; --gold:#c9973a;
+    --cream:#faf7f2; --border:rgba(27,42,74,0.1);
+    --text-dark:#1e1e2e; --text-mid:#4a4a5a; --text-soft:#7a7a8a;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:var(--cream);color:var(--text-dark);font-family:'Noto Sans KR',sans-serif;line-height:1.7;}
+
+  /* ── HEADER ── */
+  .hero{
+    background:var(--navy);
+    padding:56px 32px 52px;
+    text-align:center;
+    position:relative;overflow:hidden;
+  }
+  .hero::before{
+    content:'';position:absolute;inset:0;
+    background:
+      radial-gradient(ellipse 60% 80% at 80% 40%,rgba(42,122,107,.22) 0%,transparent 60%),
+      radial-gradient(ellipse 40% 60% at 10% 80%,rgba(201,151,58,.13) 0%,transparent 60%);
+    pointer-events:none;
+  }
+  .hero *{position:relative;z-index:1;}
+  .hero-badge{
+    display:inline-block;border:1px solid rgba(255,255,255,.2);
+    color:rgba(255,255,255,.55);font-size:11px;letter-spacing:.25em;
+    padding:5px 16px;border-radius:20px;margin-bottom:18px;
+  }
+  .hero h1{
+    font-family:'Gowun Batang',serif;
+    font-size:clamp(26px,4vw,40px);color:#fff;font-weight:700;
+    line-height:1.25;margin-bottom:10px;
+  }
+  .hero h1 span{color:#e8c278;}
+  .hero-desc{
+    font-size:14px;color:rgba(255,255,255,.55);font-weight:300;
+    max-width:480px;margin:0 auto 32px;
+  }
+
+  /* 추천 배너 */
+  .rec-row{
+    display:flex;justify-content:center;gap:10px;flex-wrap:wrap;
+    margin-bottom:8px;
+  }
+  .rec-chip{
+    background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);
+    border-radius:20px;padding:6px 16px;font-size:12px;
+    color:rgba(255,255,255,.7);display:flex;align-items:center;gap:6px;
+  }
+  .rec-chip strong{color:#e8c278;}
+
+  /* ── NOTICE ── */
+  .notice{
+    background:#fff8ee;border-left:4px solid var(--gold);
+    padding:16px 22px;margin:32px auto;max-width:860px;
+    border-radius:0 8px 8px 0;font-size:13px;color:var(--text-mid);
+  }
+  .notice strong{color:var(--navy);}
+
+  /* ── SECTION ── */
+  .section{max-width:860px;margin:0 auto;padding:0 32px 64px;}
+
+  .sec-label{
+    font-size:11px;font-weight:700;letter-spacing:.25em;
+    text-transform:uppercase;color:var(--teal);margin-bottom:14px;
+    padding-bottom:10px;border-bottom:1.5px solid rgba(42,122,107,.2);
+    display:flex;align-items:center;gap:8px;
+  }
+
+  /* ── CARD GRID ── */
+  .cards-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+    gap:14px;margin-bottom:40px;
+  }
+
+  .test-card{
+    background:#fff;border:1px solid var(--border);border-radius:14px;
+    padding:22px 20px;text-decoration:none;display:flex;flex-direction:column;
+    gap:6px;transition:transform .22s,box-shadow .22s;position:relative;overflow:hidden;
+    cursor:pointer;
+  }
+  .test-card::before{
+    content:'';position:absolute;top:0;left:0;right:0;
+    height:4px;border-radius:14px 14px 0 0;
+    background:var(--card-color, var(--teal));
+  }
+  .test-card:hover{
+    transform:translateY(-4px);
+    box-shadow:0 12px 36px rgba(27,42,74,.12);
+  }
+
+  /* 추천 강조 */
+  .test-card.hot{
+    border-color:rgba(184,50,37,.25);
+    background:linear-gradient(160deg,#fff 80%,rgba(184,50,37,.03) 100%);
+  }
+
+  /* 뱃지 행 */
+  .card-badges{display:flex;gap:6px;align-items:center;margin-bottom:4px;flex-wrap:wrap;}
+  .badge{
+    font-size:9px;font-weight:700;letter-spacing:.12em;
+    padding:2px 8px;border-radius:10px;
+  }
+  .badge-hot {background:#b83225;color:#fff;}
+  .badge-time{background:rgba(27,42,74,.08);color:var(--navy);}
+  .badge-free{background:rgba(42,122,107,.1);color:var(--teal);}
+  .badge-senior{background:rgba(138,74,16,.1);color:#7a4010;}
+  .badge-biz{background:rgba(107,58,154,.1);color:#6b3a9a;}
+
+  .card-title{
+    font-family:'Noto Serif KR',serif;
+    font-size:15.5px;font-weight:700;color:var(--navy);line-height:1.35;
+  }
+  .card-desc{font-size:12px;color:var(--text-soft);font-weight:300;line-height:1.65;flex:1;}
+  .card-footer{
+    margin-top:10px;padding-top:10px;
+    border-top:1px dashed var(--border);
+    display:flex;justify-content:space-between;align-items:center;
+  }
+  .card-cta{
+    font-size:11px;font-weight:700;
+    color:var(--card-color, var(--teal));
+    display:flex;align-items:center;gap:4px;
+  }
+  .card-target{font-size:10px;color:var(--text-soft);}
+
+  /* ── STEP GUIDE ── */
+  .step-box{
+    background:var(--navy);border-radius:16px;
+    padding:32px 28px;margin:0 0 48px;color:#fff;
+  }
+  .step-title{
+    font-family:'Gowun Batang',serif;font-size:18px;
+    color:#e8c278;margin-bottom:20px;font-weight:700;
+  }
+  .steps{display:flex;gap:0;align-items:stretch;flex-wrap:wrap;}
+  .step{
+    flex:1;min-width:140px;
+    display:flex;flex-direction:column;align-items:center;
+    text-align:center;gap:8px;padding:0 12px;position:relative;
+  }
+  .step:not(:last-child)::after{
+    content:'→';position:absolute;right:-10px;top:50%;
+    transform:translateY(-50%);color:rgba(255,255,255,.3);font-size:18px;
+  }
+  .step-num{
+    width:36px;height:36px;border-radius:50%;
+    background:rgba(255,255,255,.12);
+    display:flex;align-items:center;justify-content:center;
+    font-size:14px;font-weight:700;color:#e8c278;
+    font-family:'Gowun Batang',serif;
+  }
+  .step-text{font-size:12px;color:rgba(255,255,255,.65);font-weight:300;line-height:1.5;}
+
+  /* ── CTA BUTTON ── */
+  .main-cta{
+    display:block;text-align:center;
+    background:#e8c278;color:var(--navy);
+    padding:16px 32px;border-radius:10px;
+    font-size:15px;font-weight:700;text-decoration:none;
+    transition:background .2s,transform .2s;
+    box-shadow:0 4px 20px rgba(201,151,58,.3);
+    max-width:360px;margin:0 auto 12px;
+  }
+  .main-cta:hover{background:#f0d090;transform:translateY(-2px);}
+  .cta-note{text-align:center;font-size:11.5px;color:var(--text-soft);}
+
+  /* FOOTER */
+  .page-footer{
+    background:var(--navy);padding:22px 32px;
+    display:flex;justify-content:space-between;align-items:center;
+    flex-wrap:wrap;gap:8px;
+  }
+  .footer-logo{font-family:'Gowun Batang',serif;color:rgba(255,255,255,.55);font-size:13px;}
+  .footer-note{font-size:11px;color:rgba(255,255,255,.3);font-weight:300;}
+
+  @media(max-width:600px){
+    .section{padding:0 16px 48px;}
+    .cards-grid{grid-template-columns:1fr 1fr;}
+    .steps{gap:12px;}
+    .step:not(:last-child)::after{display:none;}
+    .rec-chip{font-size:11px;}
+  }
+  @media(max-width:380px){.cards-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<header class="hero">
+  <p class="hero-badge">소상공인시장진흥공단 경기남부 · 직무직능 컨설턴트</p>
+  <h1>나를 알면<br><span>길이 보입니다 🧭</span></h1>
+  <p class="hero-desc">폐업 후 어떤 일이 맞을지 막막하다면 — 직업심리검사로 시작해보세요.<br>고용24가 제공하는 무료 검사, 아래 카드를 클릭하면 바로 이동합니다.</p>
+  <div class="rec-row">
+    <div class="rec-chip">✦ <strong>전체 무료</strong> · 고용노동부 공식 제공</div>
+    <div class="rec-chip">✦ 회원가입 후 결과 <strong>영구 저장</strong></div>
+    <div class="rec-chip">✦ 결과 상담은 <strong>1350</strong> 고용센터</div>
+  </div>
+</header>
+
+<!-- NOTICE -->
+<div class="notice" style="margin-top:28px;">
+  <strong>💡 검사 전 확인하세요</strong><br>
+  고용24 회원가입 후 로그인 상태에서 검사를 진행해야 결과가 저장됩니다.
+  검사 결과는 전직장려수당 심화교육 신청 및 취업 상담 시 활용할 수 있어요.
+  실업급여 수급자는 직업심리검사를 <strong>구직활동 1회로 인정</strong>받을 수 있습니다.
+</div>
+
+<!-- CONTENT -->
+<div class="section">
+
+  <!-- 사용 안내 -->
+  <div class="step-box">
+    <p class="step-title">🔍 검사 이용 방법</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-text">아래 카드 클릭<br>고용24 이동</div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-text">회원가입 또는<br>로그인</div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-text">원하는 검사<br>선택 후 실시</div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-text">결과 확인 후<br>저장·출력</div>
+      </div>
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-text">컨설턴트 상담<br>연계 가능</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ① 폐업 소상공인 추천 -->
+  <p class="sec-label">🔥 폐업 소상공인에게 추천하는 검사</p>
+  <div class="cards-grid">
+
+    <a href="https://www.work24.go.kr/wk/r/c/1000/jobPsyExamList.do"
+       target="_blank" class="test-card hot" style="--card-color:#2a7a6b;">
+      <div class="card-badges">
+        <span class="badge badge-hot">🔥 1순위</span>
+        <span class="badge badge-time">⏱ 20분</span>
+        <span class="badge badge-free">무료</span>
+      </div>
+      <div class="card-title">직업선호도검사 S형</div>
+      <div class="card-desc">좋아하는 활동·관심 직업·선호 분야를 탐색해 흥미유형에 맞는 직업을 알려줘요. 가장 빠르고 핵심적인 첫 검사!</div>
+      <div class="card-footer">
+        <span class="card-target">성인 일반</span>
+        <span class="card-cta">검사 받기 →</span>
+      </div>
+    </a>
+
+    <a href="https://www.work24.go.kr/wk/r/c/1000/jobPsyExamList.do"
+       target="_blank" class="test-card hot" style="--card-color:#1a5a9a;">
+      <div class="card-badges">
+        <span class="badge badge-hot">🔥 2순위</span>
+        <span class="badge badge-time">⏱ 20분</span>
+        <span class="badge badge-free">무료</span>
+      </div>
+      <div class="card-title">직업가치관검사</div>
+      <div class="card-desc">내가 일에서 중요하게 여기는 가치(안정성·성취·대인관계 등)를 확인하고 그에 맞는 직업 분야를 안내해줘요.</div>
+      <div class="card-footer">
+        <span class="card-target">성인 일반</span>
+        <span class="card-cta">검사 받기 →</span>
+      </div>
+    </a>
+
+    <a href="https://www.work24.go.kr/wk/r/c/1000/jobPsyExamList.do"
+       target="_blank" class="test-card hot" style="--card-color:#b86820;">
+      <div class="card-badges">
+        <span class="badge badge-hot">🔥 3순위</span>
+        <span class="badge badge-time">⏱ 20분</span>
+        <span class="badge badge-free">무료</span>
+      </div>
+      <div class="card-title">구직준비도검사</div>
+      <div class="card-desc">취업 준비가 얼마나 됐는지 파악해 맞춤형 취업지원 서비스를 연결해줘요. 실업급여 구직활동 1회 인정!</div>
+      <div class="card-footer">
+        <span class="card-target">구직자 전용</span>
+        <span class="card-cta">검사 받기 →</span>
+      </div>
+    </a>
+
+    <a href="https://www.work24.go.kr/wk/r/c/1000/jobPsyExamList.do"
+       target="_blank" class="test-card hot" style="--card-color:#7a4010;">
+      <div class="card-badges">
+        <span class="badge badge-senior">준고령자</span>
+        <span class="badge badge-time">⏱ 20분</span>
+        <span class="badge badge-free">무료</span>
+      </div>
+      <div class="card-title">준고령자 직업선호도검사</div>
+      <div class="card-desc">중장년층을 위한 맞춤형 직업 흥미·선호도 검사. 50대 이상 폐업 소상공인께 특히 권장합니다.</div>
+      <div class="card-footer">
+        <span class="card-target">준고령자 (50대+)</span>
+        <span class="card-cta">검사 받기 →</span>
+      </div>
+    </a>
+
+  </div>
+
+  <!-- ② 심층 분석 -->
+  <p class="sec-label">🔬 더 깊이 알고 싶다면 — 심층 검사</p>
+  <div class="cards-grid">
+
+    <a href="https://www.work24.go.kr/wk/r/c/1000/jobPsyExamList.do"
+       target="_blank" class="test-card" style="--card-color:#2a7a6b;">
+      <div class="card-badges">
+        <span class="badge badge-time">⏱ 60분</span>
+        <span class="badge badge-free">무료</span>
+      </div>
+      <div class="card-title">직업선호도검사 L형</div>
+      <div class="card-desc">흥미 + 성격 + 생활사 특성까지 종합 분석. S형보다 정밀한 직업 추천을 원할 때. 시간 여유 있을 때 권장.</div>
+      <div class="card-footer">
+        <span class="card-target">성인 일반</span>
+        <span class="card-cta">검사 받기 →</span>
+      </div>
+    </a>
+
+    <a href="https://www.work24.go.kr/wk/r/c/1000/jobPsyExamList.do"
+       target="_blank" class="test-card" style="--card-color:#3a5a8a;">
+      <div class="card-badges">
+        <span class="badge badge-time">⏱ 80분</span>
+        <span class="badge badge-free">무료</span>
+      </div>
+      <div class="card-title">성인용 직업적성검사</div>
+      <div class="card-desc">11개 적성 요인 × 16개 하위검사로 구성. 내가 잘할 수 있는 것을 객관적으로 파악하는 가장 종합적인 검사.</div>
+      <div class="card-footer">
+        <span class="card-target">성인 일반</span>
+        <span class="card-cta">검사 받기 →</span>
+      </div>
+    </a>
+
+  </div>
+
+  <!-- ③ 목적별 -->
+  <p class="sec-label">🎯 목적별 특화 검사</p>
+  <div class="cards-grid">
+
+    <a href="https://www.work24.go.kr/wk/r/c/1000/jobPsyExamList.do"
+       target="_blank" class="test-card" style="--card-color:#6b3a9a;">
+      <div class="card-badges">
+        <span class="badge badge-biz">재창업</span>
+        <span class="badge badge-time">⏱ 20분</span>
+        <span class="badge badge-free">무료</span>
+      </div>
+      <div class="card-title">창업적성검사</div>
+      <div class="card-desc">재창업·업종전환을 고민 중이라면 필수. 창업에 필요한 역량과 성향을 진단해줘요.</div>
+      <div class="card-footer">
+        <span class="card-target">재창업 희망자</span>
+        <span class="card-cta">검사 받기 →</span>
+      </div>
+    </a>
+
+    <a href="https://www.work24.go.kr/wk/r/c/1000/jobPsyExamList.do"
+       target="_blank" class="test-card" style="--card-color:#b86820;">
+      <div class="card-badges">
+        <span class="badge badge-biz">영업직</span>
+        <span class="badge badge-time">⏱ 50분</span>
+        <span class="badge badge-free">무료</span>
+      </div>
+      <div class="card-title">영업직무 기본역량검사</div>
+      <div class="card-desc">영업·판매·서비스직 전환을 고려 중이라면. 소상공인 경험을 살릴 수 있는 대표 직군에 최적화.</div>
+      <div class="card-footer">
+        <span class="card-target">영업·판매직 희망자</span>
+        <span class="card-cta">검사 받기 →</span>
+      </div>
+    </a>
+
+    <a href="https://www.work24.go.kr/wk/r/c/1000/jobPsyExamList.do"
+       target="_blank" class="test-card" style="--card-color:#3a5a8a;">
+      <div class="card-badges">
+        <span class="badge badge-biz">IT</span>
+        <span class="badge badge-time">⏱ 95분</span>
+        <span class="badge badge-free">무료</span>
+      </div>
+      <div class="card-title">IT직무 기본역량검사</div>
+      <div class="card-desc">IT·디지털 분야로 전직을 고민 중이라면. 시간이 걸리지만 결과가 매우 상세해요.</div>
+      <div class="card-footer">
+        <span class="card-target">IT 직군 희망자</span>
+        <span class="card-cta">검사 받기 →</span>
+      </div>
+    </a>
+
+  </div>
+
+  <!-- 메인 CTA -->
+  <a href="https://www.work24.go.kr/wk/r/c/1000/jobPsyExamList.do"
+     target="_blank" class="main-cta">
+    🧭 고용24 직업심리검사 전체 목록 보기
+  </a>
+  <p class="cta-note">고용24 로그인 → 취업지원 → 취업가이드 → 직업심리검사</p>
+
+  <!-- 컨설턴트 안내 -->
+  <div style="margin-top:40px;background:var(--navy);border-radius:14px;padding:28px 24px;text-align:center;">
+    <p style="font-size:11px;letter-spacing:.2em;color:rgba(255,255,255,.5);margin-bottom:8px;">검사 후 결과가 궁금하다면</p>
+    <p style="font-family:'Gowun Batang',serif;font-size:20px;color:#fff;font-weight:700;margin-bottom:8px;">컨설턴트가 직접 해석해드려요</p>
+    <p style="font-size:13px;color:rgba(255,255,255,.55);font-weight:300;margin-bottom:20px;">
+      검사 결과를 바탕으로 어떤 직종이 맞는지,<br>
+      희망리턴패키지 교육과 어떻게 연결할지 상담해드립니다.<br>
+      <span style="color:#e8c278;font-weight:500;">✔ 상담 무료 · 소상공인시장진흥공단 경기남부 직무직능 컨설턴트</span>
+    </p>
+    <a href="https://pf.kakao.com/" target="_blank"
+       style="display:inline-flex;align-items:center;gap:8px;background:#FEE500;color:#1a1a1a;padding:13px 28px;border-radius:8px;font-size:14px;font-weight:700;text-decoration:none;">
+      💬 카카오톡 무료 상담 신청
+    </a>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer class="page-footer">
+  <span class="footer-logo">소상공인시장진흥공단 경기남부 · 직무직능 컨설턴트</span>
+  <span class="footer-note">검사 제공: 고용노동부·한국고용정보원 · 상담 무료</span>
+</footer>
+
+</body>
+</html>
