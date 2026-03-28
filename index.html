@@ -319,7 +319,7 @@ footer{background:var(--charcoal);color:rgba(255,255,255,.7);padding:40px 0;}
     <p class="section-label fade-up">Diagnosis Tools · 진단 도구</p>
     <h2 class="section-title fade-up">나를 알아가는<br/>커리어포레스트 진단 도구</h2>
     <p class="section-sub fade-up">검증된 도구로 나의 현재를 진단하고 더 나은 미래를 설계하세요. 모두 무료로 제공됩니다.</p>
-    <div style="display:grid;grid-template-columns:1fr;gap:20px;margin-top:48px;max-width:440px;" id="tools-grid">
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:48px;" id="tools-grid">
 
       <!-- 1. 생애설계 진단 (완성) -->
       <div class="fade-up" style="background:linear-gradient(135deg,var(--forest),var(--forest-light));border-radius:20px;padding:28px;color:white;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;"
@@ -338,7 +338,69 @@ footer{background:var(--charcoal);color:rgba(255,255,255,.7);padding:40px 0;}
         <a href="diagnosis-hub.html" style="display:inline-flex;align-items:center;gap:6px;background:white;color:var(--forest);padding:10px 20px;border-radius:50px;font-size:14px;font-weight:700;text-decoration:none;">진단 시작 →</a>
       </div>
 
+      <!-- 2. AI 역량 진단 (준비중) -->
+      <div class="fade-up" style="background:var(--light-gray);border-radius:20px;padding:28px;cursor:not-allowed;transition:all .2s;position:relative;overflow:hidden;border:2px dashed #ddd;" style="transition-delay:.1s">
+        <div style="position:absolute;right:-10px;top:-10px;font-size:80px;opacity:.06;">🤖</div>
+        <div style="display:inline-block;background:#ddd;color:#888;font-size:11px;padding:3px 10px;border-radius:20px;font-weight:700;margin-bottom:14px;">🔜 준비중</div>
+        <div style="font-size:36px;margin-bottom:12px;">🤖</div>
+        <h3 style="font-size:17px;font-weight:900;margin-bottom:8px;color:var(--charcoal);">AI 활용 역량 진단</h3>
+        <p style="font-size:13px;color:var(--gray);line-height:1.7;margin-bottom:18px;">나의 AI 활용 수준은? 단계별 맞춤 교육 커리큘럼을 추천해 드립니다.</p>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px;">
+          <span style="background:#eee;color:#aaa;font-size:11px;padding:3px 10px;border-radius:20px;">10분</span>
+          <span style="background:#eee;color:#aaa;font-size:11px;padding:3px 10px;border-radius:20px;">무료</span>
+        </div>
+        <div style="display:inline-flex;align-items:center;gap:6px;background:#ddd;color:#aaa;padding:10px 20px;border-radius:50px;font-size:14px;font-weight:700;">곧 오픈 예정</div>
+      </div>
 
+      <!-- 3. 소상공인 재기 진단 (준비중) -->
+      <div class="fade-up" style="background:var(--light-gray);border-radius:20px;padding:28px;cursor:not-allowed;transition:all .2s;position:relative;overflow:hidden;border:2px dashed #ddd;" style="transition-delay:.2s">
+        <div style="position:absolute;right:-10px;top:-10px;font-size:80px;opacity:.06;">🏪</div>
+        <div style="display:inline-block;background:#ddd;color:#888;font-size:11px;padding:3px 10px;border-radius:20px;font-weight:700;margin-bottom:14px;">🔜 준비중</div>
+        <div style="font-size:36px;margin-bottom:12px;">🏪</div>
+        <h3 style="font-size:17px;font-weight:900;margin-bottom:8px;color:var(--charcoal);">소상공인 재기 준비도 진단</h3>
+        <p style="font-size:13px;color:var(--gray);line-height:1.7;margin-bottom:18px;">폐업 후 재기를 위한 준비 상태를 진단하고 맞춤 지원 정책을 안내합니다.</p>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px;">
+          <span style="background:#eee;color:#aaa;font-size:11px;padding:3px 10px;border-radius:20px;">8분</span>
+          <span style="background:#eee;color:#aaa;font-size:11px;padding:3px 10px;border-radius:20px;">무료</span>
+        </div>
+        <div style="display:inline-flex;align-items:center;gap:6px;background:#ddd;color:#aaa;padding:10px 20px;border-radius:50px;font-size:14px;font-weight:700;">곧 오픈 예정</div>
+      </div>
+
+      <!-- 4. 커리어 강점 진단 (준비중) -->
+      <div class="fade-up" style="background:var(--light-gray);border-radius:20px;padding:28px;cursor:not-allowed;transition:all .2s;position:relative;overflow:hidden;border:2px dashed #ddd;">
+        <div style="position:absolute;right:-10px;top:-10px;font-size:80px;opacity:.06;">💼</div>
+        <div style="display:inline-block;background:#ddd;color:#888;font-size:11px;padding:3px 10px;border-radius:20px;font-weight:700;margin-bottom:14px;">🔜 준비중</div>
+        <div style="font-size:36px;margin-bottom:12px;">💼</div>
+        <h3 style="font-size:17px;font-weight:900;margin-bottom:8px;color:var(--charcoal);">커리어 강점 진단</h3>
+        <p style="font-size:13px;color:var(--gray);line-height:1.7;margin-bottom:18px;">나만의 강점과 적합 직무를 발견하고 재취업·이직 전략을 수립합니다.</p>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px;">
+          <span style="background:#eee;color:#aaa;font-size:11px;padding:3px 10px;border-radius:20px;">12분</span>
+          <span style="background:#eee;color:#aaa;font-size:11px;padding:3px 10px;border-radius:20px;">무료</span>
+        </div>
+        <div style="display:inline-flex;align-items:center;gap:6px;background:#ddd;color:#aaa;padding:10px 20px;border-radius:50px;font-size:14px;font-weight:700;">곧 오픈 예정</div>
+      </div>
+
+      <!-- 5. 재정 건강도 진단 (준비중) -->
+      <div class="fade-up" style="background:var(--light-gray);border-radius:20px;padding:28px;cursor:not-allowed;transition:all .2s;position:relative;overflow:hidden;border:2px dashed #ddd;" style="transition-delay:.1s">
+        <div style="position:absolute;right:-10px;top:-10px;font-size:80px;opacity:.06;">💰</div>
+        <div style="display:inline-block;background:#ddd;color:#888;font-size:11px;padding:3px 10px;border-radius:20px;font-weight:700;margin-bottom:14px;">🔜 준비중</div>
+        <div style="font-size:36px;margin-bottom:12px;">💰</div>
+        <h3 style="font-size:17px;font-weight:900;margin-bottom:8px;color:var(--charcoal);">노후 재정 건강도 진단</h3>
+        <p style="font-size:13px;color:var(--gray);line-height:1.7;margin-bottom:18px;">은퇴 후 필요한 자금과 현재 준비 상태를 진단하고 재정 설계를 안내합니다.</p>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px;">
+          <span style="background:#eee;color:#aaa;font-size:11px;padding:3px 10px;border-radius:20px;">10분</span>
+          <span style="background:#eee;color:#aaa;font-size:11px;padding:3px 10px;border-radius:20px;">무료</span>
+        </div>
+        <div style="display:inline-flex;align-items:center;gap:6px;background:#ddd;color:#aaa;padding:10px 20px;border-radius:50px;font-size:14px;font-weight:700;">곧 오픈 예정</div>
+      </div>
+
+      <!-- 6. + 추가 예정 -->
+      <div class="fade-up" style="background:var(--cream);border-radius:20px;padding:28px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;border:2px dashed var(--sage);min-height:280px;" style="transition-delay:.2s">
+        <div style="font-size:36px;margin-bottom:12px;opacity:.4;">➕</div>
+        <h3 style="font-size:16px;font-weight:700;color:var(--sage);margin-bottom:8px;">더 많은 진단 도구</h3>
+        <p style="font-size:13px;color:#aaa;line-height:1.7;">새로운 진단 도구가<br/>계속 추가될 예정입니다.</p>
+        <div style="margin-top:16px;font-size:12px;color:var(--sage);">Coming Soon 🌱</div>
+      </div>
 
     </div>
   </div>
@@ -474,7 +536,34 @@ footer{background:var(--charcoal);color:rgba(255,255,255,.7);padding:40px 0;}
   </div>
 </section>
 
-
+<!-- 수상 배너 (옵션 C) -->
+<section style="background:var(--forest);padding:60px 0;">
+  <div class="container">
+    <div class="fade-up" style="display:grid;grid-template-columns:1fr 2fr;gap:48px;align-items:center;">
+      <div>
+        <p style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:10px;font-weight:700;">Awards</p>
+        <h2 style="font-size:26px;font-weight:900;color:white;line-height:1.3;">정부기관이<br/>인정한 전문성</h2>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div style="display:flex;align-items:center;gap:14px;">
+          <div style="width:8px;height:8px;border-radius:50%;background:var(--gold);flex-shrink:0;"></div>
+          <div style="flex:1;font-size:15px;color:rgba(255,255,255,.9);">소상공인시장진흥공단 컨설턴트 <strong style="color:var(--gold);">우수상</strong></div>
+          <div style="font-size:12px;color:var(--gold);font-weight:700;">2025</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:14px;">
+          <div style="width:8px;height:8px;border-radius:50%;background:var(--gold);flex-shrink:0;"></div>
+          <div style="flex:1;font-size:15px;color:rgba(255,255,255,.9);">소상공인시장진흥공단 컨설턴트 <strong style="color:var(--gold);">최우수상</strong></div>
+          <div style="font-size:12px;color:var(--gold);font-weight:700;">2024</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:14px;">
+          <div style="width:8px;height:8px;border-radius:50%;background:var(--gold);flex-shrink:0;"></div>
+          <div style="flex:1;font-size:15px;color:rgba(255,255,255,.9);"><strong style="color:var(--gold);">고용노동부 장관상</strong> — 청년취업진로 및 장기근속 지원</div>
+          <div style="font-size:12px;color:var(--gold);font-weight:700;">2022</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
 <!-- 프로세스 -->
 <section class="section process" id="process">
@@ -519,9 +608,9 @@ footer{background:var(--charcoal);color:rgba(255,255,255,.7);padding:40px 0;}
       <div class="cta-btns">
         <a href="https://pf.kakao.com/_EJNlX" class="btn-gold">💬 카카오톡 무료 상담</a>
         <a href="diagnosis-hub.html" class="btn-outline" style="border-color:white;color:white;">🧭 무료 진단 먼저 해보기</a>
-        <a href="/cdn-cgi/l/email-protection#3950575f56795a584b5c5c4b5f564b5c4a4d175a5617524b" class="btn-outline" style="border-color:rgba(255,255,255,.5);color:rgba(255,255,255,.8);">✉️ 이메일 문의</a>
+        <a href="mailto:info@careerforest.co.kr" class="btn-outline" style="border-color:rgba(255,255,255,.5);color:rgba(255,255,255,.8);">✉️ 이메일 문의</a>
       </div>
-      <div class="cta-info">📍 경기도 오산시 원동 동부대로 &nbsp;|&nbsp; 📧 <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="98f1f6fef7d8fbf9eafdfdeafef7eafdebecb6fbf7b6f3ea">[email&#160;protected]</a></div>
+      <div class="cta-info">📍 경기도 오산시 원동 동부대로 &nbsp;|&nbsp; 📧 info@careerforest.co.kr</div>
     </div>
   </div>
 </section>
@@ -532,7 +621,7 @@ footer{background:var(--charcoal);color:rgba(255,255,255,.7);padding:40px 0;}
     <div class="footer-inner">
       <div class="footer-logo">🌲 커리어포레스트</div>
       <div class="footer-info">
-        대표: 임금희 (커리어셀파) &nbsp;|&nbsp; 이메일: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="aec7c0c8c1eecdcfdccbcbdcc8c1dccbddda80cdc180c5dc">[email&#160;protected]</a><br/>
+        대표: 임금희 (커리어셀파) &nbsp;|&nbsp; 이메일: info@careerforest.co.kr<br/>
         📍 경기도 오산시 원동 동부대로 &nbsp;|&nbsp; © 2026 Career Forest. All rights reserved.
       </div>
       <div class="footer-links">
@@ -541,4 +630,14 @@ footer{background:var(--charcoal);color:rgba(255,255,255,.7);padding:40px 0;}
         <a href="#expert">소개</a>
         <a href="diagnosis-hub.html">무료진단</a>
       </div>
-    <
+    </div>
+  </div>
+</footer>
+<script>
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+}, {threshold:0.1});
+document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
