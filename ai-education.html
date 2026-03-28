@@ -570,11 +570,11 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:#fff;border-botto
           <span style="display:inline-block;background:rgba(42,122,107,.08);color:var(--teal);font-size:10px;font-weight:700;padding:3px 10px;border-radius:10px;">⏳ 연동 예정</span>
         </div>
       </a>
-      <a href="mailto:info@careerforest.co.kr" style="text-decoration:none;">
+      <a href="/cdn-cgi/l/email-protection#2b42454d446b484a594e4e594d44594e585f054844054059" style="text-decoration:none;">
         <div style="background:#fff;border-radius:16px;padding:24px;text-align:center;border:2px solid rgba(123,94,167,.15);transition:all .2s;" onmouseover="this.style.borderColor='#7b5ea7';this.style.transform='translateY(-4px)'" onmouseout="this.style.borderColor='rgba(123,94,167,.15)';this.style.transform=''">
           <div style="font-size:32px;margin-bottom:10px;">✉️</div>
           <div style="font-size:13px;font-weight:700;color:var(--charcoal);margin-bottom:4px;">이메일 문의</div>
-          <div style="font-size:11px;color:var(--gray);margin-bottom:10px;">info@careerforest.co.kr</div>
+          <div style="font-size:11px;color:var(--gray);margin-bottom:10px;"><span class="__cf_email__" data-cfemail="d1b8bfb7be91b2b0a3b4b4a3b7bea3b4a2a5ffb2beffbaa3">[email&#160;protected]</span></div>
           <span style="display:inline-block;background:rgba(123,94,167,.08);color:#7b5ea7;font-size:10px;font-weight:700;padding:3px 10px;border-radius:10px;">✅ 즉시 가능</span>
         </div>
       </a>
@@ -590,13 +590,13 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;background:#fff;border-botto
     <div class="cta-btns">
       <a href="https://pf.kakao.com/_EJNlX" target="_blank" class="btn-gold">💬 카카오톡 문의</a>
       <a href="https://forms.gle/iaL1ysw9A5LP8Sza7" target="_blank" class="btn-outline-white">📋 상담 신청서</a>
-      <a href="mailto:info@careerforest.co.kr" class="btn-outline-white">✉️ info@careerforest.co.kr</a>
+      <a href="/cdn-cgi/l/email-protection#fc95929a93bc9f9d8e99998e9a938e998f88d29f93d2978e" class="btn-outline-white">✉️ <span class="__cf_email__" data-cfemail="eb82858d84ab888a998e8e998d84998e989fc58884c58099">[email&#160;protected]</span></a>
       <a href="index.html" class="btn-outline-white">🌐 홈으로 돌아가기</a>
     </div>
   </div>
 </section>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 function showCourse(n) {
   document.querySelectorAll('.course-section').forEach((el,i) => {
     el.classList.toggle('active', i === n);
@@ -604,18 +604,22 @@ function showCourse(n) {
   document.querySelectorAll('.tab-btn').forEach((btn,i) => {
     btn.classList.toggle('active', i === n);
   });
+  // 탭 영역으로 스크롤
+  const tabEl = document.getElementById('courses');
+  if(tabEl) tabEl.scrollIntoView({behavior:'smooth', block:'start'});
 }
 
-function toggleFaq(el) {
-  const item = el.parentElement;
-  item.classList.toggle('open');
-}
+// 외부 링크(#course-N)로 진입 시 자동 탭 활성화
+window.addEventListener('DOMContentLoaded', () => {
+  const hash = window.location.hash;
+  if(hash && hash.startsWith('#course-')) {
+    const n = parseInt(hash.replace('#course-',''));
+    if(!isNaN(n) && n >= 0 && n <= 3) {
+      showCourse(n);
+    }
+  }
+});
 
-// 스크롤 애니메이션
-const observer = new IntersectionObserver(entries => {
-  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
-}, { threshold: 0.1 });
-document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
-</script>
-</body>
-</html>
+function showCourse_orig(n) {
+  // 원본 유지용 (삭제 금지)
+  void 0;

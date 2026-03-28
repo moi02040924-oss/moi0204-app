@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AI 활용 역량 진단 | 커리어포레스트</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Gowun+Batang:wght@400;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --forest:#2D5A3D; --forest-light:#3D7A52; --sage:#7B9E87;
+  --gold:#C9A84C; --gold-light:#E8C97A;
+  --cream:#F5F0E8; --charcoal:#2C2C2C;
+  --white:#FFFFFF; --gray:#888; --light-gray:#f8f6f2;
+  --teal:#2a7a6b; --navy:#1a1a2e;
+  --purple:#7b5ea7; --terra:#C4704F;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Noto Sans KR',sans-serif;color:var(--charcoal);background:var(--light-gray);line-height:1.7;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:#fff;border-bottom:1px solid rgba(45,90,61,.12);padding:14px 0;box-shadow:0 2px 12px rgba(0,0,0,.06);}
+.nav-inner{max-width:900px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.nav-logo img{height:40px;width:auto;}
+.nav-logo-text{font-size:16px;font-weight:900;color:var(--forest);}
+.nav-logo-sub{font-size:10px;color:var(--sage);margin-top:-2px;}
+.nav-back{font-size:13px;color:var(--forest);text-decoration:none;font-weight:600;padding:7px 16px;border:1.5px solid var(--forest);border-radius:20px;transition:all .2s;}
+.nav-back:hover{background:var(--forest);color:#fff;}
+
+/* WRAP */
+.wrap{max-width:760px;margin:0 auto;padding:100px 24px 60px;}
+
+/* 출처 배너 */
+.source-banner{background:#fff;border:1px solid rgba(123,94,167,.2);border-radius:12px;padding:16px 20px;margin-bottom:24px;}
+.source-title{font-size:11px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--purple);margin-bottom:10px;}
+.source-list{display:flex;flex-direction:column;gap:6px;}
+.source-item{display:flex;gap:10px;font-size:12.5px;color:#555;line-height:1.6;}
+.source-badge{flex-shrink:0;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;}
+.badge-ok{background:rgba(39,174,96,.1);color:#27ae60;}
+.badge-warn{background:rgba(196,112,79,.1);color:var(--terra);}
+
+/* HERO CARD */
+.hero-card{background:linear-gradient(135deg,var(--navy),#1a3a28);border-radius:20px;padding:40px 36px;color:white;margin-bottom:24px;position:relative;overflow:hidden;}
+.hero-card::after{content:'🤖';position:absolute;right:-10px;top:-10px;font-size:120px;opacity:.07;}
+.hero-label{font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold-light);margin-bottom:12px;font-weight:700;}
+.hero-title{font-family:'Gowun Batang',serif;font-size:28px;font-weight:700;margin-bottom:10px;}
+.hero-sub{font-size:14px;color:rgba(255,255,255,.75);line-height:1.9;margin-bottom:20px;}
+.hero-meta{display:flex;gap:16px;flex-wrap:wrap;}
+.hero-meta-item{font-size:12px;color:rgba(255,255,255,.6);display:flex;align-items:center;gap:5px;}
+
+/* 진도 바 */
+.progress-wrap{background:#fff;border-radius:12px;padding:16px 20px;margin-bottom:20px;display:flex;align-items:center;gap:16px;}
+.progress-bar{flex:1;background:var(--light-gray);border-radius:10px;height:8px;overflow:hidden;}
+.progress-fill{height:100%;background:linear-gradient(to right,var(--forest),var(--teal));border-radius:10px;transition:width .4s ease;}
+.progress-text{font-size:13px;font-weight:700;color:var(--forest);white-space:nowrap;}
+
+/* 섹션 헤더 */
+.section-header{background:#fff;border-radius:16px;padding:20px 24px;margin-bottom:12px;border-left:4px solid var(--forest);}
+.sec-domain{font-size:10px;letter-spacing:0.2em;text-transform:uppercase;font-weight:700;margin-bottom:4px;}
+.sec-title{font-size:16px;font-weight:800;color:var(--charcoal);}
+.sec-sub{font-size:12.5px;color:var(--gray);margin-top:4px;}
+.sec-source{font-size:11px;color:var(--purple);margin-top:6px;font-style:italic;}
+
+/* 문항 카드 */
+.q-card{background:#fff;border-radius:14px;padding:22px 24px;margin-bottom:10px;border:2px solid transparent;transition:all .2s;}
+.q-card.answered{border-color:rgba(45,90,61,.2);}
+.q-num{font-size:10px;font-weight:700;letter-spacing:0.15em;color:var(--sage);margin-bottom:8px;}
+.q-text{font-size:14.5px;font-weight:600;color:var(--charcoal);line-height:1.7;margin-bottom:14px;}
+.options{display:flex;flex-direction:column;gap:6px;}
+.option{display:flex;align-items:center;gap:10px;padding:10px 14px;border:1.5px solid #e8e0d0;border-radius:10px;cursor:pointer;transition:all .15s;font-size:13.5px;color:#444;}
+.option:hover{border-color:var(--forest);background:rgba(45,90,61,.04);}
+.option.selected{border-color:var(--forest);background:rgba(45,90,61,.06);color:var(--forest);font-weight:700;}
+.option input{display:none;}
+.option-dot{width:16px;height:16px;border-radius:50%;border:2px solid #ccc;flex-shrink:0;transition:all .15s;display:flex;align-items:center;justify-content:center;}
+.option.selected .option-dot{border-color:var(--forest);background:var(--forest);}
+.option.selected .option-dot::after{content:'';width:6px;height:6px;border-radius:50%;background:#fff;}
+
+/* 버튼 */
+.btn-wrap{text-align:center;margin-top:28px;}
+.btn-next{display:inline-flex;align-items:center;gap:8px;background:var(--forest);color:#fff;padding:14px 36px;border-radius:50px;font-size:15px;font-weight:700;border:none;cursor:pointer;font-family:inherit;transition:all .2s;}
+.btn-next:hover{background:var(--forest-light);transform:translateY(-2px);}
+.btn-next:disabled{background:#ccc;cursor:not-allowed;transform:none;}
+
+/* 결과 */
+#resultSection{display:none;}
+.result-card{background:#fff;border-radius:20px;padding:36px;margin-bottom:20px;}
+.result-header{text-align:center;padding:36px;background:linear-gradient(135deg,var(--navy),#1a3a28);border-radius:16px;color:#fff;margin-bottom:24px;}
+.result-level{font-family:'Gowun Batang',serif;font-size:32px;font-weight:700;margin-bottom:8px;}
+.result-score{font-size:48px;font-weight:900;color:var(--gold-light);}
+.result-score span{font-size:20px;opacity:.7;}
+.result-desc{font-size:14px;color:rgba(255,255,255,.8);margin-top:10px;line-height:1.8;}
+
+/* 도메인 결과 */
+.domain-results{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
+@media(max-width:600px){.domain-results{grid-template-columns:1fr;}}
+.domain-card{padding:18px 20px;border-radius:14px;border:1px solid #e8e0d0;}
+.domain-name{font-size:12px;font-weight:700;margin-bottom:8px;}
+.domain-bar-wrap{background:var(--light-gray);border-radius:6px;height:10px;overflow:hidden;margin-bottom:6px;}
+.domain-bar-fill{height:100%;border-radius:6px;transition:width 1s ease;}
+.domain-score{font-size:13px;font-weight:700;text-align:right;}
+
+/* 추천 과정 */
+.recommend-section{background:var(--light-gray);border-radius:16px;padding:24px;margin-bottom:20px;}
+.rec-title{font-size:13px;font-weight:700;color:var(--forest);margin-bottom:14px;letter-spacing:0.05em;}
+.rec-cards{display:flex;flex-direction:column;gap:10px;}
+.rec-card{display:flex;align-items:center;gap:14px;background:#fff;border-radius:12px;padding:14px 18px;text-decoration:none;border:2px solid transparent;transition:all .2s;}
+.rec-card:hover{border-color:var(--forest);transform:translateX(4px);}
+.rec-icon{font-size:24px;flex-shrink:0;}
+.rec-name{font-size:13.5px;font-weight:700;color:var(--charcoal);}
+.rec-tag{font-size:11px;padding:2px 8px;border-radius:10px;margin-top:3px;display:inline-block;}
+.rec-arrow{margin-left:auto;color:var(--sage);font-size:16px;}
+
+/* 면책 */
+.disclaimer{background:rgba(123,94,167,.06);border:1px solid rgba(123,94,167,.2);border-radius:10px;padding:14px 18px;font-size:12px;color:#666;line-height:1.8;margin-top:16px;}
+.disclaimer strong{color:var(--purple);}
+
+.cta-btns{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:24px;}
+.btn-gold{display:inline-flex;align-items:center;gap:8px;background:var(--gold);color:var(--charcoal);padding:13px 24px;border-radius:50px;font-size:14px;font-weight:700;text-decoration:none;}
+.btn-outline{display:inline-flex;align-items:center;gap:8px;background:transparent;color:var(--forest);padding:13px 24px;border-radius:50px;font-size:14px;font-weight:700;text-decoration:none;border:2px solid var(--forest);}
+
+@media(max-width:600px){.hero-card{padding:28px 20px;}.result-card{padding:20px;}}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">
+      <img src="로고_배경제거_PNG.png" alt="커리어포레스트"/>
+      <div>
+        <div class="nav-logo-text">커리어포레스트</div>
+        <div class="nav-logo-sub">길을 아는 자, 셰르파!</div>
+      </div>
+    </a>
+    <a href="ai-education.html" class="nav-back">← AI 교육으로</a>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <!-- 출처 및 팩트체크 -->
+  <div class="source-banner">
+    <div class="source-title">📌 진단 도구 출처 및 팩트체크</div>
+    <div class="source-list">
+      <div class="source-item">
+        <span class="source-badge badge-ok">✅ 검증</span>
+        <span><strong>Long & Magerko (2020)</strong> — "What is AI Literacy? Competencies and Design Considerations" · ACM CHI Conference 피어리뷰 논문 · 5개 테마, 17개 핵심 역량 프레임워크 (가장 많이 인용되는 AI 리터러시 이론적 기반)</span>
+      </div>
+      <div class="source-item">
+        <span class="source-badge badge-ok">✅ 검증</span>
+        <span><strong>Ng et al. (2021)</strong> — "Conceptualizing AI Literacy: An Exploratory Review" · 학술지 피어리뷰 논문 · 인지·정의·행동 3차원 AI 리터러시 모델</span>
+      </div>
+      <div class="source-item">
+        <span class="source-badge badge-warn">⚠️ 재구성</span>
+        <span>본 진단 <strong>문항·점수 기준·추천 과정</strong>은 커리어포레스트가 위 프레임워크를 한국 현장(성인·직장인·소상공인)에 맞게 재구성한 것으로, 원 논문의 측정 도구와 동일하지 않습니다.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 히어로 -->
+  <div class="hero-card">
+    <div class="hero-label">🤖 AI Competency Diagnosis</div>
+    <h1 class="hero-title">나의 AI 활용 역량은?</h1>
+    <p class="hero-sub">20개 문항으로 AI 이해·활용·윤리 역량을 진단하고<br/>나에게 맞는 교육 과정을 추천받으세요.</p>
+    <div class="hero-meta">
+      <div class="hero-meta-item">⏱ 약 10분</div>
+      <div class="hero-meta-item">📊 4개 영역 진단</div>
+      <div class="hero-meta-item">🎯 맞춤 교육 추천</div>
+    </div>
+  </div>
+
+  <!-- 진도 -->
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    <div class="progress-text" id="progressText">0 / 20</div>
+  </div>
+
+  <!-- 문항 -->
+  <div id="quizSection">
+
+    <!-- 영역 1: AI 인식 (Long & Magerko Theme 1) -->
+    <div class="section-header">
+      <div class="sec-domain" style="color:var(--teal);">영역 1 · AI 인식 (AI Awareness)</div>
+      <div class="sec-title">AI가 무엇인지 알고 있나요?</div>
+      <div class="sec-sub">AI를 인식하고 이해하는 기초 역량</div>
+      <div class="sec-source">📚 Long & Magerko (2020) Theme 1 — "What is AI?" 기반</div>
+    </div>
+
+    <div class="q-card" data-q="1" data-domain="awareness">
+      <div class="q-num">문항 01 / 20</div>
+      <div class="q-text">챗GPT, 클로드(Claude), 네이버 클로바 등은 어떤 기술을 활용한 서비스인가요?</div>
+      <div class="options">
+        <label class="option"><input type="radio" name="q1" value="1"/><div class="option-dot"></div>빅데이터 검색 서비스</label>
+        <label class="option"><input type="radio" name="q1" value="2"/><div class="option-dot"></div>생성형 AI (Generative AI) 기반 서비스</label>
+        <label class="option"><input type="radio" name="q1" value="3"/><div class="option-dot"></div>클라우드 저장소 서비스</label>
+        <label class="option"><input type="radio" name="q1" value="4"/><div class="option-dot"></div>잘 모르겠다</label>
+      </div>
+    </div>
+
+    <div class="q-card" data-q="2" data-domain="awareness">
+      <div class="q-num">문항 02 / 20</div>
+      <div class="q-text">AI는 어떤 방식으로 답변을 생성하나요? 가장 맞는 설명은?</div>
+      <div class="options">
+        <label class="option"><input type="radio" name="q2" value="1"/><div class="option-dot"></div>미리 저장된 답변 중에서 찾아서 보여준다</label>
+        <label class="option"><input type="radio" name="q2" value="2"/><div class="option-dot"></div>인터넷을 실시간 검색해서 복사해준다</label>
+        <label class="option"><input type="radio" name="q2" value="3"/><div class="option-dot"></div>대량의 데이터로 학습한 패턴을 바탕으로 생성한다</label>
+        <label class="option"><input type="radio" name="q2" value="4"/><div class="option-dot"></div>잘 모르겠다</label>
+      </div>
+    </div>
+
+    <div class="q-card" data-q="3" data-domain="awareness">
+      <div class="q-num">문항 03 / 20</div>
+      <div class="q-text">AI가 사실과 다른 내용을 마치 사실인 것처럼 말하는 현상을 무엇이라고 하나요?</div>
+      <div class="options">
+        <label class="option"><input type="radio" name="q3" value="1"/><div class="option-dot"></div>딥러닝 오류</label>
+        <label class="option"><input type="radio" name="q3" value="2"/><div class="option-dot"></div>환각 현상 (Hallucination)</label>
+        <label class="option"><input type="radio" name="q3" value="3"/><div class="option-dot"></div>데이터 편향</label>
+        <label class="option"><input type="radio" name="q3" value="4"/><div class="option-dot"></div>알고리즘 충돌</label>
+      </div>
+    </div>
+
+    <div class="q-card" data-q="4" data-domain="awareness">
+      <div class="q-num">문항 04 / 20</div>
+      <div class="q-text">챗GPT는 학습 데이터의 기준 시점 이후 정보를 모를 수 있습니다. 이를 무엇이라고 하나요?</div>
+      <div class="options">
+        <label class="option"><input type="radio" name="q4" value="1"/><div class="option-dot"></div>서비스 점검 시간</label>
+        <label class="option"><input type="radio" name="q4" value="2"/><div class="option-dot"></div>지식 단절 (Knowledge Gap)</label>
+        <label class="option"><input type="radio" name="q4" value="3"/><div class="option-dot"></div>학습 데이터 컷오프 (Cutoff Date)</label>
+        <label class="option"><input type="radio" name="q4" value="4"/><div class="option-dot"></div>인터넷 연결 오류</label>
+      </div>
+    </div>
+
+    <div class="q-card" data-q="5" data-domain="awareness">
+      <div class="q-num">문항 05 / 20</div>
+      <div class="q-text">현재 AI(챗GPT 등)가 가장 잘 하는 것은 무엇인가요?</div>
+      <div class="options">
+        <label class="option"><input type="radio" name="q5" value="1"/><div class="option-dot"></div>완전히 새로운 아이디어를 독창적으로 창조하는 것</label>
+        <label class="option"><input type="radio" name="q5" value="2"/><div class="option-dot"></div>학습된 패턴을 기반으로 글·이미지 등을 생성하고 요약·번역하는 것</label>
+        <label class="option"><input type="radio" name="q5" value="3"/><div class="option-dot"></div>100% 정확한 사실 정보를 제공하는 것</label>
+        <label class="option"><input type="radio" name="q5" value="4"/><div class="option-dot"></div>인간의 감정을 완전히 이해하고 공감하는 것</label>
+      </div>
+    </div>
+
+    <!-- 영역 2: AI 활용 (Long & Magerko Theme 2) -->
+    <div class="section-header" style="margin-top:28px;">
+      <div class="sec-domain" style="color:var(--forest);">영역 2 · AI 활용 (AI Application)</div>
+      <div class="sec-title">AI를 실제로 얼마나 활용하고 있나요?</div>
+      <div class="sec-sub">업무·일상에서 AI 도구를 선택하고 사용하는 역량</div>
+      <div class="sec-source">📚 Long & Magerko (2020) Theme 2 — "What can AI do?" · Ng et al. (2021) 행동(Behavioral) 차원 기반</div>
+    </div>
+
+    <div class="q-card" data-q="6" data-domain="application">
+      <div class="q-num">문항 06 / 20</div>
+      <div class="q-text">AI에게 더 좋은 답변을 얻으려면 질문을 어떻게 해야 할까요?</div>
+      <div class="options">
+        <label class="option"><input type="radio" name="q6" value="1"/><div class="option-dot"></div>짧게 한 단어로만 질문한다</label>
+        <label class="option"><input type="radio" name="q6" value="2"/><div class="option-dot"></div>목적·배경·원하는 형식을 구체적으로 포함해 질문한다</label>
+        <label class="option"><input type="radio" name="q6" value="3"/><div class="option-dot"></div>여러 질문을 한꺼번에 섞어서 던진다</label>
+        <label class="option"><input type="radio" name="q6" value="4"/><div class="option-dot"></div>질문 방식은 결과에 영향이 없다</label>
+      </div>
+    </div>
+
+    <div class="q-card" data-q="7" data-domain="application">
+      <div class="q-num">문항 07 / 20</div>
+      <div class="q-text">다음 중 업무에서 AI를 활용해 본 경험이 있는 것을 모두 고르면? (가장 가까운 것 선택)</div>
+      <div class="options">
+        <label class="option"><input type="radio" name="q7" value="1"/><div class="option-dot"></div>아직 한 번도 사용해본 적 없다</label>
+        <label class="option"><input type="radio" name="q7" value="2"/><div class="option-dot"></div>개인적 호기심으로 몇 번 써봤지만 업무엔 활용 안 했다</label>
+        <label class="option"><input type="radio" name="q7" value="3"/><div class="option-dot"></div>문서 작성·번역·요약 등에 활용한 경험이 있다</label>
+        <label class="option"><input type="radio" name="q7" value="4"/><div class="option-dot"></div>AI를 정기적으로 업무에 활용하며 생산성이 높아졌다</label>
+      </div>
+    </div>
+
+    <div class="q-card" data-q="8" data-domain="application">
+      <div class="q-num">문항 08 / 20</div>
+      <div class="q-text">이미지·영상을 만드는 데 활용할 수 있는 AI 도구가 있다는 것을 알고 있나요?</div>
+      <div class="options">
+        <label class="option"><input type="radio" name="q8" value="1"/><div class="option-dot"></div>전혀 모른다</label>
+        <label class="option"><input type="radio" name="q8" value="2"/><div class="option-dot"></div>들어봤지만 써본 적은 없다</label>
+        <label class="option"><input type="radio" name="q8" value="3"/><div class="option-dot"></div>알고 있으며 한두 가지 도구를 사용해봤다</label>
+        <label class="option"><input type="radio" name="q8" value="4"/><div class="option-dot"></div>실제로 업무·콘텐츠 제작에 활용하고 있다</label>
+      </div>
+    </div>
+
+    <div class="q-card" data-q="9" data-domain="application">
+      <div class="q-num">문항 09 / 20</div>
+      <div class="q-text">AI가 작성한 답변을 받은 후 어떻게 하시나요?</div>
+      <div class="options">
+        <label class="option"><input type="radio" name="q9" value="1"/><div class="option-dot"></div>그대로 복사해서 사용한다</label>
+        <label class="option"><input type="radio" name="q9" value="2"/><div class="option-dot"></div>마음에 들지 않으면 질문을 다시 수정해서 재시도한다</label>
+        <label class="option"><input type="radio" name="q9" value="3"/><div class="option-dot"></div>내용을 검토하고 사실 확인 후 필요한 부분을 수정해 사용한다</label>
+        <label class="option"><input type="radio" name="q9" value="4"/><div class="option-dot"></div>AI 결과를 참고자료로만 활용하고 내 판단을 최우선으로 한다</label>
+      </div>
+    </div>
+
+    <div class="q-card" data-q="10" data-domain="application">
+      <div class="q-num">문항 10 / 20</div>
+      <div class="q-text">엑셀 수식이나 반복 업무 자동화에 AI를 활용할 수 있다는 것을 알고 있나요?</div>
+      <div class="options">
+        <label class="option"><input type="radio" name="q10" value="1"/><div class="option-dot"></div>전혀 모른다</label>
+        <label class="option"><input type="radio" name="q10" value="2"/><div class="option-dot"></div>들어봤지만 어떻게 하는지 모른다</label>
+        <label class="option"><input type="radio" name="q10" value="3"/><div class="option-dot"></div>알고 있으며 시도해본 적 있다</label>
+        <label class="option"><input type="radio" name="q10" value="4"/><div class="option-dot"></div>실제로 자동화에 활용하고 있다</label>
+      </div>
+    </div>
+
+    <!-- 영역 3: AI 이해 (Long & Magerko Theme 3) -->
+    <div class="section-header" style="margin-top:28px;">
+      <div class="sec-domain" style="color:var(--gold);">영역 3 · AI 이해 (AI Understanding)</div>
+      <div class="sec-title">AI가 어떻게 작동하는지 이해하고 있나요?</div>
+      <div class="sec-sub">AI의 작동 원리와 한계를 이해하는 역량 (비전문가 수준)</div>
+      <div class="sec-source">📚 Long & Magerko (2020) Theme 3 — "How does AI work?" 기반 (비기술 수준으로 재구성)</div>
+    </div>
+
+    <div class="q-card" data-q="11" data-domain="understanding">
+      <div class="q-num">문항 11 / 20</div>
+      <div class="q-text">AI가 학습하려면 무엇이 필요한가요?</div>
+      <div class="options">
+        <label class="option"><input type="radio" name="q11" value="1"/><div class="option-dot"></div>프로그래머의 직접 입력만으로 충분하다</label>
+        <label class="option"><input type="radio" name="q11" value="2"/><div class="option-dot"></div>대량의 데이터가 필요하다</label>
+        <label class="option"><input type="radio" name="q11" value="3"/><div class="option-dot"></div>인터넷 연결만 있으면 된다</label>
+        <label class="option"><input type="radio" name="q11" value="4"/><div class="option-dot"></div>잘 모르겠다</label>
+      </div>
+    </div>
+
+    <div class="q-card" data-q="12" data-domain="understanding">
+      <div class="q-num">문항 12 / 20</div>
+      <div class="q-text">AI가 특정 집단에 대해 편향된 답변을 할 수 있는 이유는?</div>
+      <div class="options">
+        <label class="option"><input type="radio" name="q12" value="1"/><div class="option-dot"></div>AI가 의도적으로 차별하도록 만들어졌기 때문</div>
+        <label class="option"><input type="radio" name="q12" value="2"/><div class="option-dot"></div>학습한 데이터 자체에 편향이 있었기 때문</label>
+        <label class="option"><input type="radio" name="q12" value="3"/><div class="option-dot"></div>AI는 항상 편향이 없다</label>
+        <label class="option"><input type="radio" name="q12" value="4"/><div class="option-dot"></div>잘 모르겠다</label>
+      </div>
+    </div>
+
+    <div class="q-card" data-q="13" data-domain="understanding">
+      <div class="q-num">문항 13 / 20</div>
+      <div class="q-text">같은 질문을 해도 AI마다 답변이 다른 이유는 무엇인가요?</div>
+      <div class="options">
+        <label class="option"><input type="radio" name="q13" value="1"/><div class="option-dot"></div>서버 위치가 달라서</label>
+        <label class="option"><input type="radio" name="q13" value="2"/><div class="option-dot"></div>학습 데이터·모델 구조·목적이 각각 다르기 때문</label>
+        <label class="option"><input type="radio" name="q13" value="3"/><div class="option-dot"></div>무작위로 답변이 생성되기 때문</label>
+        <label class="option"><input type="radio" name="q13" value="4"/><div class="option-dot"></div>잘 모르겠다</label>
+      </div>
+    </div>
+
+    <div class="q-card" data-q="14" data-domain="understanding">
+      <div class="q-num">문항 14 / 20</div>
+      <div class="q-text">AI에게 개인정보(주민등록번호, 카드번호 등)를 입력하면 안 되는 이유는?</div>
+      <div class="options">
+        <label class="option"><input type="radio" name="q14" value="1"/><div class="option-dot"></div>AI가 숫자를 처리하지 못해서</label>
+        <label class="option"><input type="radio" name="q14" value="2"/><div class="option-dot"></div>입력된 데이터가 학습에 활용되거나 서버에 저장될 수 있기 때문</label>
+        <label class="option"><input type="radio" name="q14" value="3"/><div class="option-dot"></div>AI가 오답을 줄 수 있어서</label>
+        <label class="option"><input type="radio" name="q14" value="4"/><div class="option-dot"></div>개인정보를 입력해도 상관없다</label>
+      </div>
+    </div>
+
+    <div class="q-card" data-q="15" data-domain="understanding">
+      <div class="q-num">문항 15 / 20</div>
+      <div class="q-text">AI가 현재 '할 수 없는' 것으로 가장 적절한 것은?</div>
+      <div class="options">
+        <label class="option"><input type="radio" name="q15" value="1"/><div class="option-dot"></div>긴 문서를 요약하는 것</label>
+        <label class="option"><input type="radio" name="q15" value="2"/><div class="option-dot"></div>외국어 번역</label>
+        <label class="option"><input type="radio" name="q15" value="3"/><div class="option-dot"></div>100% 사실만을 보장하며 정보를 제공하는 것</label>
+        <label class="option"><input type="radio" name="q15" value="4"/><div class="option-dot"></div>자기소개서 초안 작성</label>
+      </div>
+    </div>
+
+    <!-- 영역 4: AI 윤리·비판 (Long & Magerko Theme 4·5) -->
+    <div class="section-header" style="margin-top:28px;">
+      <div class="sec-domain" style="color:var(--purple);">영역 4 · AI 윤리·비판 (AI Ethics & Critical Thinking)</div>
+      <div class="sec-title">AI를 비판적으로 평가할 수 있나요?</div>
+      <div class="sec-sub">AI를 올바르게 평가하고 윤리적으로 활용하는 역량</div>
+      <div class="sec-source">📚 Long & Magerko (2020) Theme 4·5 — "How should AI be used?" / "How is AI perceived?" · Ng et al. (2021) 윤리(Ethical) 차원 기반</div>
+    </div>
+
+    <div class="q-card" data-q="16" data-domain="ethics">
+      <div class="q-num">문항 16 / 20</div>
+      <div class="q-text">AI가 작성한 글을 그대로 제출·게재할 때 발생할 수 있는 문제는?</div>
+      <div class="options">
+        <label class="option"><input type="radio" name="q16" value="1"/><div class="option-dot"></div>아무 문제가 없다</label>
+        <label class="option"><input type="radio" name="q16" value="2"/><div class="option-dot"></div>파일 형식이 맞지 않을 수 있다</label>
+        <label class="option"><input type="radio" name="q16" value="3"/><div class="option-dot"></div>저작권·사실 오류·AI 출처 표기 미비 등의 문제가 생길 수 있다</label>
+        <label class="option"><input type="radio" name="q16" value="4"/><div class="option-dot"></div>AI가 쓴 글은 언제나 완벽하다</label>
+      </div>
+    </div>
+
+    <div class="q-card" data-q="17" data-domain="ethics">
+      <div class="q-num">문항 17 / 20</div>
+      <div class="q-text">딥페이크(AI로 만든 가짜 영상·음성)에 대한 올바른 태도는?</div>
+      <div class="options">
+        <label class="option"><input type="radio" name="q17" value="1"/><div class="option-dot"></div>영상·음성은 항상 진짜라고 믿어도 된다</label>
+        <label class="option"><input type="radio" name="q17" value="2"/><div class="option-dot"></div>출처와 맥락을 확인하고 비판적으로 판단해야 한다</label>
+        <label class="option"><input type="radio" name="q17" value="3"/><div class="option-dot"></div>딥페이크는 존재하지 않는 개념이다</label>
+        <label class="option"><input type="radio" name="q17" value="4"/><div class="option-dot"></div>AI가 만든 콘텐츠는 언제나 구별 가능하다</label>
+      </div>
+    </div>
+
+    <div class="q-card" data-q="18" data-domain="ethics">
+      <div class="q-num">문항 18 / 20</div>
+      <div class="q-text">회사 기밀·고객 개인정보를 AI에게 입력해 분석을 요청하는 것은 적절한가요?</div>
+      <div class="options">
+        <label class="option"><input type="radio" name="q18" value="1"/><div class="option-dot"></div>AI가 분석을 잘하니 입력해도 된다</label>
+        <label class="option"><input type="radio" name="q18" value="2"/><div class="option-dot"></div>중요한 정보는 AI에 입력하기 전 정책·보안 기준을 확인해야 한다</label>
+        <label class="option"><input type="radio" name="q18" value="3"/><div class="option-dot"></div>AI 서비스는 모두 완전히 보안이 보장된다</label>
+        <label class="option"><input type="radio" name="q18" value="4"/><div class="option-dot"></div>AI 사용 자체를 금지해야 한다</label>
+      </div>
+    </div>
+
+    <div class="q-card" data-q="19" data-domain="ethics">
+      <div class="q-num">문항 19 / 20</div>
+      <div class="q-text">AI가 취업·대출 심사에 사용될 때 발생할 수 있는 문제는?</div>
+      <div class="options">
+        <label class="option"><input type="radio" name="q19" value="1"/><div class="option-dot"></div>AI는 공정하므로 아무 문제가 없다</label>
+        <label class="option"><input type="radio" name="q19" value="2"/><div class="option-dot"></div>학습 데이터의 편향이 특정 집단에 불리한 결과를 낼 수 있다</label>
+        <label class="option"><input type="radio" name="q19" value="3"/><div class="option-dot"></div>AI는 취업·대출 심사에 전혀 사용되지 않는다</label>
+        <label class="option"><input type="radio" name="q19" value="4"/><div class="option-dot"></div>잘 모르겠다</label>
+      </div>
+    </div>
+
+    <div class="q-card" data-q="20" data-domain="ethics">
+      <div class="q-num">문항 20 / 20</div>
+      <div class="q-text">AI 활용 능력이 앞으로 직업 세계에 미칠 영향에 대한 가장 균형 잡힌 시각은?</div>
+      <div class="options">
+        <label class="option"><input type="radio" name="q20" value="1"/><div class="option-dot"></div>AI가 모든 직업을 대체하므로 배울 필요가 없다</label>
+        <label class="option"><input type="radio" name="q20" value="2"/><div class="option-dot"></div>AI는 도구일 뿐이므로 전혀 신경 쓸 필요 없다</label>
+        <label class="option"><input type="radio" name="q20" value="3"/><div class="option-dot"></div>AI를 잘 활용하는 사람이 그렇지 않은 사람보다 경쟁력이 높아질 것이다</label>
+        <label class="option"><input type="radio" name="q20" value="4"/><div class="option-dot"></div>AI는 전문가만 사용하는 기술이다</label>
+      </div>
+    </div>
+
+    <div class="btn-wrap">
+      <button class="btn-next" id="submitBtn" onclick="submitQuiz()" disabled>
+        결과 확인하기 →
+      </button>
+    </div>
+  </div>
+
+  <!-- 결과 -->
+  <div id="resultSection">
+    <div class="result-header" id="resultHeader"></div>
+
+    <div class="result-card">
+      <h3 style="font-size:14px;font-weight:700;color:var(--forest);margin-bottom:16px;letter-spacing:0.05em;">📊 영역별 결과</h3>
+      <div class="domain-results" id="domainResults"></div>
+
+      <div class="recommend-section">
+        <div class="rec-title">🎯 추천 교육 과정</div>
+        <div class="rec-cards" id="recCards"></div>
+      </div>
+
+      <div class="disclaimer">
+        <strong>📌 진단 결과 안내:</strong> 본 결과는 Long & Magerko (2020), Ng et al. (2021) 프레임워크를 기반으로 커리어포레스트가 재구성한 자기보고식 진단입니다. 공인 검사 기관의 검증을 받은 심리측정 도구가 아니므로 참고자료로 활용하시고, 전문 교육 상담을 통해 정확한 수준을 확인하세요.
+      </div>
+
+      <div class="cta-btns">
+        <a href="ai-education.html" target="_blank" class="btn-gold">📚 AI 교육 과정 보기</a>
+        <a href="https://pf.kakao.com/_EJNlX" target="_blank" class="btn-outline">💬 교육 상담 신청</a>
+      </div>
+    </div>
+
+    <div class="btn-wrap" style="margin-top:12px;">
+      <button class="btn-next" onclick="resetQuiz()" style="background:var(--gray);">↩ 다시 진단하기</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// 정답 키
+const answers = {
+  q1:2, q2:3, q3:2, q4:3, q5:2,
+  q6:2, q7:4, q8:4, q9:3, q10:4,
+  q11:2, q12:2, q13:2, q14:2, q15:3,
+  q16:3, q17:2, q18:2, q19:2, q20:3
+};
+
+// q7,8,9,10은 점수형 (1→1pt 2→2pt 3→3pt 4→4pt → 정규화)
+const scoreQs = ['q7','q8','q9','q10'];
+
+const domains = {
+  awareness:     { name:'🔵 AI 인식', qs:['q1','q2','q3','q4','q5'], color:'var(--teal)' },
+  application:   { name:'🟢 AI 활용', qs:['q6','q7','q8','q9','q10'], color:'var(--forest)' },
+  understanding: { name:'🟡 AI 이해', qs:['q11','q12','q13','q14','q15'], color:'var(--gold)' },
+  ethics:        { name:'🟣 AI 윤리·비판', qs:['q16','q17','q18','q19','q20'], color:'var(--purple)' }
+};
+
+const courses = [
+  { level:[0,40], icon:'🧠', name:'AI 리터러시', tag:'입문 과정 추천', color:'rgba(42,122,107,.1)', tagColor:'var(--teal)', link:'ai-education.html#course-0' },
+  { level:[30,65], icon:'💼', name:'AI & 커리어', tag:'기초→응용 과정', color:'rgba(201,168,76,.1)', tagColor:'var(--gold)', link:'ai-education.html#course-1' },
+  { level:[55,80], icon:'⚙️', name:'AI 업무자동화', tag:'심화 과정 추천', color:'rgba(123,94,167,.1)', tagColor:'var(--purple)', link:'ai-education.html#course-2' },
+  { level:[70,100], icon:'🏪', name:'소상공인 맞춤 AI', tag:'실전 과정', color:'rgba(196,112,79,.1)', tagColor:'var(--terra)', link:'ai-education.html#course-3' }
+];
+
+let answered = {};
+
+// 옵션 클릭
+document.querySelectorAll('.option').forEach(opt => {
+  opt.addEventListener('click', () => {
+    const name = opt.querySelector('input').name;
+    const val = parseInt(opt.querySelector('input').value);
+    document.querySelectorAll(`[name="${name}"]`).forEach(i => {
+      i.closest('.option').classList.remove('selected');
+    });
+    opt.classList.add('selected');
+    opt.querySelector('input').checked = true;
+    answered[name] = val;
+    opt.closest('.q-card').classList.add('answered');
+    updateProgress();
+  });
+});
+
+function updateProgress() {
+  const total = 20;
+  const done = Object.keys(answered).length;
+  document.getElementById('progressFill').style.width = (done/total*100)+'%';
+  document.getElementById('progressText').textContent = done+' / '+total;
+  document.getElementById('submitBtn').disabled = done < total;
+}
+
+function submitQuiz() {
+  // 점수 계산
+  let totalScore = 0;
+  let domainScores = {};
+
+  Object.keys(domains).forEach(d => {
+    let score = 0;
+    domains[d].qs.forEach(q => {
+      const val = answered[q];
+      if(scoreQs.includes(q)) {
+        score += (val-1) / 3; // 0~1 정규화
+      } else {
+        score += (val === answers[q]) ? 1 : 0;
+      }
+    });
+    domainScores[d] = Math.round((score/5)*100);
+    totalScore += score;
+  });
+
+  const pct = Math.round((totalScore / 20) * 100);
+
+  let level, desc, color;
+  if(pct < 40) {
+    level='🌱 AI 입문'; desc='AI에 대한 기초 개념과 도구 활용을 차근차근 배워가면 됩니다. AI 리터러시 과정부터 시작해보세요.'; color='var(--teal)';
+  } else if(pct < 60) {
+    level='🌿 AI 초급'; desc='기본 개념은 알고 있지만 실제 활용 경험을 더 쌓아야 합니다. AI & 커리어 과정으로 실전 연결을 강화해보세요.'; color='var(--forest)';
+  } else if(pct < 80) {
+    level='🌳 AI 중급'; desc='AI를 꽤 잘 이해하고 있습니다. 업무자동화·고급 활용으로 생산성을 더 높일 수 있어요.'; color='var(--gold)';
+  } else {
+    level='🏆 AI 숙련'; desc='AI 활용 역량이 우수합니다! 더 깊은 자동화·AI 윤리·소상공인 특화 과정으로 전문성을 높여보세요.'; color='var(--purple)';
+  }
+
+  // 결과 렌더링
+  document.getElementById('resultHeader').innerHTML = `
+    <div style="font-size:12px;letter-spacing:0.15em;color:rgba(255,255,255,.5);margin-bottom:12px;">DIAGNOSIS RESULT</div>
+    <div class="result-level">${level}</div>
+    <div class="result-score">${pct}<span> / 100점</span></div>
+    <div class="result-desc">${desc}</div>
+  `;
+
+  // 도메인 결과
+  let domHtml = '';
+  Object.keys(domains).forEach(d => {
+    const sc = domainScores[d];
+    domHtml += `
+      <div class="domain-card">
+        <div class="domain-name" style="color:${domains[d].color};">${domains[d].name}</div>
+        <div class="domain-bar-wrap"><div class="domain-bar-fill" style="width:${sc}%;background:${domains[d].color};"></div></div>
+        <div class="domain-score" style="color:${domains[d].color};">${sc}점</div>
+      </div>`;
+  });
+  document.getElementById('domainResults').innerHTML = domHtml;
+
+  // 추천 과정
+  let recHtml = '';
+  courses.forEach(c => {
+    if(pct >= c.level[0] && pct <= c.level[1]) {
+      recHtml += `
+        <a href="${c.link}" target="_blank" class="rec-card" style="background:${c.color};">
+          <span class="rec-icon">${c.icon}</span>
+          <div>
+            <div class="rec-name">${c.name}</div>
+            <span class="rec-tag" style="background:rgba(0,0,0,.06);color:${c.tagColor};">${c.tag}</span>
+          </div>
+          <span class="rec-arrow">→</span>
+        </a>`;
+    }
+  });
+  if(!recHtml) recHtml = courses.map(c => `
+    <a href="${c.link}" target="_blank" class="rec-card">
+      <span class="rec-icon">${c.icon}</span>
+      <div><div class="rec-name">${c.name}</div></div>
+      <span class="rec-arrow">→</span>
+    </a>`).join('');
+  document.getElementById('recCards').innerHTML = recHtml;
+
+  document.getElementById('quizSection').style.display = 'none';
+  document.getElementById('resultSection').style.display = 'block';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function resetQuiz() {
+  answered = {};
+  document.querySelectorAll('.option').forEach(o => o.classList.remove('selected'));
+  document.querySelectorAll('.q-card').forEach(c => c.classList.remove('answered'));
+  document.querySelectorAll('input[type=radio]').forEach(r => r.checked=false);
+  updateProgress();
+  document.getElementById('quizSection').style.display = 'block';
+  document.getElementById('resultSection').style.display = 'none';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+</script>
+</body>
+</html>
