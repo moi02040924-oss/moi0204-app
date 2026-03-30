@@ -849,43 +849,7 @@ function stepper(step){
 }
 
 function printReport(){
-  // 결과 내용 수집
-  const content = document.querySelector('.result-wrap');
-  if(!content){ alert('결과 화면에서 눌러주세요!'); return; }
-
-  // 새 창에서 인쇄
-  const win = window.open('', '_blank', 'width=900,height=700');
-  if(!win){ alert('팝업이 차단되었습니다.\n브라우저 팝업 허용 후 다시 시도해주세요.'); return; }
-
-  win.document.write(`
-    <!DOCTYPE html>
-    <html lang="ko">
-    <head>
-      <meta charset="UTF-8"/>
-      <title>생애설계 진단 보고서 | 커리어포레스트</title>
-      <style>
-        *{margin:0;padding:0;box-sizing:border-box;}
-        body{font-family:'Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',sans-serif;background:white;padding:20px;}
-        .no-print{display:none!important;}
-        button{display:none!important;}
-        @media print{
-          body{padding:0;}
-          *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}
-        }
-      </style>
-    </head>
-    <body>
-      ${content.innerHTML}
-      <scr` + `ipt>
-        // 버튼 모두 숨기기
-        document.querySelectorAll('button').forEach(b=>b.style.display='none');
-        document.querySelectorAll('.no-print').forEach(el=>el.style.display='none');
-        setTimeout(()=>{ window.print(); }, 800);
-      <\/script>
-    </body>
-    </html>
-  `);
-  win.document.close();
+  window.print();
 }
 
 // ── 이벤트 핸들러 ──
