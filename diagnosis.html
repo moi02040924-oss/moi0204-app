@@ -295,7 +295,7 @@ let state={
   screen:"welcome",
   name:"",anon:false,
   leIdx:0,leAns:{},
-  domIdx:0,domAns:Array(6).fill(null).map(()=>Array(5).fill(3)),
+  domIdx:0,domAns:Array(6).fill(null).map(()=>Array(5).fill(null)),
   results:null,
   pwIn:"",pwErr:false,
   allData:[]
@@ -478,6 +478,14 @@ function render(){
   // DOMAIN QUIZ
   if(s.screen==="domain_quiz"){
     const d=DD[s.domIdx];
+    const allAnswered=s.domAns[s.domIdx].every(v=>v!==null);
+    const warnMsg=allAnswered?'':'<span style="font-size:12px;color:#e65100;">⚠️ 모든 문항에 응답해 주세요</span>';
+    const btnOpacity=allAnswered?'1':'0.4';
+    const btnDisabled=allAnswered?'':'disabled';
+    const nextLabel=s.domIdx<DD.length-1?('다음: '+DD[s.domIdx+1].name+' →'):'🎯 결과 보기';
+    const nextOnclick=s.domIdx<DD.length-1?('setState({domIdx:'+(s.domIdx+1)+'})') :'finish()';
+    const prevOnclick=s.domIdx===0?'setState({screen:"le_quiz"})':('setState({domIdx:'+(s.domIdx-1)+'})');
+
     app.innerHTML=`
     <div class="wrap" style="background:#fafafa;">
       <div class="header" style="background:${d.color};">
@@ -508,10 +516,14 @@ function render(){
           </div>`).join("")}
         </div>
         <div style="display:flex;gap:12px;justify-content:space-between;">
-          <button class="btn-outline" onclick="setState({domIdx:${s.domIdx>0?s.domIdx-1:0},screen:'${s.domIdx===0?'le_quiz':'domain_quiz'}'})">← 이전</button>
-          <button class="btn-navy" style="background:${d.color};" onclick="${s.domIdx<DD.length-1?`setState({domIdx:${s.domIdx+1}})`:'finish()'}">
-            ${s.domIdx<DD.length-1?`다음: ${DD[s.domIdx+1].name} →`:'🎯 결과 보기'}
-          </button>
+          <button class="btn-outline" onclick="${prevOnclick}">← 이전</button>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
+            ${warnMsg}
+            <button class="btn-navy" style="background:${d.color};opacity:${btnOpacity};"
+              ${btnDisabled} onclick="${nextOnclick}">
+              ${nextLabel}
+            </button>
+          </div>
         </div>
       </div>
     </div>`;
@@ -885,7 +897,7 @@ function onLeNext(){
   if(state.leIdx<LQ.length-1){
     setState({leIdx:state.leIdx+1});
   } else {
-    setState({screen:"domain_quiz",domIdx:0,domAns:Array(6).fill(null).map(()=>Array(5).fill(3))});
+    setState({screen:"domain_quiz",domIdx:0,domAns:Array(6).fill(null).map(()=>Array(5).fill(null))});
   }
 }
 function onDomScore(qi,v){
@@ -894,7 +906,7 @@ function onDomScore(qi,v){
 }
 function finish(){
   const le=calcLE();
-  const doms=DD.map((d,i)=>({...d,score:state.domAns[i].reduce((s,v)=>s+v,0)}));
+  const doms=DD.map((d,i)=>({...d,score:state.domAns[i].reduce((s,v)=>s+(v??0),0)}));
   const rec={id:Date.now(),name:state.anon?"익명":(state.name||"익명"),date:new Date().toLocaleDateString("ko-KR"),le,domains:doms.map(d=>({name:d.name,score:d.score}))};
   state.allData.push(rec);
   save();
