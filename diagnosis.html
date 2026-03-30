@@ -876,12 +876,12 @@ function printReport(){
     </head>
     <body>
       ${content.innerHTML}
-      <script>
+      <scr` + `ipt>
         // 버튼 모두 숨기기
         document.querySelectorAll('button').forEach(b=>b.style.display='none');
         document.querySelectorAll('.no-print').forEach(el=>el.style.display='none');
         setTimeout(()=>{ window.print(); }, 800);
-      </script>
+      <\/script>
     </body>
     </html>
   `);
