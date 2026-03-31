@@ -338,70 +338,84 @@ footer{background:var(--charcoal);color:rgba(255,255,255,.7);padding:40px 0;}
         <a href="diagnosis-hub.html" style="display:inline-flex;align-items:center;gap:6px;background:white;color:var(--forest);padding:10px 20px;border-radius:50px;font-size:14px;font-weight:700;text-decoration:none;">진단 시작 →</a>
       </div>
 
-      <!-- 2. AI 역량 진단 (준비중) -->
-      <div class="fade-up" style="background:var(--light-gray);border-radius:20px;padding:28px;cursor:not-allowed;transition:all .2s;position:relative;overflow:hidden;border:2px dashed #ddd;" style="transition-delay:.1s">
-        <div style="position:absolute;right:-10px;top:-10px;font-size:80px;opacity:.06;">🤖</div>
-        <div style="display:inline-block;background:#ddd;color:#888;font-size:11px;padding:3px 10px;border-radius:20px;font-weight:700;margin-bottom:14px;">🔜 준비중</div>
+      <!-- 2. AI 역량 진단 (완성) -->
+      <div class="fade-up" style="background:linear-gradient(135deg,#1a3a5c,#2563ab);border-radius:20px;padding:28px;color:white;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;" style="transition-delay:.1s"
+        onmouseover="this.style.transform='translateY(-6px)';this.style.boxShadow='0 20px 48px rgba(37,99,171,.35)'"
+        onmouseout="this.style.transform='';this.style.boxShadow=''">
+        <div style="position:absolute;right:-10px;top:-10px;font-size:80px;opacity:.1;">🤖</div>
+        <div style="display:inline-block;background:var(--gold);color:white;font-size:11px;padding:3px 10px;border-radius:20px;font-weight:700;margin-bottom:14px;">✅ 사용 가능</div>
         <div style="font-size:36px;margin-bottom:12px;">🤖</div>
-        <h3 style="font-size:17px;font-weight:900;margin-bottom:8px;color:var(--charcoal);">AI 활용 역량 진단</h3>
-        <p style="font-size:13px;color:var(--gray);line-height:1.7;margin-bottom:18px;">나의 AI 활용 수준은? 단계별 맞춤 교육 커리큘럼을 추천해 드립니다.</p>
+        <h3 style="font-size:17px;font-weight:900;margin-bottom:8px;">AI 활용 역량 진단</h3>
+        <p style="font-size:13px;opacity:.85;line-height:1.7;margin-bottom:18px;">나의 AI 활용 수준은? 단계별 맞춤 교육 커리큘럼을 추천해 드립니다.</p>
         <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px;">
-          <span style="background:#eee;color:#aaa;font-size:11px;padding:3px 10px;border-radius:20px;">10분</span>
-          <span style="background:#eee;color:#aaa;font-size:11px;padding:3px 10px;border-radius:20px;">무료</span>
+          <span style="background:rgba(255,255,255,.2);font-size:11px;padding:3px 10px;border-radius:20px;">10분</span>
+          <span style="background:rgba(255,255,255,.2);font-size:11px;padding:3px 10px;border-radius:20px;">무료</span>
         </div>
-        <div style="display:inline-flex;align-items:center;gap:6px;background:#ddd;color:#aaa;padding:10px 20px;border-radius:50px;font-size:14px;font-weight:700;">곧 오픈 예정</div>
+        <a href="ai-competency-diagnosis.html" style="display:inline-flex;align-items:center;gap:6px;background:white;color:#2563ab;padding:10px 20px;border-radius:50px;font-size:14px;font-weight:700;text-decoration:none;">진단 시작 →</a>
       </div>
 
-      <!-- 3. 소상공인 재기 진단 (준비중) -->
-      <div class="fade-up" style="background:var(--light-gray);border-radius:20px;padding:28px;cursor:not-allowed;transition:all .2s;position:relative;overflow:hidden;border:2px dashed #ddd;" style="transition-delay:.2s">
-        <div style="position:absolute;right:-10px;top:-10px;font-size:80px;opacity:.06;">🏪</div>
-        <div style="display:inline-block;background:#ddd;color:#888;font-size:11px;padding:3px 10px;border-radius:20px;font-weight:700;margin-bottom:14px;">🔜 준비중</div>
+      <!-- 3. 희망리턴패키지 안내 (완성) -->
+      <div class="fade-up" style="background:linear-gradient(135deg,#7c3d1e,#c4704f);border-radius:20px;padding:28px;color:white;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;" style="transition-delay:.2s"
+        onmouseover="this.style.transform='translateY(-6px)';this.style.boxShadow='0 20px 48px rgba(196,112,79,.35)'"
+        onmouseout="this.style.transform='';this.style.boxShadow=''">
+        <div style="position:absolute;right:-10px;top:-10px;font-size:80px;opacity:.1;">🏪</div>
+        <div style="display:inline-block;background:var(--gold);color:white;font-size:11px;padding:3px 10px;border-radius:20px;font-weight:700;margin-bottom:14px;">✅ 사용 가능</div>
         <div style="font-size:36px;margin-bottom:12px;">🏪</div>
-        <h3 style="font-size:17px;font-weight:900;margin-bottom:8px;color:var(--charcoal);">소상공인 재기 준비도 진단</h3>
-        <p style="font-size:13px;color:var(--gray);line-height:1.7;margin-bottom:18px;">폐업 후 재기를 위한 준비 상태를 진단하고 맞춤 지원 정책을 안내합니다.</p>
+        <h3 style="font-size:17px;font-weight:900;margin-bottom:8px;">희망리턴패키지 안내</h3>
+        <p style="font-size:13px;opacity:.85;line-height:1.7;margin-bottom:18px;">폐업 후 재기를 위한 종합 지원 패키지. 최대 600만원 지원 신청 방법을 안내합니다.</p>
         <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px;">
-          <span style="background:#eee;color:#aaa;font-size:11px;padding:3px 10px;border-radius:20px;">8분</span>
-          <span style="background:#eee;color:#aaa;font-size:11px;padding:3px 10px;border-radius:20px;">무료</span>
+          <span style="background:rgba(255,255,255,.2);font-size:11px;padding:3px 10px;border-radius:20px;">8분</span>
+          <span style="background:rgba(255,255,255,.2);font-size:11px;padding:3px 10px;border-radius:20px;">무료</span>
         </div>
-        <div style="display:inline-flex;align-items:center;gap:6px;background:#ddd;color:#aaa;padding:10px 20px;border-radius:50px;font-size:14px;font-weight:700;">곧 오픈 예정</div>
+        <a href="hope_return_package.html" style="display:inline-flex;align-items:center;gap:6px;background:white;color:#c4704f;padding:10px 20px;border-radius:50px;font-size:14px;font-weight:700;text-decoration:none;">바로 확인 →</a>
       </div>
 
-      <!-- 4. 커리어 강점 진단 (직업심리검사) -->
-      <div class="fade-up" style="background:linear-gradient(135deg,#1b2a4a,#2a4a7a);border-radius:20px;padding:28px;color:white;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;"
-        onmouseover="this.style.transform='translateY(-6px)';this.style.boxShadow='0 20px 48px rgba(27,42,74,.3)'"
+      <!-- 4. 커리어 강점 진단 (완성) -->
+      <div class="fade-up" style="background:linear-gradient(135deg,#3d2b6b,#5c3d8f);border-radius:20px;padding:28px;color:white;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;"
+        onmouseover="this.style.transform='translateY(-6px)';this.style.boxShadow='0 20px 48px rgba(92,61,143,.35)'"
         onmouseout="this.style.transform='';this.style.boxShadow=''">
         <div style="position:absolute;right:-10px;top:-10px;font-size:80px;opacity:.1;">💼</div>
         <div style="display:inline-block;background:var(--gold);color:white;font-size:11px;padding:3px 10px;border-radius:20px;font-weight:700;margin-bottom:14px;">✅ 사용 가능</div>
         <div style="font-size:36px;margin-bottom:12px;">💼</div>
-        <h3 style="font-size:17px;font-weight:900;margin-bottom:8px;">직업심리검사 가이드</h3>
-        <p style="font-size:13px;opacity:.85;line-height:1.7;margin-bottom:18px;">고용24 공식 직업심리검사 종류와 활용법. 내게 맞는 검사를 골라 바로 시작하세요.</p>
+        <h3 style="font-size:17px;font-weight:900;margin-bottom:8px;">강점카드 핵심역량 진단</h3>
+        <p style="font-size:13px;opacity:.85;line-height:1.7;margin-bottom:18px;">나만의 강점과 적합 직무를 발견하고 재취업·이직 전략을 수립합니다.</p>
         <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px;">
+          <span style="background:rgba(255,255,255,.2);font-size:11px;padding:3px 10px;border-radius:20px;">12분</span>
           <span style="background:rgba(255,255,255,.2);font-size:11px;padding:3px 10px;border-radius:20px;">무료</span>
-          <span style="background:rgba(255,255,255,.2);font-size:11px;padding:3px 10px;border-radius:20px;">고용24 연계</span>
         </div>
-        <a href="job_test.html" style="display:inline-flex;align-items:center;gap:6px;background:white;color:#1b2a4a;padding:10px 20px;border-radius:50px;font-size:14px;font-weight:700;text-decoration:none;">검사 보러가기 →</a>
+        <a href="강점카드_역량진단.html" style="display:inline-flex;align-items:center;gap:6px;background:white;color:#5c3d8f;padding:10px 20px;border-radius:50px;font-size:14px;font-weight:700;text-decoration:none;">진단 시작 →</a>
       </div>
 
-      <!-- 5. 재정 건강도 진단 (준비중) -->
-      <div class="fade-up" style="background:var(--light-gray);border-radius:20px;padding:28px;cursor:not-allowed;transition:all .2s;position:relative;overflow:hidden;border:2px dashed #ddd;" style="transition-delay:.1s">
-        <div style="position:absolute;right:-10px;top:-10px;font-size:80px;opacity:.06;">💰</div>
-        <div style="display:inline-block;background:#ddd;color:#888;font-size:11px;padding:3px 10px;border-radius:20px;font-weight:700;margin-bottom:14px;">🔜 준비중</div>
+      <!-- 5. 생애자산 플래너 (완성) -->
+      <div class="fade-up" style="background:linear-gradient(135deg,#1b4332,#2d6a4f);border-radius:20px;padding:28px;color:white;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;" style="transition-delay:.1s"
+        onmouseover="this.style.transform='translateY(-6px)';this.style.boxShadow='0 20px 48px rgba(27,67,50,.35)'"
+        onmouseout="this.style.transform='';this.style.boxShadow=''">
+        <div style="position:absolute;right:-10px;top:-10px;font-size:80px;opacity:.1;">💰</div>
+        <div style="display:inline-block;background:var(--gold);color:white;font-size:11px;padding:3px 10px;border-radius:20px;font-weight:700;margin-bottom:14px;">✅ 사용 가능</div>
         <div style="font-size:36px;margin-bottom:12px;">💰</div>
-        <h3 style="font-size:17px;font-weight:900;margin-bottom:8px;color:var(--charcoal);">노후 재정 건강도 진단</h3>
-        <p style="font-size:13px;color:var(--gray);line-height:1.7;margin-bottom:18px;">은퇴 후 필요한 자금과 현재 준비 상태를 진단하고 재정 설계를 안내합니다.</p>
+        <h3 style="font-size:17px;font-weight:900;margin-bottom:8px;">생애자산 플래너</h3>
+        <p style="font-size:13px;opacity:.85;line-height:1.7;margin-bottom:18px;">은퇴 후 필요한 자금과 현재 준비 상태를 진단하고 노후 재정 설계를 안내합니다.</p>
         <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px;">
-          <span style="background:#eee;color:#aaa;font-size:11px;padding:3px 10px;border-radius:20px;">10분</span>
-          <span style="background:#eee;color:#aaa;font-size:11px;padding:3px 10px;border-radius:20px;">무료</span>
+          <span style="background:rgba(255,255,255,.2);font-size:11px;padding:3px 10px;border-radius:20px;">10분</span>
+          <span style="background:rgba(255,255,255,.2);font-size:11px;padding:3px 10px;border-radius:20px;">무료</span>
         </div>
-        <div style="display:inline-flex;align-items:center;gap:6px;background:#ddd;color:#aaa;padding:10px 20px;border-radius:50px;font-size:14px;font-weight:700;">곧 오픈 예정</div>
+        <a href="retirement-planner.html" style="display:inline-flex;align-items:center;gap:6px;background:white;color:#2d6a4f;padding:10px 20px;border-radius:50px;font-size:14px;font-weight:700;text-decoration:none;">진단 시작 →</a>
       </div>
 
-      <!-- 6. + 추가 예정 -->
-      <div class="fade-up" style="background:var(--cream);border-radius:20px;padding:28px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;border:2px dashed var(--sage);min-height:280px;" style="transition-delay:.2s">
-        <div style="font-size:36px;margin-bottom:12px;opacity:.4;">➕</div>
-        <h3 style="font-size:16px;font-weight:700;color:var(--sage);margin-bottom:8px;">더 많은 진단 도구</h3>
-        <p style="font-size:13px;color:#aaa;line-height:1.7;">새로운 진단 도구가<br/>계속 추가될 예정입니다.</p>
-        <div style="margin-top:16px;font-size:12px;color:var(--sage);">Coming Soon 🌱</div>
+      <!-- 6. AI 사진관 (완성) -->
+      <div class="fade-up" style="background:linear-gradient(135deg,#0f172a,#1e3a5f);border-radius:20px;padding:28px;color:white;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;" style="transition-delay:.2s"
+        onmouseover="this.style.transform='translateY(-6px)';this.style.boxShadow='0 20px 48px rgba(15,23,42,.45)'"
+        onmouseout="this.style.transform='';this.style.boxShadow=''">
+        <div style="position:absolute;right:-10px;top:-10px;font-size:80px;opacity:.1;">📸</div>
+        <div style="display:inline-block;background:var(--gold);color:white;font-size:11px;padding:3px 10px;border-radius:20px;font-weight:700;margin-bottom:14px;">✅ 사용 가능</div>
+        <div style="font-size:36px;margin-bottom:12px;">📸</div>
+        <h3 style="font-size:17px;font-weight:900;margin-bottom:8px;">AI 사진관</h3>
+        <p style="font-size:13px;opacity:.85;line-height:1.7;margin-bottom:18px;">AI로 이력서·링크드인용 프로필 사진을 손쉽게 업그레이드하세요.</p>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px;">
+          <span style="background:rgba(255,255,255,.2);font-size:11px;padding:3px 10px;border-radius:20px;">5분</span>
+          <span style="background:rgba(255,255,255,.2);font-size:11px;padding:3px 10px;border-radius:20px;">무료 체험</span>
+        </div>
+        <a href="photo_studio.html" style="display:inline-flex;align-items:center;gap:6px;background:white;color:#1e3a5f;padding:10px 20px;border-radius:50px;font-size:14px;font-weight:700;text-decoration:none;">사진관 입장 →</a>
       </div>
 
     </div>
@@ -415,7 +429,7 @@ footer{background:var(--charcoal);color:rgba(255,255,255,.7);padding:40px 0;}
     <h2 class="section-title fade-up">소상공인을 위한<br/>최신 정책 정보</h2>
     <p class="section-sub fade-up">복잡한 정부 지원 정책을 쉽고 빠르게 정리해 드립니다. 놓치지 마세요!</p>
     <div class="blog-grid">
-      <div class="blog-card fade-up">
+      <div class="blog-card fade-up" onclick="location.href='hope_return_package.html'" style="cursor:pointer;">
         <div class="blog-thumb" style="background:#FEF3E8;">📋</div>
         <div class="blog-body">
           <div class="blog-category" style="color:var(--terra);">희망리턴패키지</div>
@@ -608,10 +622,9 @@ footer{background:var(--charcoal);color:rgba(255,255,255,.7);padding:40px 0;}
       <h2>지금 바로 시작하세요.<br/><em>첫 상담은 무료</em>입니다.</h2>
       <p>AI 시대, 혼자 고민하지 마세요.<br/>소상공인 정책부터 커리어 설계까지 — 커리어포레스트가 옆에 있습니다.</p>
       <div class="cta-btns">
-        <a href="https://pf.kakao.com/_EJNlX" class="btn-gold">💬 카카오톡 무료 상담</a>
-        <a href="https://forms.gle/iaL1ysw9A5LP8Sza7" target="_blank" class="btn-outline" style="border-color:white;color:white;">📋 상담 신청서 작성</a>
+        <a href="https://forms.gle/iaL1ysw9A5LP8Sza7" class="btn-gold">📋 무료 상담 신청서 작성</a>
+        <a href="https://pf.kakao.com/_EJNlX" class="btn-outline" style="border-color:white;color:white;">💬 카카오톡 바로 상담</a>
         <a href="diagnosis-hub.html" class="btn-outline" style="border-color:rgba(255,255,255,.5);color:rgba(255,255,255,.8);">🧭 무료 진단 먼저 해보기</a>
-        <a href="mailto:info@careerforest.co.kr" class="btn-outline" style="border-color:rgba(255,255,255,.4);color:rgba(255,255,255,.6);">✉️ 이메일 문의</a>
       </div>
       <div class="cta-info">📍 경기도 오산시 원동 동부대로 &nbsp;|&nbsp; 📧 info@careerforest.co.kr</div>
     </div>
