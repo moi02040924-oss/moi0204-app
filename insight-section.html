@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>인사이트 큐브 — 커리어포레스트</title>
+<style>
+/* =============================================
+   커리어포레스트 인사이트 큐브 섹션
+   홈페이지 삽입용 독립 스타일
+   ※ 기존 CSS와 충돌 방지를 위해 .cf-insight 네임스페이스 사용
+============================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
+
+.cf-insight * {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.cf-insight {
+  font-family: 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif;
+  background: #F4F7F5;
+  padding: 72px 20px;
+  --green: #1B5E3B;
+  --green-light: #2E7D52;
+  --green-pale: #E8F4EE;
+  --green-mid: #A8D4BB;
+  --amber: #C8860A;
+  --amber-pale: #FBF3E0;
+  --ink: #1A2030;
+  --muted: #637080;
+  --rule: #E2E8EE;
+  --white: #FFFFFF;
+}
+
+/* 섹션 헤더 */
+.cf-insight__header {
+  max-width: 1080px;
+  margin: 0 auto 48px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.cf-insight__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--green);
+  background: var(--green-pale);
+  padding: 5px 14px;
+  border-radius: 20px;
+  margin-bottom: 12px;
+  letter-spacing: 0.3px;
+}
+
+.cf-insight__title {
+  font-family: 'Noto Serif KR', serif;
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.3;
+  margin-bottom: 8px;
+}
+
+.cf-insight__title span {
+  color: var(--green);
+}
+
+.cf-insight__desc {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.8;
+  max-width: 500px;
+}
+
+.cf-insight__more {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--green);
+  text-decoration: none;
+  padding: 10px 20px;
+  border: 1.5px solid var(--green);
+  border-radius: 8px;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.cf-insight__more:hover {
+  background: var(--green);
+  color: #fff;
+}
+
+/* 통계 배너 */
+.cf-insight__stats {
+  max-width: 1080px;
+  margin: 0 auto 40px;
+  background: var(--white);
+  border-radius: 16px;
+  border: 1px solid var(--rule);
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  overflow: hidden;
+}
+
+.cf-stat {
+  padding: 24px 28px;
+  border-right: 1px solid var(--rule);
+  position: relative;
+}
+
+.cf-stat:last-child { border-right: none; }
+
+.cf-stat__num {
+  font-family: 'Noto Serif KR', serif;
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 4px;
+  line-height: 1;
+}
+
+.cf-stat__num--green { color: var(--green); }
+.cf-stat__num--amber { color: var(--amber); }
+.cf-stat__num--red   { color: #B42B2B; }
+.cf-stat__num--blue  { color: #1B4F8A; }
+
+.cf-stat__label {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.cf-stat__sub {
+  font-size: 11px;
+  color: var(--green);
+  margin-top: 6px;
+  font-weight: 500;
+}
+
+/* 카드 그리드 */
+.cf-insight__grid {
+  max-width: 1080px;
+  margin: 0 auto 32px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+/* 블로그 카드 */
+.cf-card {
+  background: var(--white);
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--rule);
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.cf-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 48px rgba(27, 94, 59, 0.13);
+}
+
+.cf-card__thumb {
+  height: 148px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 20px;
+  overflow: hidden;
+}
+
+.cf-card__thumb--1 { background: linear-gradient(140deg, #0F3B25 0%, #1E7A4A 100%); }
+.cf-card__thumb--2 { background: linear-gradient(140deg, #5C2E00 0%, #B8720A 100%); }
+.cf-card__thumb--3 { background: linear-gradient(140deg, #0F2B4E 0%, #1C5C98 100%); }
+
+.cf-card__thumb::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 80% 20%, rgba(255,255,255,0.08) 0%, transparent 60%);
+}
+
+.cf-card__cat {
+  display: inline-block;
+  background: rgba(255,255,255,0.2);
+  color: rgba(255,255,255,0.95);
+  font-size: 11px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  position: relative;
+  z-index: 1;
+  width: fit-content;
+}
+
+.cf-card__emoji {
+  font-size: 36px;
+  opacity: 0.35;
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.cf-card__num {
+  font-family: 'Noto Serif KR', serif;
+  font-size: 48px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.12);
+  line-height: 1;
+  position: absolute;
+  right: 16px;
+  bottom: 10px;
+}
+
+.cf-card__body {
+  padding: 20px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.cf-card__meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.cf-card__date {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.cf-card__dot {
+  width: 3px;
+  height: 3px;
+  background: var(--muted);
+  border-radius: 50%;
+}
+
+.cf-card__tag {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--green);
+}
+
+.cf-card__title {
+  font-family: 'Noto Serif KR', serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.55;
+  margin-bottom: 10px;
+}
+
+.cf-card__excerpt {
+  font-size: 12.5px;
+  color: var(--muted);
+  line-height: 1.8;
+  flex: 1;
+}
+
+.cf-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 14px;
+  margin-top: 14px;
+  border-top: 1px solid var(--rule);
+}
+
+.cf-card__read {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--green);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.cf-card__read-arrow {
+  display: inline-block;
+  transition: transform 0.2s;
+}
+
+.cf-card:hover .cf-card__read-arrow {
+  transform: translateX(4px);
+}
+
+.cf-card__time {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+/* 하이라이트 배너 */
+.cf-insight__banner {
+  max-width: 1080px;
+  margin: 0 auto 32px;
+  background: linear-gradient(135deg, #0F3B25 0%, #1E6040 60%, #0F3B25 100%);
+  border-radius: 16px;
+  padding: 32px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+.cf-insight__banner::before {
+  content: '';
+  position: absolute;
+  right: -40px;
+  top: -60px;
+  width: 260px;
+  height: 260px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.05);
+}
+
+.cf-insight__banner::after {
+  content: '';
+  position: absolute;
+  right: 120px;
+  bottom: -80px;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.04);
+}
+
+.cf-banner__left {
+  position: relative;
+  z-index: 1;
+}
+
+.cf-banner__eyebrow {
+  font-size: 12px;
+  color: rgba(255,255,255,0.65);
+  margin-bottom: 8px;
+  letter-spacing: 0.3px;
+}
+
+.cf-banner__title {
+  font-family: 'Noto Serif KR', serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.4;
+  margin-bottom: 6px;
+}
+
+.cf-banner__desc {
+  font-size: 13px;
+  color: rgba(255,255,255,0.72);
+  line-height: 1.7;
+}
+
+.cf-banner__actions {
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.cf-banner__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 11px 22px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.2s;
+  white-space: nowrap;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.cf-banner__btn--primary {
+  background: #fff;
+  color: var(--green);
+  border: none;
+}
+
+.cf-banner__btn--primary:hover {
+  background: #E8F4EE;
+}
+
+.cf-banner__btn--ghost {
+  background: rgba(255,255,255,0.12);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.25);
+}
+
+.cf-banner__btn--ghost:hover {
+  background: rgba(255,255,255,0.22);
+}
+
+/* 키워드 태그 */
+.cf-insight__keywords {
+  max-width: 1080px;
+  margin: 0 auto;
+}
+
+.cf-keywords__label {
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.cf-keywords__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.cf-kw {
+  font-size: 12px;
+  padding: 5px 14px;
+  border-radius: 20px;
+  border: 1px solid var(--rule);
+  color: var(--muted);
+  text-decoration: none;
+  transition: all 0.15s;
+  background: var(--white);
+}
+
+.cf-kw:hover {
+  border-color: var(--green-mid);
+  color: var(--green);
+  background: var(--green-pale);
+}
+
+.cf-kw--hot {
+  border-color: var(--green-mid);
+  color: var(--green);
+  background: var(--green-pale);
+  font-weight: 500;
+}
+
+/* 반응형 */
+@media (max-width: 900px) {
+  .cf-insight__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .cf-insight__stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .cf-stat:nth-child(2) { border-right: none; }
+  .cf-stat:nth-child(3) { border-top: 1px solid var(--rule); }
+  .cf-stat:nth-child(4) { border-top: 1px solid var(--rule); border-right: none; }
+  .cf-insight__banner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .cf-insight__header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 600px) {
+  .cf-insight__grid {
+    grid-template-columns: 1fr;
+  }
+  .cf-insight__stats {
+    grid-template-columns: 1fr 1fr;
+  }
+  .cf-insight__title {
+    font-size: 24px;
+  }
+  .cf-insight {
+    padding: 48px 16px;
+  }
+  .cf-insight__banner {
+    padding: 24px;
+  }
+  .cf-banner__actions {
+    flex-direction: column;
+    width: 100%;
+  }
+  .cf-banner__btn {
+    justify-content: center;
+  }
+}
+
+/* 애니메이션 (스크롤 없이 자동 실행) */
+@keyframes cf-fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.cf-card { animation: cf-fadeUp 0.5s ease both; }
+.cf-card:nth-child(1) { animation-delay: 0.05s; }
+.cf-card:nth-child(2) { animation-delay: 0.15s; }
+.cf-card:nth-child(3) { animation-delay: 0.25s; }
+.cf-insight__banner { animation: cf-fadeUp 0.5s ease 0.3s both; }
+</style>
+</head>
+<body>
+
+<!--
+  ═══════════════════════════════════════════════════
+  커리어포레스트 · 인사이트 큐브 섹션
+  홈페이지 삽입 방법:
+  1. <style> 블록 → 기존 CSS 파일에 추가 (또는 <head>에 삽입)
+  2. <section class="cf-insight"> ~ </section> → 홈페이지 원하는 위치에 붙여넣기
+  3. 링크(href)를 실제 블로그 URL로 교체
+  ═══════════════════════════════════════════════════
+-->
+
+<section class="cf-insight">
+
+  <!-- 헤더 -->
+  <div class="cf-insight__header">
+    <div>
+      <div class="cf-insight__label">📊 인사이트 큐브</div>
+      <h2 class="cf-insight__title">현장에서 나온<br><span>진짜 소상공인 정보</span></h2>
+      <p class="cf-insight__desc">16년 현장 경험을 바탕으로 서울 상권·폐업 전략·컨설팅 인사이트를 정리합니다.</p>
+    </div>
+    <a href="https://blog.naver.com/moi0204" target="_blank" class="cf-insight__more">
+      블로그 전체보기 →
+    </a>
+  </div>
+
+  <!-- 핵심 통계 -->
+  <div class="cf-insight__stats">
+    <div class="cf-stat">
+      <div class="cf-stat__num cf-stat__num--green">65만</div>
+      <div class="cf-stat__label">서울시 소상공인 사업체</div>
+      <div class="cf-stat__sub">전국의 약 20% 집중</div>
+    </div>
+    <div class="cf-stat">
+      <div class="cf-stat__num cf-stat__num--amber">13.8%</div>
+      <div class="cf-stat__label">서울 가두상권 평균 공실률</div>
+      <div class="cf-stat__sub">전년比 0.9%p 개선 (2025 4Q)</div>
+    </div>
+    <div class="cf-stat">
+      <div class="cf-stat__num cf-stat__num--red">1억 236만</div>
+      <div class="cf-stat__label">폐업 시점 평균 부채액</div>
+      <div class="cf-stat__sub">새출발기금으로 최대 90% 감면 가능</div>
+    </div>
+    <div class="cf-stat">
+      <div class="cf-stat__num cf-stat__num--blue">78.2%</div>
+      <div class="cf-stat__label">정부 지원 미활용 소상공인</div>
+      <div class="cf-stat__sub">이유 1위: "몰라서" (66.9%)</div>
+    </div>
+  </div>
+
+  <!-- 블로그 카드 3개 -->
+  <div class="cf-insight__grid">
+
+    <a class="cf-card" href="https://blog.naver.com/moi0204" target="_blank">
+      <div class="cf-card__thumb cf-card__thumb--1">
+        <div class="cf-card__cat">상권 분석</div>
+        <span class="cf-card__emoji">🗺️</span>
+        <div class="cf-card__num">01</div>
+      </div>
+      <div class="cf-card__body">
+        <div class="cf-card__meta">
+          <span class="cf-card__date">2026. 04</span>
+          <span class="cf-card__dot"></span>
+          <span class="cf-card__tag">상권 트렌드</span>
+        </div>
+        <div class="cf-card__title">2026 서울 상권 지도 — 뜨는 곳, 버티는 곳, 떠나야 할 곳</div>
+        <p class="cf-card__excerpt">성수·청담·용리단길은 왜 뜨고, 가로수길은 왜 지는가. 최신 데이터로 서울 상권의 명암을 정직하게 정리했습니다. 창업·운영·폐업 결정 전에 꼭 읽어보세요.</p>
+        <div class="cf-card__footer">
+          <span class="cf-card__read">읽기 <span class="cf-card__read-arrow">→</span></span>
+          <span class="cf-card__time">5분 소요</span>
+        </div>
+      </div>
+    </a>
+
+    <a class="cf-card" href="https://blog.naver.com/moi0204" target="_blank">
+      <div class="cf-card__thumb cf-card__thumb--2">
+        <div class="cf-card__cat">재기 전략</div>
+        <span class="cf-card__emoji">💰</span>
+        <div class="cf-card__num">02</div>
+      </div>
+      <div class="cf-card__body">
+        <div class="cf-card__meta">
+          <span class="cf-card__date">2026. 04</span>
+          <span class="cf-card__dot"></span>
+          <span class="cf-card__tag">폐업·재기</span>
+        </div>
+        <div class="cf-card__title">폐업할 때 돈 덜 잃는 법 — 아무도 알려주지 않는 원금손실 최소화 전략</div>
+        <p class="cf-card__excerpt">평균 폐업 비용 2,188만원. 그러나 알고 챙기면 수백~수천만원이 달라집니다. 타이밍부터 부채 구조조정, 정부 지원까지 단계별 정리.</p>
+        <div class="cf-card__footer">
+          <span class="cf-card__read">읽기 <span class="cf-card__read-arrow">→</span></span>
+          <span class="cf-card__time">6분 소요</span>
+        </div>
+      </div>
+    </a>
+
+    <a class="cf-card" href="https://blog.naver.com/moi0204" target="_blank">
+      <div class="cf-card__thumb cf-card__thumb--3">
+        <div class="cf-card__cat">컨설턴트 인사이트</div>
+        <span class="cf-card__emoji">🧭</span>
+        <div class="cf-card__num">03</div>
+      </div>
+      <div class="cf-card__body">
+        <div class="cf-card__meta">
+          <span class="cf-card__date">2026. 04</span>
+          <span class="cf-card__dot"></span>
+          <span class="cf-card__tag">윤리·신뢰</span>
+        </div>
+        <div class="cf-card__title">좋은 컨설턴트의 조건 — "듣기 좋은 말"이 아니라 "도움이 되는 말"</div>
+        <p class="cf-card__excerpt">의뢰인이 원하는 답과 데이터가 말하는 답이 다를 때 어떻게 해야 할까요? 16년 현장에서 지켜온 컨설팅 윤리 원칙을 솔직하게 씁니다.</p>
+        <div class="cf-card__footer">
+          <span class="cf-card__read">읽기 <span class="cf-card__read-arrow">→</span></span>
+          <span class="cf-card__time">5분 소요</span>
+        </div>
+      </div>
+    </a>
+
+  </div>
+
+  <!-- CTA 배너 -->
+  <div class="cf-insight__banner">
+    <div class="cf-banner__left">
+      <div class="cf-banner__eyebrow">🌿 커리어포레스트 · 1:1 무료 상담</div>
+      <div class="cf-banner__title">경영이 막막하다면, 혼자 고민하지 마세요</div>
+      <p class="cf-banner__desc">폐업 고민, 재창업 준비, 업종전환까지 — 16년 경력 전문가와 1:1로 이야기 나눠보세요.</p>
+    </div>
+    <div class="cf-banner__actions">
+      <a href="https://pf.kakao.com/_EJNlX" target="_blank" class="cf-banner__btn cf-banner__btn--primary">
+        💬 카카오로 상담하기
+      </a>
+      <a href="https://forms.gle/iaL1ysw9A5LP8Sza7" target="_blank" class="cf-banner__btn cf-banner__btn--ghost">
+        📋 사전 신청서 작성
+      </a>
+    </div>
+  </div>
+
+  <!-- 키워드 태그 -->
+  <div class="cf-insight__keywords">
+    <div class="cf-keywords__label">인기 키워드</div>
+    <div class="cf-keywords__list">
+      <a href="https://blog.naver.com/moi0204" class="cf-kw cf-kw--hot">#성수동상권</a>
+      <a href="https://blog.naver.com/moi0204" class="cf-kw cf-kw--hot">#새출발기금</a>
+      <a href="https://blog.naver.com/moi0204" class="cf-kw cf-kw--hot">#업종닥터</a>
+      <a href="https://blog.naver.com/moi0204" class="cf-kw">#서울상권분석</a>
+      <a href="https://blog.naver.com/moi0204" class="cf-kw">#폐업지원</a>
+      <a href="https://blog.naver.com/moi0204" class="cf-kw">#원금손실최소화</a>
+      <a href="https://blog.naver.com/moi0204" class="cf-kw">#희망리턴패키지</a>
+      <a href="https://blog.naver.com/moi0204" class="cf-kw">#노란우산공제</a>
+      <a href="https://blog.naver.com/moi0204" class="cf-kw">#상권양극화</a>
+      <a href="https://blog.naver.com/moi0204" class="cf-kw">#소상공인컨설팅</a>
+      <a href="https://blog.naver.com/moi0204" class="cf-kw">#재기전략</a>
+      <a href="https://blog.naver.com/moi0204" class="cf-kw">#컨설턴트윤리</a>
+    </div>
+  </div>
+
+</section>
+
+</body>
+</html>
