@@ -467,7 +467,7 @@ function render(){
           </div>
         </div>
         <div style="display:flex;justify-content:space-between;">
-          <button class="btn-outline" onclick="setState({leIdx:Math.max(0,${s.leIdx}-1),screen:${s.leIdx}===0?'\'info\'':'\'le_quiz\''})">← 이전</button>
+          <button class="btn-outline" onclick="setState({leIdx:Math.max(0,${s.leIdx}-1),screen:${s.leIdx}===0?'info':'le_quiz'})">← 이전</button>
           ${s.leAns[s.leIdx]!==undefined?`<button class="btn-navy" onclick="onLeNext()">다음 →</button>`:''}
         </div>
       </div>
@@ -478,14 +478,6 @@ function render(){
   // DOMAIN QUIZ
   if(s.screen==="domain_quiz"){
     const d=DD[s.domIdx];
-    const allAnswered=s.domAns[s.domIdx].every(v=>v!==null);
-    const warnMsg=allAnswered?'':'<span style="font-size:12px;color:#e65100;">⚠️ 모든 문항에 응답해 주세요</span>';
-    const btnOpacity=allAnswered?'1':'0.4';
-    const btnDisabled=allAnswered?'':'disabled';
-    const nextLabel=s.domIdx<DD.length-1?('다음: '+DD[s.domIdx+1].name+' →'):'🎯 결과 보기';
-    const nextOnclick=s.domIdx<DD.length-1?('setState({domIdx:'+(s.domIdx+1)+'})') :'finish()';
-    const prevOnclick=s.domIdx===0?'setState({screen:"le_quiz"})':('setState({domIdx:'+(s.domIdx-1)+'})');
-
     app.innerHTML=`
     <div class="wrap" style="background:#fafafa;">
       <div class="header" style="background:${d.color};">
@@ -516,14 +508,14 @@ function render(){
           </div>`).join("")}
         </div>
         <div style="display:flex;gap:12px;justify-content:space-between;">
-          <button class="btn-outline" onclick="${prevOnclick}">← 이전</button>
-          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;">
-            ${warnMsg}
-            <button class="btn-navy" style="background:${d.color};opacity:${btnOpacity};"
-              ${btnDisabled} onclick="${nextOnclick}">
-              ${nextLabel}
-            </button>
-          </div>
+          <button class="btn-outline" onclick="setState({domIdx:${s.domIdx>0?s.domIdx-1:0},screen:'${s.domIdx===0?'le_quiz':'domain_quiz'}'})">← 이전</button>
+          ${s.domAns[s.domIdx].every(v=>v!==null)?`
+          <button class="btn-navy" style="background:${d.color};" onclick="${s.domIdx<DD.length-1?`setState({domIdx:${s.domIdx+1}})`:'finish()'}">
+            ${s.domIdx<DD.length-1?`다음: ${DD[s.domIdx+1].name} →`:'🎯 결과 보기'}
+          </button>`:`
+          <button class="btn-navy" disabled style="background:#ccc;cursor:not-allowed;">
+            ${d.qs.length}개 문항을 모두 선택하세요
+          </button>`}
         </div>
       </div>
     </div>`;
@@ -849,7 +841,42 @@ function stepper(step){
 }
 
 function printReport(){
-  window.print();
+  // 결과 내용 수집
+  const content = document.querySelector('.result-wrap');
+  if(!content){ alert('결과 화면에서 눌러주세요!'); return; }
+
+  // 새 창에서 인쇄
+  const win = window.open('', '_blank', 'width=900,height=700');
+  if(!win){ alert('팝업이 차단되었습니다.\n브라우저 팝업 허용 후 다시 시도해주세요.'); return; }
+
+  win.document.write(`
+    <!DOCTYPE html>
+    <html lang="ko">
+    <head>
+      <meta charset="UTF-8"/>
+      <title>생애설계 진단 보고서 | 커리어포레스트</title>
+      <style>
+        *{margin:0;padding:0;box-sizing:border-box;}
+        body{font-family:'Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',sans-serif;background:white;padding:20px;}
+        .no-print{display:none!important;}
+        button{display:none!important;}
+        @media print{
+          body{padding:0;}
+          *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}
+        }
+      </style>
+    </head>
+    <body>
+      ${content.innerHTML}
+      <script>
+        // 버튼 모두 숨기기
+        document.querySelectorAll('button').forEach(b=>b.style.display='none');
+        document.querySelectorAll('.no-print').forEach(el=>el.style.display='none');
+        setTimeout(()=>{ window.print(); }, 800);
+      <\/script>
+    </html>
+  `);
+  win.document.close();
 }
 
 // ── 이벤트 핸들러 ──
@@ -870,7 +897,7 @@ function onDomScore(qi,v){
 }
 function finish(){
   const le=calcLE();
-  const doms=DD.map((d,i)=>({...d,score:state.domAns[i].reduce((s,v)=>s+(v??0),0)}));
+  const doms=DD.map((d,i)=>({...d,score:state.domAns[i].reduce((s,v)=>s+(v||0),0)}));
   const rec={id:Date.now(),name:state.anon?"익명":(state.name||"익명"),date:new Date().toLocaleDateString("ko-KR"),le,domains:doms.map(d=>({name:d.name,score:d.score}))};
   state.allData.push(rec);
   save();
