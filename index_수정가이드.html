@@ -1,0 +1,90 @@
+<!--
+====================================================================
+  careerforest.co.kr 인덱스 수정 가이드
+  작업: 폐업 자산 유동화 가이드 페이지 연결
+====================================================================
+
+📁 STEP 1 — 파일 배치
+─────────────────────────────────────────────────────────────────
+  GitHub 리포지터리 루트(index.html 과 같은 폴더)에 아래 파일을 복사:
+
+    reboot2026_자산유동화_v3.html
+
+  배포 후 접속 URL:
+    https://www.careerforest.co.kr/reboot2026_자산유동화_v3.html
+
+====================================================================
+  STEP 2 — index.html 수정 위치 ①
+  대상: 정책정보(Policy Info) 섹션의 카드 목록
+  찾을 키워드: "2026년 희망리턴패키지 원스톱폐업지원 총정리"
+  
+  아래 블록을 해당 카드 바로 다음(</article> 또는 카드 div 닫힘 태그 뒤)에 삽입
+====================================================================
+-->
+
+<!-- ── 정책정보 섹션에 추가할 카드 ── -->
+<article style="background:#fff;border:1px solid #e2e8f0;border-radius:16px;padding:24px;transition:all .25s;cursor:pointer;"
+  onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 12px 32px rgba(0,0,0,.09)'"
+  onmouseout="this.style.transform='none';this.style.boxShadow='none'">
+  <a href="/reboot2026_자산유동화_v3.html" style="text-decoration:none;color:inherit;">
+    <div style="font-size:28px;margin-bottom:12px;">📦</div>
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+      <span style="background:#eff6ff;color:#1d4ed8;font-size:11px;font-weight:700;padding:3px 10px;border-radius:100px;">자산유동화</span>
+      <span style="background:#f0fdf4;color:#15803d;font-size:11px;font-weight:700;padding:3px 10px;border-radius:100px;">팩트체크 완료</span>
+    </div>
+    <h3 style="font-size:16px;font-weight:800;color:#0f172a;line-height:1.45;margin-bottom:8px;">
+      폐업 자산 유동화 가이드 2026<br>
+      <span style="color:#475569;font-weight:500;font-size:14px;">— 플랫폼 생태계 & 서울 권역별 회수율</span>
+    </h3>
+    <p style="font-size:13px;color:#64748b;line-height:1.7;margin-bottom:14px;">
+      옥션 중고장터 종료 · 헬로마켓 전환 반영 최신판. 품목별 최적 매각 채널 매트릭스 + 서울 6개 권역 공실률·회수율 비교.
+    </p>
+    <div style="display:flex;align-items:center;justify-content:space-between;">
+      <span style="font-size:12px;color:#94a3b8;">📅 2026.03 &nbsp;·&nbsp; ⏱ 5분 읽기</span>
+      <span style="font-size:12px;font-weight:700;color:#2563eb;">자세히 보기 →</span>
+    </div>
+  </a>
+</article>
+
+<!--
+====================================================================
+  STEP 3 — index.html 수정 위치 ②
+  대상: 진단 도구(Diagnosis Tools) 섹션의 "소상공인 재기 준비도 진단" 카드
+  찾을 키워드: "소상공인 재기 준비도 진단"  /  "곧 오픈 예정"
+  
+  해당 카드의 버튼(또는 하단 영역)을 아래 코드로 교체
+====================================================================
+-->
+
+<!-- ── "소상공인 재기 준비도 진단" 카드 버튼 교체 ── -->
+<!-- 기존: <span>곧 오픈 예정</span>  →  아래로 교체 -->
+<a href="/reboot2026_자산유동화_v3.html"
+   style="display:inline-flex;align-items:center;gap:6px;
+          background:#0f172a;color:#fff;
+          font-size:12px;font-weight:700;
+          padding:10px 20px;border-radius:100px;
+          text-decoration:none;transition:background .2s;"
+   onmouseover="this.style.background='#2563eb'"
+   onmouseout="this.style.background='#0f172a'">
+  📦 자산 유동화 가이드 보기 →
+</a>
+
+<!--
+====================================================================
+  STEP 4 (선택) — 네비게이션에 링크 추가
+  찾을 키워드: <a href="#blog">정책정보</a>  (또는 유사한 nav 링크)
+  바로 다음에 아래 링크 1줄 추가
+====================================================================
+-->
+<a href="/reboot2026_자산유동화_v3.html" style="/* 기존 nav 스타일과 동일하게 */">자산유동화 가이드</a>
+
+<!--
+====================================================================
+  요약 체크리스트
+  ☐ reboot2026_자산유동화_v3.html → 루트 폴더에 복사
+  ☐ index.html → 정책정보 섹션에 카드 추가 (STEP 2)
+  ☐ index.html → 소상공인 재기 준비도 진단 버튼 교체 (STEP 3)
+  ☐ index.html → nav에 링크 추가 (STEP 4, 선택)
+  ☐ GitHub Desktop: Commit to main → Push origin
+====================================================================
+-->

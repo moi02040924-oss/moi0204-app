@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>잇템방 — 커리어포레스트 통합 지원 센터</title>
+<meta name="description" content="직업심리검사 · 소상공인 재기 지원 사이트 모음 · 무료 1:1 상담 신청. 커리어포레스트 잇템방에서 한 번에 해결하세요."/>
+<meta name="keywords" content="직업심리검사, 소상공인 지원, 희망리턴패키지, 재취업, 무료상담, 커리어포레스트, 잇템방"/>
+<meta name="author" content="커리어포레스트 임금희"/>
+<link rel="canonical" href="https://www.careerforest.co.kr/ittemband.html"/>
+<!-- Open Graph -->
+<meta property="og:type" content="website"/>
+<meta property="og:site_name" content="커리어포레스트"/>
+<meta property="og:title" content="잇템방 — 커리어포레스트 통합 지원 센터"/>
+<meta property="og:description" content="직업심리검사 · 소상공인 재기 지원 · 무료 1:1 상담. 필요한 모든 것을 한 곳에서."/>
+<meta property="og:url" content="https://www.careerforest.co.kr/ittemband.html"/>
+<meta property="og:image" content="https://www.careerforest.co.kr/로고_배경제거_PNG.png"/>
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="잇템방 — 커리어포레스트"/>
+<meta name="twitter:description" content="직업심리검사 · 소상공인 재기 지원 · 무료 상담"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Gowun+Batang:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --forest:#2D5A3D;
+  --forest-light:#3D7A52;
+  --sage:#7B9E87;
+  --gold:#C9A84C;
+  --gold-light:#E8C97A;
+  --cream:#F5F0E8;
+  --cream-dark:#EDE7DA;
+  --terra:#C4704F;
+  --charcoal:#2C2C2C;
+  --white:#FFFFFF;
+  --gray:#888;
+  --light-gray:#f8f6f2;
+  --navy:#1b2a4a;
+  --teal:#2a7a6b;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Noto Sans KR',sans-serif;color:var(--charcoal);background:var(--white);line-height:1.7;}
+
+.container{max-width:1100px;margin:0 auto;padding:0 24px;}
+
+/* ── 네비게이션 ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:#ffffff;border-bottom:1px solid rgba(45,90,61,.12);padding:14px 0;box-shadow:0 2px 12px rgba(0,0,0,.06);}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.nav-logo img{height:44px;width:auto;}
+.nav-logo-text{font-size:17px;font-weight:900;color:var(--forest);}
+.nav-logo-sub{font-size:11px;color:var(--sage);margin-top:-2px;}
+.nav-links{display:flex;align-items:center;gap:24px;}
+.nav-links a{font-size:14px;font-weight:500;color:var(--charcoal);text-decoration:none;transition:color .2s;}
+.nav-links a:hover{color:var(--forest);}
+.nav-back{font-size:13px;color:var(--forest);font-weight:700;text-decoration:none;display:flex;align-items:center;gap:6px;padding:8px 16px;border:1.5px solid var(--forest);border-radius:20px;transition:all .2s;}
+.nav-back:hover{background:var(--forest);color:white;}
+@media(max-width:700px){.nav-links{display:none;}}
+
+/* ── 히어로 ── */
+.hero{
+  padding:130px 0 70px;
+  background:linear-gradient(160deg, var(--navy) 0%, #1e3a52 60%, var(--forest) 100%);
+  position:relative;overflow:hidden;
+}
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 50% 70% at 80% 30%, rgba(42,122,107,.25) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 60% at 10% 80%, rgba(201,168,76,.15) 0%, transparent 60%),
+    radial-gradient(ellipse 30% 40% at 50% 10%, rgba(255,255,255,.04) 0%, transparent 50%);
+  pointer-events:none;
+}
+.hero-inner{position:relative;z-index:1;text-align:center;}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.8);font-size:12px;padding:6px 18px;border-radius:20px;margin-bottom:22px;letter-spacing:.05em;}
+.hero-eyebrow span{color:var(--gold-light);font-weight:700;}
+.hero h1{font-family:'Gowun Batang',serif;font-size:clamp(34px,6vw,58px);color:#fff;font-weight:700;line-height:1.2;margin-bottom:16px;}
+.hero h1 em{color:var(--gold-light);font-style:normal;}
+.hero-desc{font-size:15px;color:rgba(255,255,255,.65);font-weight:300;max-width:540px;margin:0 auto 40px;line-height:1.9;}
+.hero-chips{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:44px;}
+.hero-chip{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:20px;padding:7px 18px;font-size:13px;color:rgba(255,255,255,.8);}
+.hero-chip strong{color:var(--gold-light);}
+
+/* 히어로 탭 버튼 */
+.hero-tabs{display:flex;gap:0;justify-content:center;background:rgba(0,0,0,.25);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:6px;max-width:520px;margin:0 auto;}
+.hero-tab{flex:1;padding:12px 10px;border:none;background:transparent;color:rgba(255,255,255,.55);font-size:13px;font-weight:600;cursor:pointer;border-radius:10px;transition:all .25s;font-family:'Noto Sans KR',sans-serif;display:flex;align-items:center;justify-content:center;gap:6px;}
+.hero-tab.active{background:white;color:var(--forest);box-shadow:0 4px 16px rgba(0,0,0,.2);}
+.hero-tab:hover:not(.active){color:rgba(255,255,255,.88);background:rgba(255,255,255,.08);}
+
+/* ── 공통 섹션 ── */
+.tab-section{display:none;padding:64px 0;}
+.tab-section.active{display:block;}
+.section-header{text-align:center;margin-bottom:48px;}
+.section-label{font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:10px;}
+.section-title{font-family:'Gowun Batang',serif;font-size:clamp(26px,4vw,36px);font-weight:700;line-height:1.3;margin-bottom:14px;color:var(--forest);}
+.section-sub{font-size:15px;color:var(--gray);line-height:1.9;max-width:560px;margin:0 auto;}
+
+/* ── 직업심리검사 섹션 ── */
+.tests-bg{background:var(--light-gray);}
+
+.notice-box{background:#fff8ee;border-left:4px solid var(--gold);padding:16px 22px;margin-bottom:40px;border-radius:0 10px 10px 0;font-size:13.5px;color:#5a4a2a;line-height:1.8;}
+.notice-box strong{color:var(--navy);}
+
+.test-category{margin-bottom:44px;}
+.test-cat-label{font-size:11px;font-weight:700;letter-spacing:.25em;text-transform:uppercase;color:var(--teal);margin-bottom:16px;padding-bottom:10px;border-bottom:1.5px solid rgba(42,122,107,.2);display:flex;align-items:center;gap:8px;}
+.test-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+@media(max-width:900px){.test-grid{grid-template-columns:1fr 1fr;}}
+@media(max-width:600px){.test-grid{grid-template-columns:1fr;}}
+
+.test-card{
+  background:white;border-radius:16px;padding:22px;
+  border:2px solid transparent;text-decoration:none;color:inherit;
+  transition:all .25s;display:flex;flex-direction:column;gap:10px;
+  border-top:4px solid var(--card-color, var(--forest));
+  box-shadow:0 2px 8px rgba(0,0,0,.06);
+}
+.test-card:hover{transform:translateY(-5px);box-shadow:0 12px 32px rgba(0,0,0,.12);border-color:var(--card-color, var(--forest));}
+.card-badges{display:flex;flex-wrap:wrap;gap:5px;}
+.badge{font-size:10px;padding:3px 9px;border-radius:20px;font-weight:700;}
+.badge-free{background:#e8f4ef;color:var(--teal);}
+.badge-time{background:#fff8ee;color:#c9873a;}
+.badge-biz{background:#f0ebf8;color:#5c3d8f;}
+.badge-youth{background:#fef0f0;color:#c44;}
+.card-title{font-family:'Gowun Batang',serif;font-size:16px;font-weight:700;color:var(--charcoal);}
+.card-desc{font-size:12.5px;color:var(--gray);line-height:1.75;flex:1;}
+.card-footer{display:flex;align-items:center;justify-content:space-between;margin-top:4px;}
+.card-target{font-size:11px;color:rgba(0,0,0,.35);font-weight:500;}
+.card-cta{font-size:12px;font-weight:700;color:var(--card-color, var(--forest));}
+
+.test-main-cta{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  background:var(--forest);color:white;padding:18px 32px;border-radius:12px;
+  text-decoration:none;font-size:15px;font-weight:700;margin-top:36px;
+  transition:all .2s;
+}
+.test-main-cta:hover{background:var(--forest-light);transform:translateY(-2px);}
+
+/* ── 도움방 섹션 ── */
+.help-bg{background:white;}
+.cat-tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:36px;justify-content:center;}
+.cat-tab{padding:8px 18px;border-radius:20px;border:1.5px solid rgba(27,42,74,.15);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;background:white;color:var(--charcoal);font-family:'Noto Sans KR',sans-serif;}
+.cat-tab.active,.cat-tab:hover{background:var(--navy);color:white;border-color:var(--navy);}
+
+.help-category{display:none;}
+.help-category.active{display:block;}
+.help-cat-header{display:flex;align-items:center;gap:12px;margin-bottom:20px;padding-bottom:14px;border-bottom:2px solid var(--cc,var(--forest));}
+.help-cat-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;background:rgba(var(--cc-rgb,45,90,61),.1);}
+.help-cat-title{font-family:'Gowun Batang',serif;font-size:19px;font-weight:700;color:var(--cc,var(--forest));}
+.help-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:40px;}
+@media(max-width:900px){.help-grid{grid-template-columns:1fr 1fr;}}
+@media(max-width:600px){.help-grid{grid-template-columns:1fr;}}
+.help-card{background:var(--light-gray);border-radius:12px;padding:18px;text-decoration:none;color:inherit;border:1.5px solid transparent;transition:all .2s;display:flex;flex-direction:column;gap:8px;}
+.help-card:hover{border-color:var(--cc,var(--forest));background:white;box-shadow:0 6px 20px rgba(0,0,0,.08);}
+.help-card-name{font-size:14px;font-weight:700;color:var(--charcoal);}
+.help-card-desc{font-size:12px;color:var(--gray);line-height:1.65;}
+.help-card-tag{font-size:10px;font-weight:700;color:var(--cc,var(--forest));letter-spacing:.05em;}
+.help-card-link{font-size:12px;font-weight:700;color:var(--cc,var(--forest));margin-top:4px;}
+
+/* ── 상담신청 섹션 ── */
+.consult-bg{background:var(--cream);}
+.consult-inner{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start;}
+@media(max-width:800px){.consult-inner{grid-template-columns:1fr;}}
+
+.consult-info{background:linear-gradient(160deg,var(--navy),#2a4a6a);border-radius:24px;padding:36px;color:white;}
+.consult-info h3{font-family:'Gowun Batang',serif;font-size:22px;font-weight:700;margin-bottom:8px;}
+.consult-info p{font-size:13px;color:rgba(255,255,255,.65);margin-bottom:28px;line-height:1.8;}
+.consult-items{display:flex;flex-direction:column;gap:14px;margin-bottom:28px;}
+.consult-item{display:flex;gap:12px;align-items:flex-start;}
+.c-icon{width:36px;height:36px;background:rgba(255,255,255,.12);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+.c-text{flex:1;}
+.c-title{font-size:13px;font-weight:700;color:white;margin-bottom:2px;}
+.c-desc{font-size:12px;color:rgba(255,255,255,.55);line-height:1.6;}
+
+.kakao-btn{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  background:#FEE500;color:#1a1a1a;padding:16px 28px;border-radius:12px;
+  text-decoration:none;font-size:15px;font-weight:900;
+  transition:all .2s;margin-bottom:12px;
+}
+.kakao-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(254,229,0,.4);}
+.channel-btn{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:white;
+  padding:14px 28px;border-radius:12px;text-decoration:none;font-size:14px;font-weight:700;
+  transition:all .2s;
+}
+.channel-btn:hover{background:rgba(255,255,255,.2);}
+
+.consult-form-box{background:white;border-radius:24px;padding:36px;box-shadow:0 4px 24px rgba(0,0,0,.06);}
+.consult-form-box h3{font-family:'Gowun Batang',serif;font-size:20px;font-weight:700;color:var(--charcoal);margin-bottom:6px;}
+.consult-form-box p{font-size:13px;color:var(--gray);margin-bottom:24px;}
+.form-group{margin-bottom:18px;}
+.form-label{font-size:12px;font-weight:700;color:var(--charcoal);margin-bottom:6px;display:block;letter-spacing:.03em;}
+.form-input,.form-select,.form-textarea{
+  width:100%;padding:12px 14px;border:1.5px solid rgba(0,0,0,.12);
+  border-radius:10px;font-size:14px;color:var(--charcoal);
+  font-family:'Noto Sans KR',sans-serif;transition:border-color .2s;
+  background:white;
+}
+.form-input:focus,.form-select:focus,.form-textarea:focus{outline:none;border-color:var(--forest);}
+.form-textarea{min-height:100px;resize:vertical;line-height:1.7;}
+.form-checks{display:flex;flex-direction:column;gap:8px;}
+.form-check{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--charcoal);cursor:pointer;}
+.form-check input{accent-color:var(--forest);width:15px;height:15px;}
+.form-submit{
+  width:100%;padding:15px;background:var(--forest);color:white;border:none;
+  border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;
+  font-family:'Noto Sans KR',sans-serif;transition:all .2s;margin-top:8px;
+}
+.form-submit:hover{background:var(--forest-light);transform:translateY(-2px);}
+.form-note{font-size:11px;color:#bbb;text-align:center;margin-top:10px;}
+
+/* ── 하단 CTA ── */
+.bottom-cta{background:linear-gradient(135deg,var(--forest),var(--forest-light));padding:72px 0;text-align:center;}
+.bottom-cta h2{font-family:'Gowun Batang',serif;font-size:clamp(24px,4vw,34px);font-weight:700;color:white;margin-bottom:12px;}
+.bottom-cta h2 em{color:var(--gold-light);font-style:normal;}
+.bottom-cta p{font-size:15px;color:rgba(255,255,255,.75);margin-bottom:32px;line-height:1.8;}
+.cta-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
+.btn-gold{display:inline-flex;align-items:center;gap:8px;background:var(--gold);color:white;padding:14px 28px;border-radius:50px;font-size:15px;font-weight:700;text-decoration:none;transition:all .2s;}
+.btn-gold:hover{background:var(--gold-light);transform:translateY(-2px);}
+.btn-white-outline{display:inline-flex;align-items:center;gap:8px;background:transparent;color:white;padding:14px 28px;border-radius:50px;font-size:15px;font-weight:700;text-decoration:none;transition:all .2s;border:2px solid rgba(255,255,255,.5);}
+.btn-white-outline:hover{background:rgba(255,255,255,.12);}
+
+/* ── 푸터 ── */
+footer{background:var(--charcoal);color:rgba(255,255,255,.6);padding:36px 0;}
+.footer-inner{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;}
+.footer-logo{font-size:15px;font-weight:900;color:white;}
+.footer-info{font-size:12px;line-height:1.9;}
+.footer-links{display:flex;gap:20px;font-size:13px;}
+.footer-links a{color:rgba(255,255,255,.55);text-decoration:none;}
+.footer-links a:hover{color:white;}
+
+/* 애니메이션 */
+.fade-up{opacity:0;transform:translateY(24px);transition:all .65s ease;}
+.fade-up.visible{opacity:1;transform:translateY(0);}
+</style>
+</head>
+<body>
+
+<!-- 네비게이션 -->
+<nav>
+  <div class="container">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <img src="로고_배경제거_PNG.png" alt="커리어포레스트 로고">
+        <div>
+          <div class="nav-logo-text">커리어포레스트</div>
+          <div class="nav-logo-sub">길을 아는 자, 셰르파!</div>
+        </div>
+      </a>
+      <div class="nav-links">
+        <a href="#tests" onclick="switchTab('tests')">직업심리검사</a>
+        <a href="#help" onclick="switchTab('help')">도움방</a>
+        <a href="#consult" onclick="switchTab('consult')">상담신청</a>
+        <a href="index.html" class="nav-back">← 홈으로</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- 히어로 -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-inner">
+      <div class="hero-eyebrow">🔑 Career Forest · <span>잇템방</span></div>
+      <h1>나를 알고, 도움받고,<br/><em>함께 나아가는 공간</em></h1>
+      <p class="hero-desc">직업심리검사 · 소상공인 지원 사이트 · 무료 상담 신청<br/>커리어포레스트가 필요한 모든 것을 한 곳에 모았습니다.</p>
+      <div class="hero-chips">
+        <div class="hero-chip">🧭 <strong>무료</strong> 직업심리검사</div>
+        <div class="hero-chip">🏪 소상공인 <strong>지원 사이트 모음</strong></div>
+        <div class="hero-chip">💬 <strong>무료</strong> 1:1 상담</div>
+      </div>
+      <div class="hero-tabs">
+        <button class="hero-tab active" onclick="switchTab('tests')">🧭 직업심리검사</button>
+        <button class="hero-tab" onclick="switchTab('help')">🏪 도움방</button>
+        <button class="hero-tab" onclick="switchTab('consult')">💬 상담신청</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────
+     탭 1 : 직업심리검사
+───────────────────────────────────── -->
+<section class="tab-section tests-bg active" id="tests">
+  <div class="container">
+    <div class="section-header fade-up">
+      <p class="section-label">Job Psychology Test</p>
+      <h2 class="section-title">나를 알면 길이 보입니다</h2>
+      <p class="section-sub">고용노동부 · 한국고용정보원이 제공하는 검증된 직업심리검사.<br>모두 무료, 결과는 바로 확인 가능합니다.</p>
+    </div>
+
+    <div class="notice-box fade-up">
+      <strong>📌 검사 이용 방법</strong> — <a href="https://www.work24.go.kr" target="_blank" style="color:var(--teal);font-weight:700;">고용24 (work24.go.kr)</a> 로그인 후 
+      <strong>취업지원 → 취업가이드 → 직업심리검사</strong> 메뉴에서 이용하세요.<br>
+      아래 카드를 클릭하면 바로 이동합니다.
+    </div>
+
+    <!-- ① 빠른 자기이해 -->
+    <div class="test-category fade-up">
+      <p class="test-cat-label">⚡ 빠른 자기이해 검사 (10~20분)</p>
+      <div class="test-grid">
+        <a href="https://www.work24.go.kr/wk/r/c/1000/jobPsyExamList.do" target="_blank" class="test-card" style="--card-color:#2a7a6b;">
+          <div class="card-badges"><span class="badge badge-time">⏱ 10분</span><span class="badge badge-free">무료</span></div>
+          <div class="card-title">직업가치관검사</div>
+          <div class="card-desc">내가 일에서 무엇을 중요하게 생각하는지 파악. 가장 빠르고 핵심적인 검사예요.</div>
+          <div class="card-footer"><span class="card-target">전 연령</span><span class="card-cta">검사 받기 →</span></div>
+        </a>
+        <a href="https://www.work24.go.kr/wk/r/c/1000/jobPsyExamList.do" target="_blank" class="test-card" style="--card-color:#c9873a;">
+          <div class="card-badges"><span class="badge badge-time">⏱ 15분</span><span class="badge badge-free">무료</span></div>
+          <div class="card-title">직업흥미검사 (K)</div>
+          <div class="card-desc">홀랜드 6가지 유형 기반. 나는 어떤 일을 좋아하는 사람인지 알 수 있어요.</div>
+          <div class="card-footer"><span class="card-target">성인 일반</span><span class="card-cta">검사 받기 →</span></div>
+        </a>
+        <a href="https://www.work24.go.kr/wk/r/c/1000/jobPsyExamList.do" target="_blank" class="test-card" style="--card-color:#5c3d8f;">
+          <div class="card-badges"><span class="badge badge-time">⏱ 20분</span><span class="badge badge-free">무료</span></div>
+          <div class="card-title">직업흥미검사 (H)</div>
+          <div class="card-desc">흥미 유형 + 추천 직업 목록까지. 한 번에 방향을 잡고 싶다면 이 검사를 추천해요.</div>
+          <div class="card-footer"><span class="card-target">성인 일반</span><span class="card-cta">검사 받기 →</span></div>
+        </a>
+      </div>
+    </div>
+
+    <!-- ② 심층 진단 -->
+    <div class="test-category fade-up">
+      <p class="test-cat-label">🔍 심층 진단 검사 (40분 이상)</p>
+      <div class="test-grid">
+        <a href="https://www.work24.go.kr/wk/r/c/1000/jobPsyExamList.do" target="_blank" class="test-card" style="--card-color:#1a5a9a;">
+          <div class="card-badges"><span class="badge badge-time">⏱ 40분</span><span class="badge badge-free">무료</span></div>
+          <div class="card-title">구직준비도검사</div>
+          <div class="card-desc">취업 의지·준비도·장애 요인까지 종합적으로 진단. 재취업 준비 중이라면 먼저 해보세요.</div>
+          <div class="card-footer"><span class="card-target">구직자</span><span class="card-cta">검사 받기 →</span></div>
+        </a>
+        <a href="https://www.work24.go.kr/wk/r/c/1000/jobPsyExamList.do" target="_blank" class="test-card" style="--card-color:#2a7a6b;">
+          <div class="card-badges"><span class="badge badge-time">⏱ 45분</span><span class="badge badge-free">무료</span></div>
+          <div class="card-title">중장년 직업역량검사</div>
+          <div class="card-desc">40~50대 특화. 지금까지 쌓아온 경험·역량을 어떤 직종에 활용할 수 있는지 보여줘요.</div>
+          <div class="card-footer"><span class="card-target">40~50대</span><span class="card-cta">검사 받기 →</span></div>
+        </a>
+        <a href="https://www.work24.go.kr/wk/r/c/1000/jobPsyExamList.do" target="_blank" class="test-card" style="--card-color:#3a5a8a;">
+          <div class="card-badges"><span class="badge badge-time">⏱ 80분</span><span class="badge badge-free">무료</span></div>
+          <div class="card-title">성인용 직업적성검사</div>
+          <div class="card-desc">11개 적성 요인 × 16개 하위검사로 구성. 내가 잘할 수 있는 것을 가장 종합적으로 파악해요.</div>
+          <div class="card-footer"><span class="card-target">성인 일반</span><span class="card-cta">검사 받기 →</span></div>
+        </a>
+      </div>
+    </div>
+
+    <!-- ③ 목적별 특화 -->
+    <div class="test-category fade-up">
+      <p class="test-cat-label">🎯 목적별 특화 검사</p>
+      <div class="test-grid">
+        <a href="https://www.work24.go.kr/wk/r/c/1000/jobPsyExamList.do" target="_blank" class="test-card" style="--card-color:#6b3a9a;">
+          <div class="card-badges"><span class="badge badge-biz">재창업</span><span class="badge badge-time">⏱ 20분</span><span class="badge badge-free">무료</span></div>
+          <div class="card-title">창업적성검사</div>
+          <div class="card-desc">재창업·업종전환을 고민 중이라면 필수. 창업에 필요한 역량과 성향을 진단해줘요.</div>
+          <div class="card-footer"><span class="card-target">재창업 희망자</span><span class="card-cta">검사 받기 →</span></div>
+        </a>
+        <a href="https://www.work24.go.kr/wk/r/c/1000/jobPsyExamList.do" target="_blank" class="test-card" style="--card-color:#b86820;">
+          <div class="card-badges"><span class="badge badge-biz">영업직</span><span class="badge badge-time">⏱ 50분</span><span class="badge badge-free">무료</span></div>
+          <div class="card-title">영업직무 기본역량검사</div>
+          <div class="card-desc">영업·판매·서비스직 전환 고려 중이라면. 소상공인 경험을 살릴 수 있는 직군에 최적화.</div>
+          <div class="card-footer"><span class="card-target">영업·판매직 희망자</span><span class="card-cta">검사 받기 →</span></div>
+        </a>
+        <a href="https://www.work24.go.kr/wk/r/c/1000/jobPsyExamList.do" target="_blank" class="test-card" style="--card-color:#3a5a8a;">
+          <div class="card-badges"><span class="badge badge-biz">IT</span><span class="badge badge-time">⏱ 95분</span><span class="badge badge-free">무료</span></div>
+          <div class="card-title">IT직무 기본역량검사</div>
+          <div class="card-desc">IT·디지털 분야로 전직을 고민 중이라면. 시간이 걸리지만 결과가 매우 상세해요.</div>
+          <div class="card-footer"><span class="card-target">IT 직군 희망자</span><span class="card-cta">검사 받기 →</span></div>
+        </a>
+      </div>
+    </div>
+
+    <a href="https://www.work24.go.kr/wk/r/c/1000/jobPsyExamList.do" target="_blank" class="test-main-cta fade-up">
+      🧭 고용24 직업심리검사 전체 목록 보기 →
+    </a>
+
+    <!-- 검사 후 상담 안내 -->
+    <div class="fade-up" style="margin-top:48px;background:linear-gradient(135deg,var(--navy),#2a3a5a);border-radius:20px;padding:32px;text-align:center;">
+      <p style="font-size:11px;letter-spacing:.2em;color:rgba(255,255,255,.5);margin-bottom:8px;">검사 결과가 궁금하다면</p>
+      <p style="font-family:'Gowun Batang',serif;font-size:22px;color:#fff;font-weight:700;margin-bottom:10px;">컨설턴트가 직접 해석해드려요</p>
+      <p style="font-size:13px;color:rgba(255,255,255,.55);margin-bottom:22px;line-height:1.9;">
+        검사 결과를 바탕으로 어떤 직종이 맞는지,<br>
+        희망리턴패키지 교육과 어떻게 연결할지 상담해드립니다.<br>
+        <span style="color:#e8c278;font-weight:500;">✔ 상담 무료 · 소상공인시장진흥공단 경기남부 직무직능 컨설턴트</span>
+      </p>
+      <button onclick="switchTab('consult')" style="display:inline-flex;align-items:center;gap:8px;background:#FEE500;color:#1a1a1a;padding:14px 28px;border-radius:10px;font-size:14px;font-weight:900;border:none;cursor:pointer;font-family:'Noto Sans KR',sans-serif;">
+        💬 무료 상담 신청하기 →
+      </button>
+    </div>
+  </div>
+</section>
+
+
+<!-- ─────────────────────────────────────
+     탭 2 : 도움방
+───────────────────────────────────── -->
+<section class="tab-section help-bg" id="help">
+  <div class="container">
+    <div class="section-header fade-up">
+      <p class="section-label">Resource Center · 도움방</p>
+      <h2 class="section-title">소상공인을 위한<br>재기 지원 사이트 모음</h2>
+      <p class="section-sub">복잡한 정부 지원 사이트, 여기서 한 번에 찾으세요.<br>카테고리별로 정리했습니다.</p>
+    </div>
+
+    <!-- 카테고리 탭 -->
+    <div class="cat-tabs fade-up">
+      <button class="cat-tab active" onclick="switchHelpCat('all')">전체</button>
+      <button class="cat-tab" onclick="switchHelpCat('job')">취업·고용</button>
+      <button class="cat-tab" onclick="switchHelpCat('startup')">재기·재창업</button>
+      <button class="cat-tab" onclick="switchHelpCat('policy')">정책·자금</button>
+      <button class="cat-tab" onclick="switchHelpCat('edu')">교육·훈련</button>
+      <button class="cat-tab" onclick="switchHelpCat('mental')">심리·복지</button>
+    </div>
+
+    <!-- 취업·고용 -->
+    <div class="help-category active" id="hcat-job" data-cat="job" style="--cc:#1a5a9a;">
+      <div class="help-cat-header">
+        <div class="help-cat-icon">💼</div>
+        <div class="help-cat-title">취업 · 고용 지원</div>
+      </div>
+      <div class="help-grid">
+        <a href="https://www.work24.go.kr" target="_blank" class="help-card" style="--cc:#1a5a9a;">
+          <div class="help-card-tag">고용노동부</div>
+          <div class="help-card-name">고용24 (Work24)</div>
+          <div class="help-card-desc">직업심리검사·취업지원·고용정보를 한 곳에서. 재취업 준비의 시작점.</div>
+          <div class="help-card-link">바로가기 →</div>
+        </a>
+        <a href="https://www.work.go.kr" target="_blank" class="help-card" style="--cc:#1a5a9a;">
+          <div class="help-card-tag">한국고용정보원</div>
+          <div class="help-card-name">워크넷</div>
+          <div class="help-card-desc">채용정보·직업정보·진로정보. 구직 중이라면 매일 들러야 할 사이트.</div>
+          <div class="help-card-link">바로가기 →</div>
+        </a>
+        <a href="https://www.hrd.go.kr" target="_blank" class="help-card" style="--cc:#1a5a9a;">
+          <div class="help-card-tag">고용노동부</div>
+          <div class="help-card-name">HRD-Net</div>
+          <div class="help-card-desc">직업훈련 신청·국민내일배움카드 발급·훈련비 지원 신청.</div>
+          <div class="help-card-link">바로가기 →</div>
+        </a>
+      </div>
+    </div>
+
+    <!-- 재기·재창업 -->
+    <div class="help-category active" id="hcat-startup" data-cat="startup" style="--cc:#2a7a6b;">
+      <div class="help-cat-header">
+        <div class="help-cat-icon">🌱</div>
+        <div class="help-cat-title">재기 · 재창업 지원</div>
+      </div>
+      <div class="help-grid">
+        <a href="https://www.sbiz.or.kr" target="_blank" class="help-card" style="--cc:#2a7a6b;">
+          <div class="help-card-tag">소상공인시장진흥공단</div>
+          <div class="help-card-name">소진공 (Sbiz)</div>
+          <div class="help-card-desc">희망리턴패키지·원스톱폐업지원·재창업패키지. 소상공인 재기의 핵심 창구.</div>
+          <div class="help-card-link">바로가기 →</div>
+        </a>
+        <a href="https://www.ssm.go.kr" target="_blank" class="help-card" style="--cc:#2a7a6b;">
+          <div class="help-card-tag">중소벤처기업부</div>
+          <div class="help-card-name">소상공인 정책자금</div>
+          <div class="help-card-desc">폐업·재창업·경영개선 자금 지원. 저금리 정책자금 신청 안내.</div>
+          <div class="help-card-link">바로가기 →</div>
+        </a>
+        <a href="https://www.kibo.or.kr" target="_blank" class="help-card" style="--cc:#2a7a6b;">
+          <div class="help-card-tag">기술보증기금</div>
+          <div class="help-card-name">기보 (KIBO)</div>
+          <div class="help-card-desc">재창업 보증·신용보증 지원. 기술력 있는 소상공인 재기를 돕는 보증기관.</div>
+          <div class="help-card-link">바로가기 →</div>
+        </a>
+      </div>
+    </div>
+
+    <!-- 정책·자금 -->
+    <div class="help-category active" id="hcat-policy" data-cat="policy" style="--cc:#7a4a10;">
+      <div class="help-cat-header">
+        <div class="help-cat-icon">📋</div>
+        <div class="help-cat-title">정책 · 자금 지원</div>
+      </div>
+      <div class="help-grid">
+        <a href="https://www.bizinfo.go.kr" target="_blank" class="help-card" style="--cc:#7a4a10;">
+          <div class="help-card-tag">중소벤처기업부</div>
+          <div class="help-card-name">기업마당</div>
+          <div class="help-card-desc">중소기업·소상공인 지원 정책 통합 검색. 내게 맞는 정책 한 번에 찾기.</div>
+          <div class="help-card-link">바로가기 →</div>
+        </a>
+        <a href="https://www.bokjiro.go.kr" target="_blank" class="help-card" style="--cc:#7a4a10;">
+          <div class="help-card-tag">보건복지부</div>
+          <div class="help-card-name">복지로</div>
+          <div class="help-card-desc">정부 복지서비스 통합 안내. 폐업 후 생활 지원·긴급복지 신청 가능.</div>
+          <div class="help-card-link">바로가기 →</div>
+        </a>
+        <a href="https://www.kinfa.or.kr" target="_blank" class="help-card" style="--cc:#7a4a10;">
+          <div class="help-card-tag">신용보증재단중앙회</div>
+          <div class="help-card-name">신보재단</div>
+          <div class="help-card-desc">소상공인 신용보증 지원. 금융이 어려울 때 든든한 보증기관.</div>
+          <div class="help-card-link">바로가기 →</div>
+        </a>
+      </div>
+    </div>
+
+    <!-- 교육·훈련 -->
+    <div class="help-category active" id="hcat-edu" data-cat="edu" style="--cc:#6b3a9a;">
+      <div class="help-cat-header">
+        <div class="help-cat-icon">📚</div>
+        <div class="help-cat-title">교육 · 훈련</div>
+      </div>
+      <div class="help-grid">
+        <a href="https://www.hrd.go.kr" target="_blank" class="help-card" style="--cc:#6b3a9a;">
+          <div class="help-card-tag">고용노동부</div>
+          <div class="help-card-name">국민내일배움카드</div>
+          <div class="help-card-desc">최대 500만원 훈련비 지원. 재취업·전직 준비 교육 수강 가능.</div>
+          <div class="help-card-link">바로가기 →</div>
+        </a>
+        <a href="https://www.k-mooc.kr" target="_blank" class="help-card" style="--cc:#6b3a9a;">
+          <div class="help-card-tag">교육부</div>
+          <div class="help-card-name">K-MOOC</div>
+          <div class="help-card-desc">대학 강의 무료 수강. AI·디지털·경영 등 다양한 분야 온라인 강좌.</div>
+          <div class="help-card-link">바로가기 →</div>
+        </a>
+        <a href="https://www.sbiz.or.kr" target="_blank" class="help-card" style="--cc:#6b3a9a;">
+          <div class="help-card-tag">소진공</div>
+          <div class="help-card-name">소상공인 온라인 교육</div>
+          <div class="help-card-desc">경영·마케팅·AI 활용 교육. 소상공인 맞춤 무료 온라인 강의 제공.</div>
+          <div class="help-card-link">바로가기 →</div>
+        </a>
+      </div>
+    </div>
+
+    <!-- 심리·복지 -->
+    <div class="help-category active" id="hcat-mental" data-cat="mental" style="--cc:#2a8a5a;">
+      <div class="help-cat-header">
+        <div class="help-cat-icon">💚</div>
+        <div class="help-cat-title">심리 · 복지 지원</div>
+      </div>
+      <div class="help-grid">
+        <a href="https://www.mentalhealth.go.kr" target="_blank" class="help-card" style="--cc:#2a8a5a;">
+          <div class="help-card-tag">보건복지부</div>
+          <div class="help-card-name">정신건강위기상담전화</div>
+          <div class="help-card-desc">24시간 무료 상담 ☎ 1577-0199. 힘들 때 혼자 버티지 마세요.</div>
+          <div class="help-card-link">바로가기 →</div>
+        </a>
+        <a href="https://www.sbiz.or.kr" target="_blank" class="help-card" style="--cc:#2a8a5a;">
+          <div class="help-card-tag">소진공</div>
+          <div class="help-card-name">소상공인 심리지원 서비스</div>
+          <div class="help-card-desc">폐업 스트레스·경영 어려움으로 힘든 소상공인을 위한 무료 심리상담.</div>
+          <div class="help-card-link">바로가기 →</div>
+        </a>
+        <a href="https://www.eap.go.kr" target="_blank" class="help-card" style="--cc:#2a8a5a;">
+          <div class="help-card-tag">근로복지공단</div>
+          <div class="help-card-name">근로자 지원 프로그램</div>
+          <div class="help-card-desc">법률·재무·심리상담 무료 제공. 재취업 근로자도 이용 가능.</div>
+          <div class="help-card-link">바로가기 →</div>
+        </a>
+      </div>
+    </div>
+
+    <div class="fade-up" style="text-align:center;margin-top:16px;">
+      <a href="resource_center.html" style="display:inline-flex;align-items:center;gap:8px;color:var(--forest);font-size:14px;font-weight:700;text-decoration:none;border:2px solid var(--forest);padding:12px 24px;border-radius:50px;transition:all .2s;" onmouseover="this.style.background='var(--forest)';this.style.color='white'" onmouseout="this.style.background='';this.style.color='var(--forest)'">
+        🏪 도움방 전체 사이트 보기 →
+      </a>
+    </div>
+  </div>
+</section>
+
+
+<!-- ─────────────────────────────────────
+     탭 3 : 상담신청
+───────────────────────────────────── -->
+<section class="tab-section consult-bg" id="consult">
+  <div class="container">
+    <div class="section-header fade-up">
+      <p class="section-label">Free Consultation · 무료 상담</p>
+      <h2 class="section-title">혼자 고민하지 마세요</h2>
+      <p class="section-sub">소상공인시장진흥공단 경기남부 직무직능 컨설턴트가<br>직접 1:1로 상담해드립니다. 완전 무료입니다.</p>
+    </div>
+
+    <div class="consult-inner">
+      <!-- 왼쪽: 상담 안내 -->
+      <div class="consult-info fade-up">
+        <h3>이런 분들께 추천해요</h3>
+        <p>아래 중 하나라도 해당된다면<br>지금 바로 연락 주세요!</p>
+        <div class="consult-items">
+          <div class="consult-item">
+            <div class="c-icon">🏪</div>
+            <div class="c-text">
+              <div class="c-title">폐업을 고민 중이에요</div>
+              <div class="c-desc">희망리턴패키지·원스톱폐업지원 신청 방법, 같이 알아봐요</div>
+            </div>
+          </div>
+          <div class="consult-item">
+            <div class="c-icon">💼</div>
+            <div class="c-text">
+              <div class="c-title">재취업·이직을 준비 중이에요</div>
+              <div class="c-desc">직업심리검사 결과 해석 + 맞춤 직종 추천 + 취업 전략</div>
+            </div>
+          </div>
+          <div class="consult-item">
+            <div class="c-icon">🌱</div>
+            <div class="c-text">
+              <div class="c-title">재창업을 계획하고 있어요</div>
+              <div class="c-desc">창업 적성 진단 + 정책자금 연계 + 업종 전환 상담</div>
+            </div>
+          </div>
+          <div class="consult-item">
+            <div class="c-icon">🤖</div>
+            <div class="c-text">
+              <div class="c-title">AI·디지털 전환이 막막해요</div>
+              <div class="c-desc">AI 리터러시 교육 연계 + 업무자동화 실전 적용 안내</div>
+            </div>
+          </div>
+          <div class="consult-item">
+            <div class="c-icon">🧭</div>
+            <div class="c-text">
+              <div class="c-title">그냥 뭔가 막막하고 모르겠어요</div>
+              <div class="c-desc">지금 상황 정리부터 같이 해요. 그게 시작이에요</div>
+            </div>
+          </div>
+        </div>
+        <a href="https://open.kakao.com/o/sfcCPVii" target="_blank" class="kakao-btn">
+          💬 카카오톡으로 바로 상담하기
+        </a>
+        <a href="https://pf.kakao.com/_EJNlX" target="_blank" class="channel-btn">
+          📣 커리어포레스트 카카오채널 추가
+        </a>
+        <div style="margin-top:16px;font-size:12px;color:rgba(255,255,255,.45);text-align:center;">
+          📍 경기도 오산시 · 소상공인시장진흥공단 경기남부 공식 컨설턴트
+        </div>
+      </div>
+
+      <!-- 오른쪽: 상담 신청 폼 -->
+      <div class="consult-form-box fade-up" style="transition-delay:.15s;">
+        <h3>상담 신청서</h3>
+        <p>아래 정보를 남겨주시면 빠르게 연락드릴게요.</p>
+        <div class="form-group">
+          <label class="form-label">이름</label>
+          <input type="text" class="form-input" placeholder="홍길동">
+        </div>
+        <div class="form-group">
+          <label class="form-label">연락처</label>
+          <input type="tel" class="form-input" placeholder="010-0000-0000">
+        </div>
+        <div class="form-group">
+          <label class="form-label">상담 희망 분야</label>
+          <select class="form-select">
+            <option value="">선택해주세요</option>
+            <option>폐업·희망리턴패키지 상담</option>
+            <option>재취업·이직 전략</option>
+            <option>재창업·업종전환</option>
+            <option>AI·디지털 교육 연계</option>
+            <option>커리어·생애설계</option>
+            <option>기타 (아래 적어주세요)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">상담 내용 (선택)</label>
+          <textarea class="form-textarea" placeholder="현재 상황이나 궁금한 점을 간단히 적어주세요."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">연락 선호 방법</label>
+          <div class="form-checks">
+            <label class="form-check"><input type="checkbox" checked> 카카오톡 메시지</label>
+            <label class="form-check"><input type="checkbox"> 전화 통화</label>
+            <label class="form-check"><input type="checkbox"> 이메일</label>
+          </div>
+        </div>
+        <button class="form-submit" onclick="window.open('https://forms.gle/iaL1ysw9A5LP8Sza7','_blank')">상담 신청하기 →</button>
+        <p class="form-note">✔ 개인정보는 상담 목적으로만 사용되며 외부에 제공되지 않습니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- 하단 CTA -->
+<section class="bottom-cta">
+  <div class="container">
+    <h2>커리어포레스트와 함께<br/><em>새 길을 여세요.</em></h2>
+    <p>길을 아는 자, 셰르파 — 16년 현장 경험으로 옆에서 함께 걷겠습니다.</p>
+    <div class="cta-btns">
+      <a href="https://open.kakao.com/o/sfcCPVii" target="_blank" class="btn-gold">💬 카카오톡 무료 상담</a>
+      <a href="diagnosis.html" class="btn-white-outline">🧭 무료 생애진단 해보기</a>
+    </div>
+  </div>
+</section>
+
+<!-- 푸터 -->
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-logo">🌲 커리어포레스트</div>
+      <div class="footer-info">
+        대표: 임금희 (커리어셀파) · 소상공인시장진흥공단 경기남부 직무직능 컨설턴트<br/>
+        📍 경기도 오산시 원동 동부대로 · © 2026 Career Forest. All rights reserved.
+      </div>
+      <div class="footer-links">
+        <a href="index.html">홈</a>
+        <a href="diagnosis.html">무료진단</a>
+        <a href="job_test.html">직업검사</a>
+        <a href="resource_center.html">도움방</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ── 탭 전환 ──
+function switchTab(tab) {
+  // 섹션 전환
+  document.querySelectorAll('.tab-section').forEach(s => s.classList.remove('active'));
+  document.getElementById(tab).classList.add('active');
+
+  // 히어로 탭 버튼
+  document.querySelectorAll('.hero-tab').forEach((btn, i) => {
+    const tabs = ['tests','help','consult'];
+    btn.classList.toggle('active', tabs[i] === tab);
+  });
+
+  // 스크롤
+  const section = document.getElementById(tab);
+  if (section) {
+    const top = section.getBoundingClientRect().top + window.scrollY - 80;
+    window.scrollTo({top, behavior:'smooth'});
+  }
+}
+
+// ── 도움방 카테고리 필터 ──
+function switchHelpCat(cat) {
+  document.querySelectorAll('.cat-tab').forEach(btn => {
+    const btnCat = btn.getAttribute('onclick').match(/'(\w+)'/)?.[1];
+    btn.classList.toggle('active', btnCat === cat);
+  });
+
+  const categories = document.querySelectorAll('.help-category');
+  categories.forEach(el => {
+    if (cat === 'all') {
+      el.classList.add('active');
+    } else {
+      el.classList.toggle('active', el.dataset.cat === cat);
+    }
+  });
+}
+
+// ── 상담 신청 ──
+function submitForm() {
+  const name = document.querySelector('.form-input').value;
+  if (!name.trim()) {
+    alert('이름을 입력해주세요.');
+    return;
+  }
+  alert('상담 신청이 접수되었습니다 🌿\n빠른 시간 내에 연락드리겠습니다!');
+}
+
+// ── 스크롤 애니메이션 ──
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, {threshold: 0.1});
+document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>

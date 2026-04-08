@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>관리자 | 커리어포레스트</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --forest:#1e5c3a; --forest-mid:#2d7a52; --forest-light:#e8f4ed; --forest-pale:#f3faf6;
+  --gold:#b8883a; --gold-light:#fdf6ea;
+  --dark:#111c16; --sidebar-w:200px;
+  --text:#1a2b22; --text-mid:#3d5a4a; --text-muted:#7a9485;
+  --border:#c8ddd0; --white:#fff;
+  --radius:10px; --radius-sm:7px;
+  --shadow:0 2px 16px rgba(30,92,58,0.10);
+}
+body{font-family:'Noto Sans KR',sans-serif;background:#f0f7f3;color:var(--text);min-height:100vh;}
+
+/* ── SCREENS ── */
+.screen{display:none;}
+.screen.active{display:flex;}
+
+/* ── LOGIN ── */
+#loginScreen{align-items:center;justify-content:center;min-height:100vh;background:linear-gradient(150deg,#1e5c3a 0%,#2d7a52 60%,#1a4a2e 100%);}
+.login-box{background:var(--white);border-radius:16px;padding:40px 36px;width:340px;box-shadow:0 20px 60px rgba(0,0,0,0.2);}
+.login-logo{text-align:center;margin-bottom:28px;}
+.login-logo .tree{font-size:36px;display:block;margin-bottom:8px;}
+.login-logo h1{font-size:18px;font-weight:600;color:var(--forest);}
+.login-logo p{font-size:12px;color:var(--text-muted);margin-top:2px;}
+.login-box label{font-size:12px;font-weight:500;color:var(--text-mid);display:block;margin-bottom:6px;}
+.login-box input[type=password]{width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:14px;font-family:inherit;outline:none;transition:border-color .2s;}
+.login-box input:focus{border-color:var(--forest-mid);}
+.btn-login{width:100%;margin-top:16px;padding:13px;background:var(--forest);color:#fff;border:none;border-radius:var(--radius-sm);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;transition:background .2s;}
+.btn-login:hover{background:var(--forest-mid);}
+.login-err{display:none;margin-top:10px;font-size:12px;color:#c0392b;text-align:center;}
+.login-err.show{display:block;}
+.setup-link{text-align:center;margin-top:16px;font-size:12px;color:var(--text-muted);}
+.setup-link a{color:var(--forest-mid);cursor:pointer;text-decoration:none;}
+
+/* ── SETUP ── */
+#setupScreen{align-items:center;justify-content:center;min-height:100vh;background:var(--forest-pale);}
+.setup-box{background:var(--white);border-radius:16px;padding:36px;width:520px;max-width:calc(100vw - 32px);box-shadow:var(--shadow);}
+.setup-box h2{font-size:18px;font-weight:600;color:var(--forest);margin-bottom:6px;}
+.setup-box .sub{font-size:13px;color:var(--text-muted);margin-bottom:24px;}
+.setup-step{margin-bottom:20px;}
+.setup-step .step-num{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:var(--forest);color:#fff;font-size:11px;font-weight:600;margin-right:8px;}
+.setup-step h3{font-size:13px;font-weight:600;color:var(--text);margin-bottom:8px;display:flex;align-items:center;}
+.setup-step p{font-size:12px;color:var(--text-muted);line-height:1.6;margin-bottom:8px;}
+.code-block{background:#f5f5f0;border:1px solid #e0ddd0;border-radius:var(--radius-sm);padding:12px;font-family:monospace;font-size:11px;color:#333;line-height:1.6;white-space:pre-wrap;word-break:break-all;max-height:160px;overflow-y:auto;}
+.btn-copy{margin-top:6px;padding:6px 14px;background:var(--forest-light);border:1px solid var(--border);border-radius:20px;font-size:11px;font-weight:500;color:var(--forest);cursor:pointer;}
+.setup-step input{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:13px;font-family:inherit;outline:none;margin-top:4px;}
+.setup-step input:focus{border-color:var(--forest-mid);}
+.setup-actions{display:flex;gap:10px;margin-top:24px;}
+.btn-back{padding:11px 20px;background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:inherit;font-size:13px;cursor:pointer;color:var(--text-mid);}
+.btn-save-setup{flex:1;padding:11px;background:var(--forest);border:none;border-radius:var(--radius-sm);font-family:inherit;font-size:13px;font-weight:600;color:#fff;cursor:pointer;}
+
+/* ── DASHBOARD ── */
+#dashScreen{flex-direction:row;min-height:100vh;}
+
+/* sidebar */
+.sidebar{width:var(--sidebar-w);background:var(--dark);display:flex;flex-direction:column;flex-shrink:0;position:fixed;left:0;top:0;height:100vh;z-index:100;}
+.sb-logo{padding:24px 20px 20px;border-bottom:1px solid rgba(255,255,255,0.08);}
+.sb-logo .tree{font-size:22px;display:block;margin-bottom:4px;}
+.sb-logo h2{font-size:13px;font-weight:600;color:#fff;line-height:1.3;}
+.sb-logo p{font-size:10px;color:rgba(255,255,255,0.4);margin-top:2px;}
+.sb-nav{flex:1;padding:16px 0;}
+.sb-item{display:flex;align-items:center;gap:10px;padding:10px 20px;font-size:13px;color:rgba(255,255,255,0.6);cursor:pointer;transition:all .2s;border-left:3px solid transparent;}
+.sb-item:hover{background:rgba(255,255,255,0.06);color:#fff;}
+.sb-item.active{background:rgba(45,122,82,0.25);color:#6ee9a0;border-left-color:#2d7a52;}
+.sb-item .icon{font-size:15px;width:18px;text-align:center;}
+.sb-bottom{padding:16px 20px;border-top:1px solid rgba(255,255,255,0.08);}
+.sb-version{font-size:10px;color:rgba(255,255,255,0.25);}
+.btn-logout{margin-top:8px;width:100%;padding:8px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:var(--radius-sm);font-family:inherit;font-size:11px;color:rgba(255,255,255,0.5);cursor:pointer;transition:all .2s;}
+.btn-logout:hover{background:rgba(255,255,255,0.12);color:#fff;}
+
+/* main */
+.main{margin-left:var(--sidebar-w);flex:1;min-height:100vh;}
+.main-header{background:var(--white);border-bottom:1px solid var(--border);padding:20px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+.main-header h1{font-size:17px;font-weight:600;color:var(--text);}
+.main-header .status-bar{display:flex;align-items:center;gap:16px;}
+.stat-pill{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-muted);}
+.stat-pill .dot{width:8px;height:8px;border-radius:50%;}
+.dot-on{background:#27ae60;} .dot-total{background:var(--border);}
+.sync-badge{font-size:11px;padding:4px 10px;border-radius:20px;background:var(--forest-light);color:var(--forest);font-weight:500;}
+.btn-add{padding:8px 16px;background:var(--forest);color:#fff;border:none;border-radius:var(--radius-sm);font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;}
+.btn-add:hover{background:var(--forest-mid);}
+
+.main-body{padding:28px 32px;}
+
+/* filter bar */
+.filter-bar{display:flex;gap:8px;margin-bottom:24px;flex-wrap:wrap;align-items:center;}
+.filter-btn{padding:6px 14px;border-radius:20px;border:1.5px solid var(--border);background:var(--white);font-family:inherit;font-size:12px;color:var(--text-mid);cursor:pointer;transition:all .2s;}
+.filter-btn:hover,.filter-btn.active{border-color:var(--forest-mid);background:var(--forest-light);color:var(--forest);font-weight:500;}
+.search-input{margin-left:auto;padding:6px 14px;border:1.5px solid var(--border);border-radius:20px;font-family:inherit;font-size:12px;color:var(--text);outline:none;width:180px;transition:border-color .2s;}
+.search-input:focus{border-color:var(--forest-mid);}
+
+/* app grid */
+.app-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:18px;}
+
+/* app card */
+.app-card{background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:box-shadow .2s;box-shadow:var(--shadow);}
+.app-card:hover{box-shadow:0 4px 24px rgba(30,92,58,0.13);}
+.app-card.off{opacity:0.72;}
+.card-top{padding:16px 18px 14px;display:flex;align-items:flex-start;gap:12px;border-bottom:1px solid var(--forest-pale);}
+.card-icon{width:40px;height:40px;border-radius:10px;background:var(--forest-light);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.card-info{flex:1;min-width:0;}
+.card-name{font-size:14px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.card-category{font-size:11px;color:var(--text-muted);margin-top:2px;}
+.card-url{font-size:10px;color:var(--forest-mid);margin-top:3px;font-family:monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+/* toggle */
+.toggle-wrap{display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0;}
+.toggle{position:relative;width:44px;height:24px;cursor:pointer;}
+.toggle input{opacity:0;width:0;height:0;}
+.toggle-slider{position:absolute;inset:0;background:#ddd;border-radius:12px;transition:.3s;}
+.toggle-slider::before{content:'';position:absolute;width:18px;height:18px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.3s;}
+.toggle input:checked + .toggle-slider{background:var(--forest-mid);}
+.toggle input:checked + .toggle-slider::before{transform:translateX(20px);}
+.toggle-label{font-size:10px;font-weight:600;color:var(--text-muted);}
+.toggle input:checked ~ .toggle-label{color:var(--forest);}
+
+/* card body */
+.card-body{padding:14px 18px;display:flex;flex-direction:column;gap:12px;}
+.field-label{font-size:11px;font-weight:500;color:var(--text-muted);display:block;margin-bottom:4px;}
+.card-body textarea,.card-body input[type=text]{width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:inherit;font-size:12px;color:var(--text);background:var(--forest-pale);outline:none;resize:none;transition:border-color .2s,background .2s;line-height:1.5;}
+.card-body textarea:focus,.card-body input[type=text]:focus{border-color:var(--forest-mid);background:#fff;}
+.tag-row{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px;}
+.tag-chip{padding:3px 9px;background:var(--forest-light);border:1px solid var(--border);border-radius:10px;font-size:11px;color:var(--forest-mid);font-weight:500;}
+
+/* card footer */
+.card-footer{padding:10px 18px 14px;display:flex;gap:8px;border-top:1px solid var(--forest-pale);flex-wrap:wrap;align-items:center;}
+.btn-action{padding:6px 12px;border-radius:var(--radius-sm);font-family:inherit;font-size:11px;font-weight:500;cursor:pointer;display:flex;align-items:center;gap:5px;transition:all .2s;}
+.btn-link{background:var(--white);border:1.5px solid var(--border);color:var(--text-mid);}
+.btn-link:hover{border-color:var(--forest-mid);color:var(--forest);}
+.btn-kakao{background:#FEE500;border:none;color:#3A1D1D;}
+.btn-kakao:hover{background:#f0d800;}
+.btn-save{background:var(--forest);border:none;color:#fff;margin-left:auto;}
+.btn-save:hover{background:var(--forest-mid);}
+.btn-save:disabled{background:var(--border);color:var(--text-muted);cursor:default;}
+.save-status{font-size:10px;color:var(--text-muted);display:flex;align-items:center;gap:4px;margin-left:auto;}
+
+/* ADD APP MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:200;align-items:center;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal{background:#fff;border-radius:16px;padding:32px;width:460px;max-width:calc(100vw - 32px);box-shadow:0 20px 60px rgba(0,0,0,0.2);}
+.modal h2{font-size:17px;font-weight:600;color:var(--forest);margin-bottom:20px;}
+.modal .field{margin-bottom:14px;}
+.modal label{font-size:12px;font-weight:500;color:var(--text-mid);display:block;margin-bottom:5px;}
+.modal input,.modal select,.modal textarea{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:inherit;font-size:13px;color:var(--text);outline:none;background:var(--forest-pale);}
+.modal input:focus,.modal select:focus,.modal textarea:focus{border-color:var(--forest-mid);background:#fff;}
+.modal-footer{display:flex;gap:10px;margin-top:20px;}
+.btn-modal-cancel{flex:1;padding:11px;background:#fff;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:inherit;font-size:13px;cursor:pointer;color:var(--text-mid);}
+.btn-modal-ok{flex:2;padding:11px;background:var(--forest);border:none;border-radius:var(--radius-sm);font-family:inherit;font-size:13px;font-weight:600;color:#fff;cursor:pointer;}
+
+/* SCRIPT MODAL */
+.script-modal{background:#fff;border-radius:16px;padding:32px;width:600px;max-width:calc(100vw - 32px);box-shadow:0 20px 60px rgba(0,0,0,0.2);max-height:80vh;overflow-y:auto;}
+.script-modal h2{font-size:17px;font-weight:600;color:var(--forest);margin-bottom:6px;}
+.script-modal .sub{font-size:13px;color:var(--text-muted);margin-bottom:20px;}
+
+/* toast */
+.toast{position:fixed;bottom:24px;right:24px;background:#1a2b22;color:#fff;padding:12px 20px;border-radius:var(--radius-sm);font-size:13px;z-index:999;opacity:0;transform:translateY(8px);transition:all .3s;pointer-events:none;}
+.toast.show{opacity:1;transform:translateY(0);}
+
+/* empty state */
+.empty{text-align:center;padding:60px 20px;color:var(--text-muted);}
+.empty .big{font-size:40px;margin-bottom:12px;}
+.empty p{font-size:14px;}
+
+@media(max-width:680px){
+  .sidebar{display:none;}
+  .main{margin-left:0;}
+  .app-grid{grid-template-columns:1fr;}
+  .main-header,.main-body{padding-left:16px;padding-right:16px;}
+}
+</style>
+</head>
+<body>
+
+<!-- ── LOGIN ── -->
+<div class="screen active" id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">
+      <span class="tree">🌲</span>
+      <h1>커리어포레스트</h1>
+      <p>관리자 전용 대시보드</p>
+    </div>
+    <label for="pwInput">비밀번호</label>
+    <input type="password" id="pwInput" placeholder="관리자 비밀번호 입력" onkeydown="if(event.key==='Enter')doLogin()">
+    <button class="btn-login" onclick="doLogin()">로그인</button>
+    <div class="login-err" id="loginErr">비밀번호가 맞지 않습니다.</div>
+    <div class="setup-link">처음 설정하시나요? <a onclick="showSetup()">설정 가이드 보기</a></div>
+  </div>
+</div>
+
+<!-- ── SETUP ── -->
+<div class="screen" id="setupScreen">
+  <div class="setup-box">
+    <h2>🔧 초기 설정 가이드</h2>
+    <p class="sub">Google Sheets와 연동하면 어느 기기에서나 앱 상태가 동기화됩니다.</p>
+
+    <div class="setup-step">
+      <h3><span class="step-num">1</span> Google Sheets에 앱 목록 시트 만들기</h3>
+      <p>새 Google Sheets를 열고 시트 이름을 <strong>apps</strong>로 변경 후, 첫 행에 아래 헤더를 입력하세요:</p>
+      <div class="code-block">id	name	url	category	status	description	tags	memo	icon</div>
+    </div>
+
+    <div class="setup-step">
+      <h3><span class="step-num">2</span> Google Apps Script 웹앱 배포</h3>
+      <p>Google Sheets에서 확장 프로그램 → Apps Script를 열고 아래 코드를 붙여넣은 후 웹앱으로 배포하세요 (액세스: 모든 사람).</p>
+      <div class="code-block" id="scriptCode"></div>
+      <button class="btn-copy" onclick="copyScript()">📋 코드 복사하기</button>
+    </div>
+
+    <div class="setup-step">
+      <h3><span class="step-num">3</span> 배포된 웹앱 URL 붙여넣기</h3>
+      <input type="text" id="scriptUrl" placeholder="https://script.google.com/macros/s/.../exec">
+    </div>
+
+    <div class="setup-step">
+      <h3><span class="step-num">4</span> 관리자 비밀번호 설정</h3>
+      <input type="password" id="setupPw" placeholder="사용할 비밀번호 입력 (최소 6자)">
+    </div>
+
+    <div class="setup-actions">
+      <button class="btn-back" onclick="showLogin()">← 돌아가기</button>
+      <button class="btn-save-setup" onclick="saveSetup()">설정 저장 후 시작하기</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── DASHBOARD ── -->
+<div class="screen" id="dashScreen">
+  <nav class="sidebar">
+    <div class="sb-logo">
+      <span class="tree">🌲</span>
+      <h2>커리어포레스트</h2>
+      <p>관리자 대시보드</p>
+    </div>
+    <div class="sb-nav">
+      <div class="sb-item active" onclick="setTab('apps')"><span class="icon">🗂</span> 앱 관리</div>
+      <div class="sb-item" onclick="openScriptModal()"><span class="icon">⚙️</span> 연동 설정</div>
+      <div class="sb-item" onclick="openPublicGallery()"><span class="icon">🌐</span> 공개 갤러리</div>
+    </div>
+    <div class="sb-bottom">
+      <div class="sb-version">careerforest.co.kr</div>
+      <button class="btn-logout" onclick="doLogout()">로그아웃</button>
+    </div>
+  </nav>
+
+  <div class="main">
+    <div class="main-header">
+      <h1>앱 관리</h1>
+      <div class="status-bar">
+        <div class="stat-pill"><span class="dot dot-on"></span><span id="onCount">0개 활성</span></div>
+        <div class="stat-pill"><span class="dot dot-total"></span><span id="totalCount">총 0개</span></div>
+        <span class="sync-badge" id="syncBadge">● 연결됨</span>
+        <button class="btn-add" onclick="openAddModal()">＋ 앱 추가</button>
+      </div>
+    </div>
+    <div class="main-body">
+      <div class="filter-bar">
+        <button class="filter-btn active" data-cat="전체" onclick="setFilter(this)">전체</button>
+        <button class="filter-btn" data-cat="진단도구" onclick="setFilter(this)">진단도구</button>
+        <button class="filter-btn" data-cat="상담지원" onclick="setFilter(this)">상담지원</button>
+        <button class="filter-btn" data-cat="설계도구" onclick="setFilter(this)">설계도구</button>
+        <button class="filter-btn" data-cat="정책정보" onclick="setFilter(this)">정책정보</button>
+        <button class="filter-btn" data-cat="부가서비스" onclick="setFilter(this)">부가서비스</button>
+        <input class="search-input" type="text" placeholder="🔍 앱 이름 검색" oninput="renderCards()">
+      </div>
+      <div class="app-grid" id="appGrid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ADD MODAL -->
+<div class="modal-overlay" id="addModal">
+  <div class="modal">
+    <h2>새 앱 추가</h2>
+    <div class="field"><label>앱 이름 *</label><input type="text" id="newName" placeholder="예) 강점카드 역량진단"></div>
+    <div class="field"><label>파일 경로 (URL) *</label><input type="text" id="newUrl" placeholder="예) 강점카드_역량진단.html"></div>
+    <div class="field"><label>카테고리</label>
+      <select id="newCat">
+        <option>진단도구</option><option>상담지원</option><option>설계도구</option><option>정책정보</option><option>부가서비스</option>
+      </select>
+    </div>
+    <div class="field"><label>아이콘 (이모지)</label><input type="text" id="newIcon" placeholder="예) 🎯" maxlength="4"></div>
+    <div class="field"><label>간단 설명</label><textarea id="newDesc" rows="2" placeholder="이 앱에 대한 한줄 소개"></textarea></div>
+    <div class="modal-footer">
+      <button class="btn-modal-cancel" onclick="closeModal('addModal')">취소</button>
+      <button class="btn-modal-ok" onclick="addApp()">추가하기</button>
+    </div>
+  </div>
+</div>
+
+<!-- SCRIPT MODAL -->
+<div class="modal-overlay" id="scriptModal">
+  <div class="script-modal">
+    <h2>⚙️ Google Sheets 연동 설정</h2>
+    <p class="sub">Apps Script URL을 변경하거나 코드를 다시 복사할 수 있습니다.</p>
+    <div style="margin-bottom:14px;">
+      <label style="font-size:12px;font-weight:500;color:var(--text-mid);display:block;margin-bottom:5px;">현재 Apps Script URL</label>
+      <input type="text" id="modalScriptUrl" style="width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:inherit;font-size:12px;outline:none;" placeholder="https://script.google.com/macros/s/.../exec">
+    </div>
+    <div style="margin-bottom:8px;font-size:12px;font-weight:500;color:var(--text-mid);">Apps Script 코드</div>
+    <div class="code-block" id="scriptCode2"></div>
+    <button class="btn-copy" onclick="copyScript()" style="margin-top:8px;">📋 코드 복사하기</button>
+    <div class="modal-footer">
+      <button class="btn-modal-cancel" onclick="closeModal('scriptModal')">닫기</button>
+      <button class="btn-modal-ok" onclick="saveScriptUrl()">URL 저장</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ─────────────────────────────────────────
+// CONFIG
+// ─────────────────────────────────────────
+const STORAGE_PW   = 'cf_admin_pw';
+const STORAGE_URL  = 'cf_script_url';
+const STORAGE_APPS = 'cf_apps';
+const API_SECRET   = 'CAREERFOREST2026';
+
+const DEFAULT_APPS = [
+  {id:'coaching-guide', name:'AI 코칭 가이드 생성기', url:'coaching-guide-generator.html', category:'상담지원', status:'ON', description:'참여자 유형과 단계를 선택하면 맞춤형 코칭 가이드를 자동 생성합니다.', tags:'코칭,가이드,커리어플래닝', memo:'', icon:'🌳'},
+  {id:'ai-competency',  name:'AI 역량 진단',          url:'ai-competency-diagnosis.html',   category:'진단도구',  status:'OFF',description:'',tags:'',memo:'',icon:'🧠'},
+  {id:'job-crafting',   name:'잡크래프팅 캔버스',      url:'job-crafting-canvas.html',        category:'설계도구',  status:'OFF',description:'',tags:'',memo:'',icon:'🎨'},
+  {id:'strength-card',  name:'강점카드 역량진단',       url:'강점카드_역량진단.html',            category:'진단도구',  status:'OFF',description:'',tags:'',memo:'',icon:'🃏'},
+  {id:'hope-return',    name:'희망리턴패키지 안내',     url:'hope_return_package.html',        category:'정책정보',  status:'OFF',description:'',tags:'',memo:'',icon:'📋'},
+  {id:'retirement',     name:'은퇴 플래너',            url:'retirement-planner.html',         category:'설계도구',  status:'OFF',description:'',tags:'',memo:'',icon:'🌅'},
+  {id:'photo-studio',   name:'AI 사진관',              url:'photo_studio.html',               category:'부가서비스',status:'OFF',description:'',tags:'',memo:'',icon:'📷'},
+  {id:'diagnosis',      name:'종합 역량진단',           url:'diagnosis.html',                  category:'진단도구',  status:'OFF',description:'',tags:'',memo:'',icon:'📊'},
+];
+
+const GAS_CODE = `const SHEET = 'apps';
+const SECRET = '${API_SECRET}';
+
+function doGet(e) {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET);
+  const [headers, ...rows] = sheet.getDataRange().getValues();
+  const apps = rows.map(r => Object.fromEntries(headers.map((h,i) => [h, r[i]])));
+  return json({apps});
+}
+
+function doPost(e) {
+  const p = JSON.parse(e.postData.contents);
+  if (p.secret !== SECRET) return json({error:'unauthorized'});
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET);
+  const [headers, ...rows] = sheet.getDataRange().getValues();
+  const idCol = headers.indexOf('id');
+  for (let i = 0; i < rows.length; i++) {
+    if (rows[i][idCol] === p.id) {
+      Object.entries(p.updates).forEach(([k, v]) => {
+        const c = headers.indexOf(k);
+        if (c !== -1) sheet.getRange(i+2, c+1).setValue(v);
+      });
+      return json({ok:true});
+    }
+  }
+  // New row
+  if (p.action === 'add') {
+    const row = headers.map(h => p.data[h] ?? '');
+    sheet.appendRow(row);
+    return json({ok:true, added:true});
+  }
+  return json({error:'not found'});
+}
+
+function json(data) {
+  return ContentService.createTextOutput(JSON.stringify(data))
+    .setMimeType(ContentService.MimeType.JSON);
+}`;
+
+// ─────────────────────────────────────────
+// STATE
+// ─────────────────────────────────────────
+let apps = [];
+let currentFilter = '전체';
+let scriptUrl = '';
+let useSheets = false;
+
+// ─────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────
+window.onload = () => {
+  document.getElementById('scriptCode').textContent = GAS_CODE;
+  document.getElementById('scriptCode2').textContent = GAS_CODE;
+  scriptUrl = localStorage.getItem(STORAGE_URL) || '';
+  if (scriptUrl) document.getElementById('modalScriptUrl').value = scriptUrl;
+};
+
+// ─────────────────────────────────────────
+// SCREENS
+// ─────────────────────────────────────────
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+function showSetup() { showScreen('setupScreen'); }
+function showLogin() { showScreen('loginScreen'); }
+
+// ─────────────────────────────────────────
+// AUTH
+// ─────────────────────────────────────────
+function doLogin() {
+  const savedPw = localStorage.getItem(STORAGE_PW);
+  const input = document.getElementById('pwInput').value;
+  if (!savedPw) { showToast('먼저 설정 가이드에서 비밀번호를 설정해주세요.'); return; }
+  if (input === savedPw) {
+    document.getElementById('loginErr').classList.remove('show');
+    showScreen('dashScreen');
+    initDashboard();
+  } else {
+    document.getElementById('loginErr').classList.add('show');
+  }
+}
+
+function doLogout() {
+  document.getElementById('pwInput').value = '';
+  showScreen('loginScreen');
+}
+
+// ─────────────────────────────────────────
+// SETUP
+// ─────────────────────────────────────────
+function saveSetup() {
+  const url = document.getElementById('scriptUrl').value.trim();
+  const pw  = document.getElementById('setupPw').value;
+  if (pw.length < 6) { showToast('비밀번호는 최소 6자 이상이어야 합니다.'); return; }
+  if (url) {
+    localStorage.setItem(STORAGE_URL, url);
+    scriptUrl = url;
+    document.getElementById('modalScriptUrl').value = url;
+  }
+  localStorage.setItem(STORAGE_PW, pw);
+  showToast('설정 저장 완료! 로그인해주세요.');
+  showScreen('loginScreen');
+}
+
+function saveScriptUrl() {
+  const url = document.getElementById('modalScriptUrl').value.trim();
+  if (!url) { showToast('URL을 입력해주세요.'); return; }
+  localStorage.setItem(STORAGE_URL, url);
+  scriptUrl = url;
+  closeModal('scriptModal');
+  showToast('URL 저장 완료! 데이터를 다시 불러옵니다.');
+  loadApps();
+}
+
+// ─────────────────────────────────────────
+// DASHBOARD INIT
+// ─────────────────────────────────────────
+async function initDashboard() {
+  scriptUrl = localStorage.getItem(STORAGE_URL) || '';
+  useSheets = !!scriptUrl;
+  document.getElementById('syncBadge').textContent = useSheets ? '● Sheets 연결됨' : '○ 로컬 모드';
+  document.getElementById('syncBadge').style.background = useSheets ? 'var(--forest-light)' : '#fff3cd';
+  document.getElementById('syncBadge').style.color = useSheets ? 'var(--forest)' : '#856404';
+  await loadApps();
+}
+
+// ─────────────────────────────────────────
+// LOAD APPS
+// ─────────────────────────────────────────
+async function loadApps() {
+  if (useSheets) {
+    try {
+      const r = await fetch(scriptUrl);
+      const d = await r.json();
+      if (d.apps && d.apps.length > 0) {
+        apps = d.apps;
+        localStorage.setItem(STORAGE_APPS, JSON.stringify(apps));
+      } else {
+        apps = getLocalApps();
+      }
+    } catch(e) {
+      apps = getLocalApps();
+      showToast('Sheets 연결 실패. 로컬 데이터를 사용합니다.');
+    }
+  } else {
+    apps = getLocalApps();
+  }
+  renderCards();
+  updateStats();
+}
+
+function getLocalApps() {
+  const saved = localStorage.getItem(STORAGE_APPS);
+  return saved ? JSON.parse(saved) : DEFAULT_APPS;
+}
+
+// ─────────────────────────────────────────
+// RENDER CARDS
+// ─────────────────────────────────────────
+function renderCards() {
+  const q = document.querySelector('.search-input').value.toLowerCase();
+  const filtered = apps.filter(a => {
+    const catOk = currentFilter === '전체' || a.category === currentFilter;
+    const nameOk = !q || a.name.toLowerCase().includes(q) || (a.description||'').toLowerCase().includes(q);
+    return catOk && nameOk;
+  });
+
+  const grid = document.getElementById('appGrid');
+  if (!filtered.length) {
+    grid.innerHTML = `<div class="empty" style="grid-column:1/-1"><div class="big">🔍</div><p>조건에 맞는 앱이 없습니다.</p></div>`;
+    return;
+  }
+
+  grid.innerHTML = filtered.map(app => cardHTML(app)).join('');
+
+  // bind toggle events
+  filtered.forEach(app => {
+    const tog = document.getElementById('tog_' + app.id);
+    if (tog) tog.addEventListener('change', () => updateField(app.id, 'status', tog.checked ? 'ON' : 'OFF'));
+  });
+}
+
+function cardHTML(app) {
+  const isOn = app.status === 'ON';
+  const tags = (app.tags || '').split(',').map(t => t.trim()).filter(Boolean);
+  const baseUrl = 'https://careerforest.co.kr/';
+  const fullUrl = baseUrl + (app.url || '');
+
+  return `
+  <div class="app-card${isOn ? '' : ' off'}" id="card_${app.id}">
+    <div class="card-top">
+      <div class="card-icon">${app.icon || '📱'}</div>
+      <div class="card-info">
+        <div class="card-name">${app.name}</div>
+        <div class="card-category">${app.category}</div>
+        <div class="card-url">${app.url}</div>
+      </div>
+      <div class="toggle-wrap">
+        <label class="toggle">
+          <input type="checkbox" id="tog_${app.id}" ${isOn ? 'checked' : ''}>
+          <span class="toggle-slider"></span>
+        </label>
+        <span class="toggle-label">${isOn ? 'ON' : 'OFF'}</span>
+      </div>
+    </div>
+    <div class="card-body">
+      <div>
+        <span class="field-label">📝 설명</span>
+        <textarea id="desc_${app.id}" rows="2" placeholder="클라이언트에게 보여줄 앱 소개"
+          onblur="updateField('${app.id}','description',this.value)"
+        >${app.description || ''}</textarea>
+      </div>
+      <div>
+        <span class="field-label">🏷 태그 (쉼표로 구분)</span>
+        <input type="text" id="tags_${app.id}" value="${app.tags || ''}"
+          placeholder="예) 진단, 강점, 중장년"
+          onblur="updateField('${app.id}','tags',this.value)">
+        <div class="tag-row">${tags.map(t=>`<span class="tag-chip">${t}</span>`).join('')}</div>
+      </div>
+      <div>
+        <span class="field-label">🗒 메모 (관리자 전용)</span>
+        <textarea id="memo_${app.id}" rows="2" placeholder="사용 기록, 클라이언트 피드백 등"
+          onblur="updateField('${app.id}','memo',this.value)"
+        >${app.memo || ''}</textarea>
+      </div>
+    </div>
+    <div class="card-footer">
+      <button class="btn-action btn-link" onclick="copyLink('${fullUrl}')">🔗 링크 복사</button>
+      <button class="btn-action btn-kakao" onclick="kakaoShare('${app.name}','${fullUrl}')">💬 카카오 메시지</button>
+      <span class="save-status" id="status_${app.id}"></span>
+    </div>
+  </div>`;
+}
+
+// ─────────────────────────────────────────
+// UPDATE FIELD
+// ─────────────────────────────────────────
+async function updateField(id, field, value) {
+  const app = apps.find(a => a.id === id);
+  if (!app) return;
+  app[field] = value;
+
+  // update toggle label
+  if (field === 'status') {
+    const card = document.getElementById('card_' + id);
+    if (card) {
+      card.className = 'app-card' + (value === 'ON' ? '' : ' off');
+      const lbl = card.querySelector('.toggle-label');
+      if (lbl) lbl.textContent = value;
+    }
+  }
+
+  // update tag chips
+  if (field === 'tags') {
+    const card = document.getElementById('card_' + id);
+    const row = card?.querySelector('.tag-row');
+    if (row) {
+      const tags = value.split(',').map(t=>t.trim()).filter(Boolean);
+      row.innerHTML = tags.map(t=>`<span class="tag-chip">${t}</span>`).join('');
+    }
+  }
+
+  localStorage.setItem(STORAGE_APPS, JSON.stringify(apps));
+  updateStats();
+
+  const statusEl = document.getElementById('status_' + id);
+  if (!statusEl) return;
+
+  if (useSheets) {
+    statusEl.textContent = '저장 중...';
+    try {
+      await fetch(scriptUrl, {
+        method:'POST',
+        body: JSON.stringify({ secret: API_SECRET, id, updates:{ [field]: value } })
+      });
+      statusEl.textContent = '✓ 저장됨';
+    } catch(e) {
+      statusEl.textContent = '⚠ 로컬 저장됨';
+    }
+    setTimeout(() => { statusEl.textContent = ''; }, 2500);
+  } else {
+    statusEl.textContent = '✓ 로컬 저장됨';
+    setTimeout(() => { statusEl.textContent = ''; }, 1800);
+  }
+}
+
+// ─────────────────────────────────────────
+// ADD APP
+// ─────────────────────────────────────────
+function openAddModal() { document.getElementById('addModal').classList.add('open'); }
+async function addApp() {
+  const name = document.getElementById('newName').value.trim();
+  const url  = document.getElementById('newUrl').value.trim();
+  if (!name || !url) { showToast('앱 이름과 경로는 필수입니다.'); return; }
+  const newApp = {
+    id: 'app_' + Date.now(),
+    name, url,
+    category: document.getElementById('newCat').value,
+    icon: document.getElementById('newIcon').value || '📱',
+    description: document.getElementById('newDesc').value,
+    tags: '', memo: '', status: 'OFF'
+  };
+  apps.push(newApp);
+  localStorage.setItem(STORAGE_APPS, JSON.stringify(apps));
+  if (useSheets) {
+    try {
+      await fetch(scriptUrl, {
+        method:'POST',
+        body: JSON.stringify({ secret: API_SECRET, action:'add', id: newApp.id, data: newApp })
+      });
+    } catch(e) {}
+  }
+  closeModal('addModal');
+  renderCards(); updateStats();
+  showToast('앱이 추가되었습니다!');
+  ['newName','newUrl','newIcon','newDesc'].forEach(i => document.getElementById(i).value = '');
+}
+
+// ─────────────────────────────────────────
+// SHARE
+// ─────────────────────────────────────────
+function copyLink(url) {
+  navigator.clipboard.writeText(url).then(() => showToast('링크가 복사되었습니다!'));
+}
+
+function kakaoShare(name, url) {
+  const msg = `안녕하세요! 커리어포레스트에서 준비한 "${name}" 도구를 활용해보세요 😊\n\n👉 ${url}\n\n궁금하신 점은 카카오채널로 문의주세요!`;
+  navigator.clipboard.writeText(msg).then(() => showToast('카카오 메시지가 클립보드에 복사됐어요!\n카카오채널에 붙여넣기하세요.'));
+}
+
+// ─────────────────────────────────────────
+// UTILS
+// ─────────────────────────────────────────
+function setFilter(btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentFilter = btn.dataset.cat;
+  renderCards();
+}
+
+function updateStats() {
+  const on = apps.filter(a => a.status === 'ON').length;
+  document.getElementById('onCount').textContent = on + '개 활성';
+  document.getElementById('totalCount').textContent = '총 ' + apps.length + '개';
+}
+
+function setTab(t) {}
+function openScriptModal() { document.getElementById('modalScriptUrl').value = scriptUrl; document.getElementById('scriptModal').classList.add('open'); }
+function openPublicGallery() { window.open('apps-gallery.html', '_blank'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+function copyScript() {
+  navigator.clipboard.writeText(GAS_CODE).then(() => showToast('코드가 복사되었습니다! Apps Script에 붙여넣기하세요.'));
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+</script>
+</body>
+</html>
