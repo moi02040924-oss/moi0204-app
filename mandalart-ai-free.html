@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>만다라트 AI | 커리어포레스트</title>
+<meta name="description" content="핵심 목표를 입력하면 AI가 8가지 세부목표와 64가지 실천과제를 자동으로 생성해드립니다.">
+<meta property="og:title" content="만다라트 AI | 커리어포레스트">
+<meta property="og:description" content="AI로 나만의 만다라트 목표 계획표를 자동 완성 (무료)">
+<meta property="og:url" content="https://careerforest.co.kr/mandalart-ai.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --green-deep:#085041;
+  --green-mid:#1D9E75;
+  --green-light:#E1F5EE;
+  --bg:#F7FAF8;
+  --surface:#FFFFFF;
+  --border:#D8E8E0;
+  --text:#1A2E26;
+  --muted:#6A8878;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+/* Header */
+.site-header{
+  background:var(--green-deep);padding:14px 24px;
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px
+}
+.brand{color:white;font-size:16px;font-weight:700;text-decoration:none}
+.brand span{font-weight:400;opacity:.7;font-size:12px;margin-left:6px}
+.free-badge{
+  background:#27ae60;color:white;font-size:11px;
+  padding:4px 10px;border-radius:20px;font-weight:500
+}
+
+/* Hero */
+.hero{
+  background:linear-gradient(135deg,var(--green-deep) 0%,#1A6B52 100%);
+  padding:44px 20px 36px;text-align:center;position:relative;overflow:hidden
+}
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E")
+}
+.hero h1{font-size:28px;font-weight:700;color:white;margin-bottom:10px;position:relative}
+.hero h1 em{font-style:normal;color:#7DDFBA}
+.hero p{font-size:14px;color:rgba(255,255,255,.8);max-width:480px;margin:0 auto 6px;line-height:1.7;position:relative}
+.hero .free-note{
+  display:inline-block;margin-top:10px;
+  background:rgba(255,255,255,.15);color:white;
+  font-size:12px;padding:5px 14px;border-radius:20px;position:relative
+}
+
+/* Input card */
+.input-card{
+  background:white;border-radius:14px;
+  box-shadow:0 4px 24px rgba(0,0,0,.12);
+  padding:24px;max-width:600px;margin:24px auto 0;position:relative
+}
+.input-card label{display:block;font-size:13px;font-weight:500;color:var(--muted);margin-bottom:8px}
+.goal-row{display:flex;gap:8px}
+.goal-row input{
+  flex:1;font-family:inherit;font-size:14px;
+  border:1.5px solid var(--border);border-radius:8px;
+  padding:11px 14px;outline:none;transition:border-color .2s;color:var(--text)
+}
+.goal-row input:focus{border-color:var(--green-mid)}
+.goal-row input::placeholder{color:#bbb}
+.btn-gen{
+  background:var(--green-mid);color:white;border:none;
+  border-radius:8px;padding:11px 20px;font-family:inherit;
+  font-size:14px;font-weight:500;cursor:pointer;white-space:nowrap;
+  transition:background .2s,transform .1s
+}
+.btn-gen:hover{background:var(--green-deep)}
+.btn-gen:active{transform:scale(.98)}
+.btn-gen:disabled{background:#aaa;cursor:not-allowed}
+
+/* API key section */
+.api-box{
+  margin-top:16px;background:#F0F8F4;border-radius:10px;padding:14px 16px
+}
+.api-box-title{
+  font-size:12px;font-weight:500;color:var(--green-deep);
+  margin-bottom:8px;display:flex;align-items:center;gap:6px
+}
+.api-box p{font-size:12px;color:var(--muted);margin-bottom:10px;line-height:1.7}
+.api-box a{color:var(--green-mid);font-weight:500}
+.api-box input{
+  width:100%;font-family:monospace;font-size:12px;
+  border:1.5px solid var(--border);border-radius:6px;
+  padding:9px 12px;outline:none;color:var(--text);background:white
+}
+.api-box input:focus{border-color:var(--green-mid)}
+.save-btn{
+  margin-top:8px;font-size:12px;font-family:inherit;
+  background:var(--green-mid);color:white;border:none;
+  border-radius:6px;padding:6px 14px;cursor:pointer;font-weight:500
+}
+.key-saved{
+  display:none;font-size:12px;color:var(--green-mid);
+  margin-top:6px;font-weight:500
+}
+
+/* Steps guide */
+.steps{
+  max-width:600px;margin:20px auto 0;
+  display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:0 4px
+}
+.step{
+  background:white;border-radius:10px;padding:14px 12px;
+  border:1px solid var(--border);text-align:center
+}
+.step-num{
+  width:28px;height:28px;border-radius:50%;
+  background:var(--green-deep);color:white;
+  font-size:13px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;margin:0 auto 8px
+}
+.step p{font-size:11px;color:var(--muted);line-height:1.6}
+.step strong{font-size:12px;color:var(--text);display:block;margin-bottom:4px}
+
+/* Main */
+.main{max-width:900px;margin:0 auto;padding:28px 16px 60px}
+
+/* Status */
+#status{
+  text-align:center;padding:40px 16px;
+  font-size:14px;color:var(--muted);display:none
+}
+.dot-wave{display:inline-flex;gap:4px;margin-left:6px;vertical-align:middle}
+.dot-wave span{
+  width:6px;height:6px;border-radius:50%;background:var(--green-mid);
+  animation:bounce 1.2s infinite ease-in-out
+}
+.dot-wave span:nth-child(2){animation-delay:.2s}
+.dot-wave span:nth-child(3){animation-delay:.4s}
+@keyframes bounce{0%,80%,100%{transform:scale(0)}40%{transform:scale(1)}}
+
+/* Grid section */
+#gridWrap{display:none}
+.section-title{
+  font-size:15px;font-weight:500;color:var(--muted);
+  margin-bottom:14px;text-align:center
+}
+.goal-chip{
+  display:inline-block;background:var(--green-deep);color:white;
+  border-radius:20px;padding:4px 14px;font-size:13px;font-weight:500;margin-left:8px
+}
+
+/* Legend */
+.legend{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:16px}
+.li{
+  display:flex;align-items:center;gap:5px;
+  font-size:12px;color:var(--muted);
+  background:white;border:1px solid var(--border);
+  border-radius:20px;padding:3px 10px
+}
+.ld{width:8px;height:8px;border-radius:2px;flex-shrink:0}
+
+/* Mandalart grid */
+.grid-scroll{overflow-x:auto}
+.mg{
+  display:grid;grid-template-columns:repeat(9,90px);
+  width:810px;border:2.5px solid var(--green-deep);
+  border-radius:4px;overflow:hidden;margin:0 auto;
+  font-family:'Noto Sans KR',sans-serif
+}
+.cell{
+  width:90px;height:90px;
+  display:flex;align-items:center;justify-content:center;
+  padding:5px;font-size:10.5px;line-height:1.4;text-align:center;
+  border:0.5px solid rgba(0,0,0,.12);
+  word-break:keep-all;overflow:hidden;transition:filter .15s
+}
+.cell:hover{filter:brightness(.94)}
+.cell.br{border-right:2.5px solid var(--green-deep)}
+.cell.bb{border-bottom:2.5px solid var(--green-deep)}
+
+/* Action bar */
+.action-bar{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:20px}
+.btn{
+  font-family:inherit;font-size:13px;font-weight:500;
+  border:1.5px solid var(--border);background:white;color:var(--text);
+  border-radius:8px;padding:9px 18px;cursor:pointer;transition:all .2s
+}
+.btn:hover{background:var(--green-light);border-color:var(--green-mid)}
+.btn.primary{background:var(--green-mid);color:white;border-color:var(--green-mid)}
+.btn.primary:hover{background:var(--green-deep)}
+
+/* Footer */
+footer{
+  text-align:center;padding:24px 16px;
+  font-size:12px;color:var(--muted);border-top:1px solid var(--border)
+}
+footer a{color:var(--green-mid);text-decoration:none}
+
+/* Print */
+@media print{
+  .site-header,.hero,.action-bar,footer,.steps{display:none!important}
+  body{background:white}
+  .main{padding:0}
+  .mg{page-break-inside:avoid}
+  .cell{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+
+@media(max-width:600px){
+  .hero h1{font-size:22px}
+  .hero{padding:32px 16px 24px}
+  .goal-row{flex-direction:column}
+  .steps{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <a class="brand" href="https://careerforest.co.kr">🌲 커리어포레스트 <span>careerforest.co.kr</span></a>
+  <span class="free-badge">✓ 무료 AI</span>
+</header>
+
+<section class="hero">
+  <h1>🗺️ 만다라트 <em>AI</em></h1>
+  <p>핵심 목표 하나를 입력하면<br>AI가 8가지 세부목표 + 64가지 실천과제를 자동으로 채워드립니다</p>
+  <span class="free-note">✦ Google Gemini AI 무료 사용 · API 비용 0원</span>
+
+  <div class="input-card">
+    <label for="goalInput">나의 핵심 목표</label>
+    <div class="goal-row">
+      <input type="text" id="goalInput"
+        placeholder="예: 1년 내에 동화작가로 동화책 내기"
+        onkeydown="if(event.key==='Enter')gen()" maxlength="40">
+      <button class="btn-gen" id="genBtn" onclick="gen()">AI 생성 ✦</button>
+    </div>
+
+    <div class="api-box">
+      <div class="api-box-title">⚙ Gemini API 키 설정 (무료)</div>
+      <p>
+        Google의 Gemini AI는 <strong>무료</strong>로 사용할 수 있습니다.<br>
+        ① <a href="https://aistudio.google.com/apikey" target="_blank">aistudio.google.com/apikey</a> 에서 무료 API 키 발급<br>
+        ② 아래에 붙여넣기 후 저장 → 이후에는 바로 생성 가능
+      </p>
+      <input type="password" id="apiKey" placeholder="AIza..." autocomplete="off"
+        onkeydown="if(event.key==='Enter')saveKey()">
+      <br>
+      <button class="save-btn" onclick="saveKey()">저장하기</button>
+      <div class="key-saved" id="keySaved">✓ API 키가 저장되었습니다!</div>
+    </div>
+  </div>
+</section>
+
+<div class="steps">
+  <div class="step">
+    <div class="step-num">1</div>
+    <strong>무료 API 키 발급</strong>
+    <p>Google AI Studio에서 1분 만에 무료로 발급</p>
+  </div>
+  <div class="step">
+    <div class="step-num">2</div>
+    <strong>목표 입력</strong>
+    <p>달성하고 싶은 핵심 목표를 구체적으로 입력</p>
+  </div>
+  <div class="step">
+    <div class="step-num">3</div>
+    <strong>만다라트 완성</strong>
+    <p>AI가 81칸을 자동 생성 → 인쇄 또는 복사</p>
+  </div>
+</div>
+
+<main class="main">
+  <div id="status"></div>
+
+  <div id="gridWrap">
+    <p class="section-title" id="sectionTitle"></p>
+    <div class="legend" id="legend"></div>
+    <div class="grid-scroll">
+      <div class="mg" id="grid"></div>
+    </div>
+    <div class="action-bar">
+      <button class="btn" onclick="window.print()">🖨️ 인쇄 / PDF 저장</button>
+      <button class="btn" onclick="copyText()">📋 텍스트 복사</button>
+      <button class="btn primary" onclick="reGen()">🔄 다시 생성</button>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <p>🌲 <a href="https://careerforest.co.kr">커리어포레스트</a> · AI 커리어 & 소상공인 컨설팅 · <a href="mailto:info@careerforest.co.kr">info@careerforest.co.kr</a></p>
+  <p style="margin-top:6px">Powered by Google Gemini AI (무료) · © 2025 커리어포레스트</p>
+</footer>
+
+<script>
+const COLORS=[
+  {bg:'#E1F5EE',ctr:'#085041',txt:'white'},
+  {bg:'#EEEDFE',ctr:'#3C3489',txt:'white'},
+  {bg:'#FAECE7',ctr:'#7A2A10',txt:'white'},
+  {bg:'#EAF3DE',ctr:'#2B5A0A',txt:'white'},
+  {bg:'#FAEEDA',ctr:'#6B3D07',txt:'white'},
+  {bg:'#FBEAF0',ctr:'#7A2440',txt:'white'},
+  {bg:'#E6F1FB',ctr:'#0D4A82',txt:'white'},
+  {bg:'#EDEBE5',ctr:'#3A3A38',txt:'white'}
+];
+const MAP=[[0,1,2],[3,-1,4],[5,6,7]];
+let curGoal='',curData=null;
+
+// 저장된 키 불러오기
+window.onload=function(){
+  const saved=localStorage.getItem('cf_gemini_key');
+  if(saved){
+    document.getElementById('apiKey').value=saved;
+    document.getElementById('keySaved').style.display='block';
+    document.getElementById('keySaved').textContent='✓ 저장된 API 키가 있습니다. 바로 생성 가능!';
+  }
+};
+
+function saveKey(){
+  const key=document.getElementById('apiKey').value.trim();
+  if(!key){alert('API 키를 입력해주세요.');return;}
+  localStorage.setItem('cf_gemini_key',key);
+  const saved=document.getElementById('keySaved');
+  saved.style.display='block';
+  saved.textContent='✓ API 키가 저장되었습니다!';
+}
+
+function getKey(){
+  const inp=document.getElementById('apiKey').value.trim();
+  if(inp){localStorage.setItem('cf_gemini_key',inp);return inp;}
+  return localStorage.getItem('cf_gemini_key')||'';
+}
+
+async function gen(){
+  const goal=document.getElementById('goalInput').value.trim();
+  if(!goal){alert('핵심 목표를 입력해주세요!');return;}
+  const key=getKey();
+  if(!key){
+    alert('Gemini API 키를 먼저 입력하고 저장해주세요.\naistudio.google.com/apikey 에서 무료 발급 가능합니다.');
+    return;
+  }
+  curGoal=goal;
+  document.getElementById('genBtn').disabled=true;
+  document.getElementById('gridWrap').style.display='none';
+  const st=document.getElementById('status');
+  st.style.display='block';
+  st.innerHTML='AI가 만다라트를 생성 중입니다 <span class="dot-wave"><span></span><span></span><span></span></span>';
+
+  const prompt=`만다라트 계획 전문가입니다. 아래 핵심 목표의 만다라트를 생성하세요.
+
+핵심 목표: ${goal}
+
+마크다운 없이 순수 JSON만 출력:
+{"subGoals":[{"goal":"세부목표(15자이내)","actions":["실천과제(15자이내)","","","","","","",""]}]}
+
+- subGoals 정확히 8개, actions 정확히 8개
+- 한국어, 구체적이고 실천 가능하게
+- 각 텍스트 15자 이내`;
+
+  try{
+    const res=await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`,
+      {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({
+          contents:[{parts:[{text:prompt}]}],
+          generationConfig:{temperature:0.7,maxOutputTokens:2000}
+        })
+      }
+    );
+    if(!res.ok){
+      const err=await res.json();
+      throw new Error(err.error?.message||'API 오류가 발생했습니다');
+    }
+    const d=await res.json();
+    const txt=d.candidates[0].content.parts[0].text;
+    const parsed=JSON.parse(txt.replace(/```json|```/g,'').trim());
+    curData=parsed;
+    render(goal,parsed);
+    st.style.display='none';
+    document.getElementById('gridWrap').style.display='block';
+    document.getElementById('gridWrap').scrollIntoView({behavior:'smooth',block:'start'});
+  }catch(e){
+    st.innerHTML='<span style="color:#c0392b">❌ 오류: '+e.message+'<br>API 키를 확인하거나 다시 시도해주세요.</span>';
+    console.error(e);
+  }
+  document.getElementById('genBtn').disabled=false;
+}
+
+function reGen(){if(curGoal){document.getElementById('goalInput').value=curGoal;gen();}}
+
+function render(goal,data){
+  const grid=document.getElementById('grid');
+  const leg=document.getElementById('legend');
+  grid.innerHTML='';leg.innerHTML='';
+  document.getElementById('sectionTitle').innerHTML=
+    '핵심 목표 <span class="goal-chip">'+goal+'</span> 의 만다라트';
+
+  for(let r=0;r<9;r++){
+    for(let c=0;c<9;c++){
+      const el=document.createElement('div');
+      let cls='cell';
+      if(c%3===2&&c<8)cls+=' br';
+      if(r%3===2&&r<8)cls+=' bb';
+      el.className=cls;
+
+      const sgr=Math.floor(r/3),sgc=Math.floor(c/3);
+      const cr=r%3,cc=c%3;
+      const isCtr=cr===1&&cc===1;
+
+      if(sgr===1&&sgc===1){
+        if(isCtr){
+          el.textContent=goal;
+          el.style.cssText='background:#085041;color:white;font-weight:700;font-size:11px';
+        }else{
+          const idx=MAP[cr][cc];
+          const sg=data.subGoals[idx];
+          el.textContent=sg?sg.goal:'';
+          el.style.cssText='background:'+COLORS[idx].ctr+';color:white;font-weight:500';
+        }
+      }else{
+        const idx=MAP[sgr][sgc];
+        const col=COLORS[idx];
+        if(isCtr){
+          const sg=data.subGoals[idx];
+          el.textContent=sg?sg.goal:'';
+          el.style.cssText='background:'+col.ctr+';color:white;font-weight:500';
+        }else{
+          const ai=MAP[cr][cc];
+          const sg=data.subGoals[idx];
+          el.textContent=sg?(sg.actions[ai]||''):'';
+          el.style.cssText='background:'+col.bg+';color:#1A2E26';
+        }
+      }
+      grid.appendChild(el);
+    }
+  }
+
+  data.subGoals.forEach((sg,i)=>{
+    const li=document.createElement('div');
+    li.className='li';
+    li.innerHTML='<span class="ld" style="background:'+COLORS[i].ctr+'"></span><span>'+sg.goal+'</span>';
+    leg.appendChild(li);
+  });
+}
+
+function copyText(){
+  if(!curData||!curGoal)return;
+  let t='[만다라트] 핵심 목표: '+curGoal+'\n\n';
+  curData.subGoals.forEach((sg,i)=>{
+    t+=(i+1)+'. '+sg.goal+'\n';
+    sg.actions.forEach((a,j)=>{t+='   '+(j+1)+') '+a+'\n';});
+    t+='\n';
+  });
+  navigator.clipboard.writeText(t).then(()=>alert('📋 클립보드에 복사되었습니다!'));
+}
+</script>
+</body>
+</html>
