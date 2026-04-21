@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>창업 적성 체크 | 커리어포레스트</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --primary:#085041;
+  --mid:#1D9E75;
+  --light:#E1F5EE;
+  --bg:#F0F4F8;
+  --surface:#fff;
+  --border:#e0e0e0;
+  --text:#202124;
+  --muted:#5f6368;
+  --accent:#1a73e8;
+  --red:#d93025;
+  --yellow:#f9ab00;
+  --green:#1e8e3e;
+  --radius:8px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+/* Header bar */
+.top-bar{
+  background:var(--primary);height:10px;position:fixed;top:0;left:0;right:0;z-index:100
+}
+
+/* Progress bar */
+.progress-bar-wrap{
+  position:fixed;top:10px;left:0;right:0;z-index:99;
+  background:rgba(8,80,65,.95);padding:8px 20px;
+  display:flex;align-items:center;gap:12px
+}
+.progress-track{flex:1;height:4px;background:rgba(255,255,255,.25);border-radius:2px}
+.progress-fill{height:100%;background:#7DDFBA;border-radius:2px;transition:width .4s ease}
+.progress-label{font-size:12px;color:rgba(255,255,255,.8);white-space:nowrap}
+
+/* Main layout */
+.main{
+  max-width:640px;margin:0 auto;
+  padding:70px 16px 60px
+}
+
+/* Form header card */
+.form-header{
+  background:var(--surface);border-radius:var(--radius);
+  border-top:10px solid var(--primary);
+  padding:28px 24px;margin-bottom:12px;
+  box-shadow:0 1px 3px rgba(0,0,0,.12)
+}
+.form-header h1{font-size:24px;font-weight:700;color:var(--text);margin-bottom:10px}
+.form-header p{font-size:14px;color:var(--muted);line-height:1.8}
+.form-header .required-note{
+  font-size:13px;color:var(--red);margin-top:14px;
+  padding-top:14px;border-top:1px solid var(--border)
+}
+
+/* Section title card */
+.section-card{
+  background:var(--surface);border-radius:var(--radius);
+  border-left:5px solid var(--mid);
+  padding:16px 20px;margin-bottom:12px;
+  box-shadow:0 1px 3px rgba(0,0,0,.08)
+}
+.section-card h2{font-size:15px;font-weight:700;color:var(--primary)}
+.section-card p{font-size:13px;color:var(--muted);margin-top:4px;line-height:1.6}
+
+/* Question card — Google Forms style */
+.q-card{
+  background:var(--surface);border-radius:var(--radius);
+  padding:20px 24px;margin-bottom:8px;
+  box-shadow:0 1px 3px rgba(0,0,0,.08);
+  border:2px solid transparent;transition:border-color .2s
+}
+.q-card.answered{border-color:var(--light)}
+.q-card.unanswered-warn{border-color:#fce8e6;background:#fff8f7}
+.q-header{display:flex;gap:10px;align-items:flex-start;margin-bottom:16px}
+.q-num-badge{
+  min-width:24px;height:24px;border-radius:50%;
+  background:var(--primary);color:white;
+  font-size:11px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;margin-top:1px
+}
+.q-text{font-size:15px;line-height:1.6;color:var(--text)}
+
+/* Radio options — horizontal pill style */
+.radio-group{
+  display:flex;gap:8px;flex-wrap:wrap
+}
+.radio-opt{
+  display:flex;align-items:center;gap:6px;
+  padding:8px 16px;border-radius:20px;
+  border:1.5px solid var(--border);cursor:pointer;
+  transition:all .15s;user-select:none;
+  font-size:14px;color:var(--muted)
+}
+.radio-opt:hover{border-color:var(--mid);background:var(--light);color:var(--primary)}
+.radio-opt input[type=radio]{display:none}
+.radio-dot{
+  width:14px;height:14px;border-radius:50%;
+  border:2px solid var(--border);flex-shrink:0;
+  transition:all .15s;background:white
+}
+.radio-opt.sel-yes{border-color:var(--green);background:#f0fff4;color:var(--green)}
+.radio-opt.sel-yes .radio-dot{border-color:var(--green);background:var(--green)}
+.radio-opt.sel-normal{border-color:var(--yellow);background:#fffdf0;color:#b06000}
+.radio-opt.sel-normal .radio-dot{border-color:var(--yellow);background:var(--yellow)}
+.radio-opt.sel-no{border-color:#aaa;background:#f8f8f8;color:#666}
+.radio-opt.sel-no .radio-dot{border-color:#aaa;background:#aaa}
+
+/* Navigation */
+.nav-area{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-top:20px;flex-wrap:wrap;gap:10px
+}
+.nav-right{display:flex;gap:10px}
+.btn{
+  font-family:inherit;font-size:14px;font-weight:500;
+  border:none;border-radius:4px;padding:10px 24px;
+  cursor:pointer;transition:all .15s
+}
+.btn-back{background:transparent;color:var(--accent);border:1px solid var(--accent)}
+.btn-back:hover{background:#e8f0fe}
+.btn-next{background:var(--accent);color:white}
+.btn-next:hover{background:#1557b0}
+.btn-result{background:var(--primary);color:white}
+.btn-result:hover{background:#054535}
+.page-info{font-size:13px;color:var(--muted)}
+
+/* Result */
+.result-header{
+  background:var(--surface);border-radius:var(--radius);
+  border-top:10px solid var(--primary);
+  padding:32px 24px;margin-bottom:12px;
+  text-align:center;
+  box-shadow:0 1px 3px rgba(0,0,0,.12)
+}
+.score-ring{
+  width:120px;height:120px;border-radius:50%;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  margin:0 auto 20px;
+  border:5px solid var(--primary)
+}
+.score-big{font-size:36px;font-weight:700;color:var(--primary)}
+.score-sub{font-size:13px;color:var(--muted)}
+.grade-pill{
+  display:inline-block;border-radius:20px;
+  padding:6px 20px;font-size:14px;font-weight:700;
+  margin-bottom:16px
+}
+.result-title{font-size:20px;font-weight:700;margin-bottom:12px}
+.result-desc{font-size:14px;color:var(--muted);line-height:1.9;max-width:480px;margin:0 auto}
+
+.cat-card{
+  background:var(--surface);border-radius:var(--radius);
+  padding:20px 24px;margin-bottom:8px;
+  box-shadow:0 1px 3px rgba(0,0,0,.08)
+}
+.cat-card h3{font-size:14px;font-weight:500;color:var(--muted);margin-bottom:16px}
+.cat-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.cat-name{font-size:13px;color:var(--text);min-width:88px}
+.cat-track{flex:1;height:8px;background:var(--border);border-radius:4px;overflow:hidden}
+.cat-fill{height:100%;border-radius:4px;transition:width .7s ease}
+.cat-val{font-size:12px;color:var(--muted);min-width:40px;text-align:right}
+
+.result-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:8px}
+
+/* Review list */
+.review-card{
+  background:var(--surface);border-radius:var(--radius);
+  padding:20px 24px;margin-bottom:8px;
+  box-shadow:0 1px 3px rgba(0,0,0,.08)
+}
+.review-card h3{font-size:14px;font-weight:500;color:var(--muted);margin-bottom:12px}
+.review-item{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:8px 0;border-bottom:1px solid var(--border);
+  font-size:13px
+}
+.review-item:last-child{border-bottom:none}
+.r-q{color:var(--text);flex:1;padding-right:12px;line-height:1.5}
+.r-a{font-weight:500;white-space:nowrap}
+.r-yes{color:var(--green)}.r-normal{color:#b06000}.r-no{color:#888}
+
+@media print{
+  .top-bar,.progress-bar-wrap,.nav-area,.result-actions{display:none!important}
+  body{background:white}.main{padding:0}
+  .q-card,.form-header,.section-card,.result-header,.cat-card,.review-card{box-shadow:none}
+}
+@media(max-width:500px){
+  .radio-group{flex-direction:column}
+  .radio-opt{justify-content:flex-start}
+}
+</style>
+</head>
+<body>
+
+<div class="top-bar"></div>
+<div class="progress-bar-wrap">
+  <div class="progress-track"><div class="progress-fill" id="pgFill" style="width:0%"></div></div>
+  <span class="progress-label" id="pgLabel">1 / 4 페이지</span>
+</div>
+
+<main class="main" id="mainArea"></main>
+
+<script>
+const QS=[
+  // 준비마인드 (Q1~5)
+  {t:"창업에 대해 신중히 고려하고 있다.",cat:"준비마인드"},
+  {t:"창업박람회, 사업설명회, 창업강좌에 참석해 본 적이 있다.",cat:"준비마인드"},
+  {t:"기본적인 창업 절차에 대한 지식을 가지고 있다.",cat:"준비마인드"},
+  {t:"인터넷 이용 시간 중 게임보다 정보습득에 더 많은 시간을 할애한다.",cat:"준비마인드"},
+  {t:"창업을 하겠다면 말리는 사람보다 돕겠다는 사람이 더 많다.",cat:"준비마인드"},
+  // 대인관계 (Q6~10)
+  {t:"대인관계가 원만하다는 소리를 주변에서 자주 듣는다.",cat:"대인관계"},
+  {t:"새로운 사람을 만나는 일은 즐겁다.",cat:"대인관계"},
+  {t:"처음 본 사람이라도 인상이나 이름을 잘 기억하는 편이다.",cat:"대인관계"},
+  {t:"주위에서 부탁을 받더라도 상대방 기분 상하지 않게 거절할 수 있다.",cat:"대인관계"},
+  {t:"가족과 상의하고 판단해서 일을 처리한다.",cat:"대인관계"},
+  // 실행력 (Q11~15)
+  {t:"물건을 살 때 꼼꼼하게 따지고 구입하는 편이다.",cat:"실행력"},
+  {t:"이해득실에 대한 판단이 빠르다.",cat:"실행력"},
+  {t:"어떤 사안의 경쟁에서 포기보다 끝까지 추진하는 선택이 빠르다.",cat:"실행력"},
+  {t:"살아오면서 여러 가지 직업을 경험해 봤다.",cat:"실행력"},
+  {t:"나는 반드시 창업을 할 것이다.",cat:"실행력"},
+  // 멘탈관리 (Q16~20)
+  {t:"식당에서 음식이 늦게 나와도 짜증내지 않는다.",cat:"멘탈관리"},
+  {t:"환경이 변하면 나 자신을 바꿔 준비가 돼 있다.",cat:"멘탈관리"},
+  {t:"건강·여가 선용을 위해 한 가지 이상 운동을 한다.",cat:"멘탈관리"},
+  {t:"실패의 경험이 있다.(진학, 취업, 사업, 자격시험 등)",cat:"멘탈관리"},
+  {t:"한 번의 실패가 끝장이 아니라 배움의 기회라 생각한다.",cat:"멘탈관리"},
+];
+
+const PAGES=[
+  {title:"준비 마인드",desc:"창업을 위한 사전 준비와 마음가짐을 확인합니다.",range:[0,5]},
+  {title:"대인 관계",desc:"주변 사람들과의 관계 형성 능력을 확인합니다.",range:[5,10]},
+  {title:"실행력",desc:"목표를 향한 추진력과 의사결정 능력을 확인합니다.",range:[10,15]},
+  {title:"멘탈 관리",desc:"어려운 상황에서의 감정 조절과 회복 능력을 확인합니다.",range:[15,20]},
+];
+
+const CATS=["준비마인드","대인관계","실행력","멘탈관리"];
+const CAT_COLORS={"준비마인드":"#085041","대인관계":"#3C3489","실행력":"#0D4A82","멘탈관리":"#c0622f"};
+
+let answers=new Array(20).fill(-1);
+let page=0; // 0~3 = questions, 4 = result
+
+function score(i){return answers[i]===-1?0:answers[i]===0?2:answers[i]===1?1:0;}
+
+function render(){
+  const main=document.getElementById('mainArea');
+  main.innerHTML='';
+  if(page<4) renderQuestions(main);
+  else renderResult(main);
+  updateProgress();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function updateProgress(){
+  const total=page<4?4:4;
+  const cur=Math.min(page+1,4);
+  const pct=page>=4?100:Math.round((page/4)*100);
+  document.getElementById('pgFill').style.width=pct+'%';
+  document.getElementById('pgLabel').textContent=
+    page>=4?'완료!':cur+' / '+4+' 페이지';
+}
+
+function renderQuestions(main){
+  const pg=PAGES[page];
+  const [start,end]=pg.range;
+
+  // Form header (page 0 only)
+  if(page===0){
+    const hd=el('div','form-header');
+    hd.innerHTML=
+      '<h1>📋 창업 적성 체크</h1>'+
+      '<p>예비창업자의 준비 상태를 스스로 점검하는 진단 도구입니다.<br>각 문항을 읽고 본인과 가장 가까운 답변을 선택해주세요.</p>'+
+      '<div class="required-note">* 총 20문항 · 약 3~5분 소요</div>';
+    main.appendChild(hd);
+  }
+
+  // Section title
+  const sc=el('div','section-card');
+  sc.innerHTML='<h2>'+pg.title+'</h2><p>'+pg.desc+'</p>';
+  main.appendChild(sc);
+
+  // Questions
+  for(let i=start;i<end;i++){
+    const q=QS[i];
+    const a=answers[i];
+    const warned=false;
+    const card=el('div','q-card'+(a!==-1?' answered':''));
+    card.id='qcard'+i;
+    card.innerHTML=
+      '<div class="q-header">'+
+        '<span class="q-num-badge">'+(i+1)+'</span>'+
+        '<span class="q-text">'+q.t+'</span>'+
+      '</div>'+
+      '<div class="radio-group" id="rg'+i+'">'+
+        radioOpt(i,0,'예',a)+
+        radioOpt(i,1,'보통',a)+
+        radioOpt(i,2,'아니오',a)+
+      '</div>';
+    main.appendChild(card);
+  }
+
+  // Nav
+  const nav=el('div','nav-area');
+  const left=el('div','');
+  if(page>0){
+    const bk=el('button','btn btn-back');
+    bk.textContent='← 뒤로';
+    bk.onclick=()=>{page--;render();};
+    left.appendChild(bk);
+  }else{
+    left.innerHTML='<span class="page-info">'+((page+1))+' / 4 페이지</span>';
+  }
+  const right=el('div','nav-right');
+  const label=page===3?'결과 보기 →':'다음 →';
+  const nb=el('button','btn '+(page===3?'btn-result':'btn-next'));
+  nb.textContent=label;
+  nb.onclick=()=>goNext(start,end);
+  right.appendChild(nb);
+  nav.appendChild(left);nav.appendChild(right);
+  main.appendChild(nav);
+}
+
+function radioOpt(qi,val,label,cur){
+  const cls=cur===val?
+    (val===0?'sel-yes':val===1?'sel-normal':'sel-no'):'';
+  return '<label class="radio-opt '+cls+'" onclick="pick('+qi+','+val+')">'+
+    '<span class="radio-dot"></span>'+label+'</label>';
+}
+
+function pick(qi,val){
+  answers[qi]=val;
+  const rg=document.getElementById('rg'+qi);
+  const opts=rg.querySelectorAll('.radio-opt');
+  const cls=['sel-yes','sel-normal','sel-no'];
+  opts.forEach((o,i)=>{
+    o.className='radio-opt'+(val===i?' '+cls[i]:'');
+  });
+  const card=document.getElementById('qcard'+qi);
+  card.className='q-card answered';
+}
+
+function goNext(start,end){
+  // warn unanswered
+  let allOk=true;
+  for(let i=start;i<end;i++){
+    if(answers[i]===-1){
+      document.getElementById('qcard'+i).className='q-card unanswered-warn';
+      allOk=false;
+    }
+  }
+  if(!allOk){
+    const first=answers.slice(start,end).findIndex(a=>a===-1)+start;
+    document.getElementById('qcard'+first).scrollIntoView({behavior:'smooth',block:'center'});
+    return;
+  }
+  page++;
+  render();
+}
+
+function renderResult(main){
+  const total=answers.reduce((s,_,i)=>s+score(i),0);
+  const max=40;
+  const pct=Math.round((total/max)*100);
+
+  let grade,title,desc,color;
+  if(pct>=80){
+    grade='A등급 · 창업 준비 완료';color=CAT_COLORS["준비마인드"];
+    title='🚀 창업 준비가 잘 되어 있습니다!';
+    desc='마인드·대인관계·실행력·멘탈관리 전반적으로 준비가 잘 갖춰져 있습니다. 구체적인 사업계획을 수립하고 실행 단계로 나아갈 좋은 시기입니다. 소상공인 지원사업을 적극 활용하시면 더욱 유리한 출발이 가능합니다.';
+  }else if(pct>=60){
+    grade='B등급 · 보완 후 도전';color=CAT_COLORS["대인관계"];
+    title='👍 기본 준비는 되어 있습니다!';
+    desc='창업에 대한 의지와 기본 역량을 갖추고 있습니다. 일부 영역 보완이 필요합니다. 창업 교육·상담 프로그램 참여나 전문 컨설턴트의 도움을 받으면 성공 가능성을 높일 수 있습니다.';
+  }else if(pct>=40){
+    grade='C등급 · 준비 보완 필요';color='#b06000';
+    title='📚 사전 준비가 더 필요합니다';
+    desc='창업에 대한 관심은 있으나 아직 준비가 충분하지 않습니다. 창업박람회·설명회 참석, 창업 교육 수강 등을 통해 지식과 경험을 쌓는 것이 중요합니다.';
+  }else{
+    grade='D등급 · 기초부터 시작';color='#c0392b';
+    title='🌱 기초부터 탄탄하게 준비하세요';
+    desc='현재 시점에서 창업보다 충분한 준비 기간이 필요합니다. 기초 지식 습득, 멘토링 참여, 직업 경험 쌓기 등을 통해 단계적으로 준비해나가는 것을 권장합니다.';
+  }
+
+  // Score card
+  const rh=el('div','result-header');
+  rh.innerHTML=
+    '<div class="score-ring" style="border-color:'+color+'">'+
+      '<span class="score-big" style="color:'+color+'">'+total+'</span>'+
+      '<span class="score-sub">/ '+max+'점</span>'+
+    '</div>'+
+    '<span class="grade-pill" style="background:'+color+'22;color:'+color+';border:1.5px solid '+color+'44">'+grade+'</span>'+
+    '<div class="result-title">'+title+'</div>'+
+    '<div class="result-desc">'+desc+'</div>';
+  main.appendChild(rh);
+
+  // Category breakdown
+  const cc=el('div','cat-card');
+  let catHtml='<h3>📊 영역별 점수</h3>';
+  CATS.forEach(cat=>{
+    const qs=QS.reduce((arr,q,i)=>q.cat===cat?[...arr,i]:arr,[]);
+    const s=qs.reduce((sum,i)=>sum+score(i),0);
+    const m=qs.length*2;
+    const p=Math.round((s/m)*100);
+    catHtml+=
+      '<div class="cat-row">'+
+        '<span class="cat-name">'+cat+'</span>'+
+        '<div class="cat-track"><div class="cat-fill" style="width:'+p+'%;background:'+CAT_COLORS[cat]+'"></div></div>'+
+        '<span class="cat-val">'+s+'/'+m+'점</span>'+
+      '</div>';
+  });
+  cc.innerHTML=catHtml;
+  main.appendChild(cc);
+
+  // Review list
+  const rv=el('div','review-card');
+  let rvHtml='<h3>📝 문항별 응답 내역</h3>';
+  QS.forEach((q,i)=>{
+    const a=answers[i];
+    const alabel=a===0?'예':a===1?'보통':'아니오';
+    const acls=a===0?'r-yes':a===1?'r-normal':'r-no';
+    rvHtml+=
+      '<div class="review-item">'+
+        '<span class="r-q">'+(i+1)+'. '+q.t+'</span>'+
+        '<span class="r-a '+acls+'">'+alabel+'</span>'+
+      '</div>';
+  });
+  rv.innerHTML=rvHtml;
+  main.appendChild(rv);
+
+  // Actions
+  const ac=el('div','result-actions');
+  const pb=el('button','btn btn-back');
+  pb.textContent='🖨️ 인쇄 / PDF';
+  pb.onclick=()=>window.print();
+  const rb=el('button','btn btn-result');
+  rb.textContent='🔄 다시 진단하기';
+  rb.onclick=()=>{answers=new Array(20).fill(-1);page=0;render();};
+  ac.appendChild(pb);ac.appendChild(rb);
+  main.appendChild(ac);
+}
+
+function el(tag,cls){
+  const e=document.createElement(tag);
+  if(cls)e.className=cls;
+  return e;
+}
+
+render();
+</script>
+</body>
+</html>

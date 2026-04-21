@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>QR코드 생성기 | 커리어포레스트</title>
+<meta name="description" content="강의용 QR코드를 무료로 생성하세요. 구글 폼 링크, 카카오채널, 홈페이지 등 어떤 URL도 QR코드로 변환 가능합니다."/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{
+  --forest:#2D5A3D;
+  --forest-light:#3D7A52;
+  --sage:#7B9E87;
+  --gold:#C9A84C;
+  --gold-light:#E8C97A;
+  --cream:#F5F0E8;
+  --cream-dark:#EDE7DA;
+  --charcoal:#2C2C2C;
+  --white:#FFFFFF;
+  --gray:#888;
+  --light-gray:#f8f6f2;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Noto Sans KR',sans-serif;color:var(--charcoal);background:var(--white);line-height:1.7;}
+.container{max-width:1100px;margin:0 auto;padding:0 24px;}
+
+/* ── 네비게이션 ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;background:#ffffff;border-bottom:1px solid rgba(45,90,61,.12);padding:14px 0;box-shadow:0 2px 12px rgba(0,0,0,.06);}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.nav-logo img{height:38px;width:auto;}
+.nav-logo-text{font-size:17px;font-weight:900;color:var(--forest);}
+.nav-logo-sub{font-size:11px;color:var(--sage);margin-top:-2px;}
+.nav-links{display:flex;align-items:center;gap:24px;}
+.nav-links a{font-size:14px;font-weight:500;color:var(--charcoal);text-decoration:none;transition:color .2s;}
+.nav-links a:hover{color:var(--forest);}
+.nav-cta{font-size:13px!important;background:var(--forest)!important;color:white!important;padding:8px 18px;border-radius:20px;font-weight:700!important;}
+@media(max-width:700px){.nav-links{display:none;}}
+
+/* ── 히어로 ── */
+.hero{padding:120px 0 60px;background:linear-gradient(160deg,var(--cream) 0%,var(--white) 60%);}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(45,90,61,.1);color:var(--forest);font-size:13px;padding:6px 16px;border-radius:20px;font-weight:600;margin-bottom:16px;}
+.hero h1{font-size:clamp(28px,4vw,44px);font-weight:900;line-height:1.2;margin-bottom:14px;color:var(--charcoal);}
+.hero h1 em{color:var(--forest);font-style:normal;}
+.hero p{font-size:16px;color:#666;line-height:1.9;max-width:560px;}
+
+/* ── 메인 생성기 ── */
+.generator-section{padding:60px 0;background:var(--white);}
+.gen-card{background:var(--white);border:2px solid rgba(45,90,61,.12);border-radius:24px;padding:40px;margin-bottom:32px;box-shadow:0 4px 24px rgba(0,0,0,.06);}
+.gen-card h2{font-size:20px;font-weight:900;color:var(--forest);margin-bottom:6px;}
+.gen-card .sub{font-size:14px;color:var(--gray);margin-bottom:28px;}
+
+/* 입력 영역 */
+.input-wrap{display:flex;gap:12px;margin-bottom:16px;}
+@media(max-width:600px){.input-wrap{flex-direction:column;}}
+.url-input{flex:1;padding:14px 18px;border:2px solid #e0e0e0;border-radius:12px;font-size:15px;font-family:inherit;transition:border-color .2s;outline:none;}
+.url-input:focus{border-color:var(--forest);}
+.url-input::placeholder{color:#bbb;}
+.gen-btn{background:var(--forest);color:#fff;border:none;padding:14px 28px;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;transition:all .2s;font-family:inherit;white-space:nowrap;}
+.gen-btn:hover{background:var(--forest-light);transform:translateY(-1px);}
+
+/* 옵션 */
+.options-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:24px;}
+.opt-btn{padding:8px 16px;border:2px solid #ddd;border-radius:20px;font-size:13px;cursor:pointer;background:#fff;font-family:inherit;font-weight:500;transition:all .2s;color:var(--charcoal);}
+.opt-btn:hover,.opt-btn.active{border-color:var(--forest);background:rgba(45,90,61,.08);color:var(--forest);}
+.color-opts{display:flex;gap:8px;align-items:center;}
+.color-dot{width:28px;height:28px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:all .2s;}
+.color-dot.active{border-color:#333;transform:scale(1.15);}
+
+/* QR 결과 */
+.result-grid{display:none;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:20px;margin-top:28px;}
+.result-grid.show{display:grid;}
+.qr-card{background:#fff;border:1px solid #eee;border-radius:16px;padding:20px;text-align:center;transition:all .2s;}
+.qr-card:hover{box-shadow:0 8px 24px rgba(0,0,0,.1);transform:translateY(-2px);}
+.qr-card .qr-area{display:flex;justify-content:center;margin:12px 0;}
+.qr-card .qr-label{font-size:12px;font-weight:700;color:var(--forest);margin-bottom:4px;}
+.qr-card .qr-sub{font-size:11px;color:var(--gray);}
+.qr-card .qr-url{font-size:10px;color:var(--sage);margin-top:8px;word-break:break-all;background:var(--light-gray);padding:4px 8px;border-radius:6px;}
+
+/* 단일 QR */
+.single-result{display:none;text-align:center;padding:32px 0;}
+.single-result.show{display:block;}
+.single-result .qr-area{display:flex;justify-content:center;margin:20px 0;}
+.single-result .download-btn{background:var(--gold);color:#fff;border:none;padding:12px 28px;border-radius:50px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin:8px 4px;transition:all .2s;text-decoration:none;display:inline-flex;align-items:center;gap:6px;}
+.single-result .download-btn:hover{background:var(--gold-light);}
+.single-result .print-btn{background:var(--forest);color:#fff;border:none;padding:12px 28px;border-radius:50px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin:8px 4px;transition:all .2s;}
+.single-result .print-btn:hover{background:var(--forest-light);}
+
+/* 강의 모드 섹션 */
+.lecture-mode{background:var(--cream);padding:60px 0;}
+.section-label{font-size:12px;letter-spacing:3px;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:10px;}
+.section-title{font-size:clamp(22px,3vw,32px);font-weight:900;line-height:1.3;margin-bottom:12px;color:var(--forest);}
+.section-sub{font-size:15px;color:var(--gray);line-height:1.9;max-width:580px;margin-bottom:32px;}
+
+.lecture-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+@media(max-width:800px){.lecture-grid{grid-template-columns:1fr;}}
+
+.lecture-card{background:#fff;border-radius:16px;padding:28px;border:2px solid transparent;transition:all .25s;cursor:pointer;}
+.lecture-card:hover{border-color:var(--forest);transform:translateY(-3px);box-shadow:0 12px 32px rgba(45,90,61,.1);}
+.lecture-card .icon{font-size:32px;margin-bottom:14px;}
+.lecture-card h3{font-size:16px;font-weight:800;margin-bottom:8px;color:var(--charcoal);}
+.lecture-card p{font-size:13px;color:var(--gray);line-height:1.7;}
+
+/* 사용 가이드 */
+.guide-section{padding:60px 0;}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-top:40px;}
+@media(max-width:800px){.steps{grid-template-columns:1fr 1fr;}}
+.step{text-align:center;padding:24px;}
+.step-num{width:44px;height:44px;background:var(--forest);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:18px;margin:0 auto 14px;}
+.step-icon{font-size:28px;margin-bottom:10px;}
+.step h4{font-size:14px;font-weight:700;color:var(--forest);margin-bottom:6px;}
+.step p{font-size:12px;color:var(--gray);line-height:1.7;}
+
+/* 푸터 */
+footer{background:var(--charcoal);color:rgba(255,255,255,.7);padding:32px 0;}
+.footer-inner{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;}
+.footer-logo{font-size:15px;font-weight:900;color:white;}
+.footer-info{font-size:12px;line-height:1.9;}
+.footer-links{display:flex;gap:16px;font-size:13px;}
+.footer-links a{color:rgba(255,255,255,.6);text-decoration:none;}
+.footer-links a:hover{color:white;}
+
+/* 인쇄 */
+@media print{
+  nav,.gen-card,.guide-section,.lecture-mode,footer,header,.hero{display:none!important;}
+  .result-grid{grid-template-columns:repeat(2,1fr)!important;}
+  .qr-card{break-inside:avoid;border:1px solid #ccc;}
+}
+
+.hint{font-size:12px;color:#999;margin-top:6px;}
+.badge-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
+.badge{font-size:11px;background:rgba(45,90,61,.1);color:var(--forest);padding:3px 10px;border-radius:10px;font-weight:600;}
+
+/* 로고 base64 (placeholder — 실제 로고로 교체 필요) */
+</style>
+</head>
+<body>
+
+<!-- 네비게이션 -->
+<nav>
+  <div class="container">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">
+        <img src="로고_배경제거_PNG.png" alt="커리어포레스트 로고"/>
+        <div>
+          <div class="nav-logo-text">커리어포레스트</div>
+          <div class="nav-logo-sub">길을 아는 자, 셰르파!</div>
+        </div>
+      </a>
+      <div class="nav-links">
+        <a href="index.html#services">서비스</a>
+        <a href="diagnosis-hub.html">무료 진단</a>
+        <a href="index.html#blog">정책정보</a>
+        <a href="index.html#expert">전문가</a>
+        <a href="index.html#cta" class="nav-cta">무료 상담</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- 히어로 -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-badge">🔗 무료 QR코드 생성기</div>
+    <h1>강의용 <em>QR코드</em>를<br/>5초 만에 만드세요</h1>
+    <p>구글 폼 링크, 카카오채널, 홈페이지, 설문지 등 어떤 URL도<br/>
+    QR코드로 변환해 강의 현장에서 바로 활용하세요.</p>
+    <div class="badge-row">
+      <span class="badge">✅ 완전 무료</span>
+      <span class="badge">✅ 회원가입 불필요</span>
+      <span class="badge">✅ 강의 5개 일괄 생성</span>
+      <span class="badge">✅ 인쇄 최적화</span>
+    </div>
+  </div>
+</section>
+
+<!-- QR 생성기 메인 -->
+<section class="generator-section">
+  <div class="container">
+
+    <!-- 단일 QR 생성 -->
+    <div class="gen-card">
+      <h2>🔗 단일 URL QR코드 생성</h2>
+      <div class="sub">링크를 붙여넣으면 즉시 QR코드가 생성됩니다</div>
+
+      <div class="input-wrap">
+        <input class="url-input" id="singleUrl" type="text"
+          placeholder="https://forms.gle/xxxxx 또는 https://pf.kakao.com/_EJNlX 등"
+          oninput="liveGen()"/>
+        <button class="gen-btn" onclick="generateSingle()">QR 생성 →</button>
+      </div>
+      <div class="hint">예: 구글 폼 링크 / 카카오채널 / 홈페이지 / 블로그 등 모든 URL 가능</div>
+
+      <!-- 색상 옵션 -->
+      <div style="display:flex;align-items:center;gap:16px;margin:16px 0;">
+        <span style="font-size:13px;font-weight:500;color:var(--charcoal)">색상:</span>
+        <div class="color-opts">
+          <div class="color-dot active" style="background:#2D5A3D" onclick="setColor('#2D5A3D',this)" title="숲 초록"></div>
+          <div class="color-dot" style="background:#1a1a1a" onclick="setColor('#1a1a1a',this)" title="블랙"></div>
+          <div class="color-dot" style="background:#C9A84C" onclick="setColor('#C9A84C',this)" title="골드"></div>
+          <div class="color-dot" style="background:#2563eb" onclick="setColor('#2563eb',this)" title="블루"></div>
+          <div class="color-dot" style="background:#e11d48" onclick="setColor('#e11d48',this)" title="레드"></div>
+        </div>
+        <span style="font-size:13px;font-weight:500;color:var(--charcoal);margin-left:8px">크기:</span>
+        <div class="options-row" style="margin:0">
+          <button class="opt-btn" onclick="setSize(160,this)">소</button>
+          <button class="opt-btn active" onclick="setSize(200,this)">중</button>
+          <button class="opt-btn" onclick="setSize(260,this)">대</button>
+          <button class="opt-btn" onclick="setSize(320,this)">특대</button>
+        </div>
+      </div>
+
+      <!-- 단일 결과 -->
+      <div class="single-result" id="singleResult">
+        <div class="qr-area" id="singleQR"></div>
+        <div id="singleUrlDisplay" style="font-size:12px;color:var(--sage);margin-bottom:16px;word-break:break-all;"></div>
+        <button class="print-btn" onclick="window.print()">🖨️ 인쇄 / PDF 저장</button>
+        <button class="download-btn" onclick="downloadQR()">💾 이미지 저장</button>
+      </div>
+    </div>
+
+    <!-- 강의 일괄 생성 -->
+    <div class="gen-card">
+      <h2>📚 강의 일괄 QR코드 생성</h2>
+      <div class="sub">구글 폼 링크 하나로 강의 5개용 카드를 한 번에 만들어드립니다</div>
+
+      <div class="input-wrap">
+        <input class="url-input" id="batchUrl" type="text"
+          placeholder="Google Forms 링크를 붙여넣으세요"/>
+        <button class="gen-btn" onclick="generateBatch()">일괄 생성 →</button>
+      </div>
+      <div class="hint">※ 강의 날짜·장소를 카드에 자동으로 표시해드립니다. 강의 정보 수정은 아래 버튼을 클릭하세요.</div>
+
+      <div style="margin-top:12px;">
+        <button class="opt-btn" id="editBtn" onclick="toggleEdit()">📝 강의 정보 수정</button>
+      </div>
+
+      <!-- 강의 정보 편집 -->
+      <div id="lectureEdit" style="display:none;margin-top:16px;background:var(--light-gray);border-radius:12px;padding:20px;">
+        <div style="font-size:13px;font-weight:700;color:var(--forest);margin-bottom:12px;">강의 정보 (수정 가능)</div>
+        <div id="lectureInputs"></div>
+        <button class="gen-btn" style="margin-top:12px;padding:10px 20px;font-size:13px;" onclick="generateBatch()">적용하기</button>
+      </div>
+
+      <!-- 일괄 결과 -->
+      <div class="result-grid" id="batchGrid"></div>
+
+      <div id="batchActions" style="display:none;margin-top:20px;text-align:center;">
+        <button class="print-btn" onclick="window.print()" style="background:var(--forest);color:#fff;border:none;padding:12px 24px;border-radius:50px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;margin:6px;">🖨️ 전체 인쇄</button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- 활용 사례 -->
+<section class="lecture-mode">
+  <div class="container">
+    <p class="section-label">Use Cases · 활용 사례</p>
+    <h2 class="section-title">이런 상황에서 바로 사용하세요</h2>
+    <p class="section-sub">강의 현장, 상담 미팅, 행사 부스 등 어디서든 활용 가능합니다.</p>
+
+    <div class="lecture-grid">
+      <div class="lecture-card" onclick="fillExample('https://forms.gle/sample')">
+        <div class="icon">📋</div>
+        <h3>강의 만족도 조사</h3>
+        <p>Google Forms 설문 링크를 QR코드로 만들어 강의 마지막 5분에 스크린에 띄우세요. 수강생이 스마트폰으로 스캔해 바로 응답합니다.</p>
+      </div>
+      <div class="lecture-card" onclick="fillExample('https://pf.kakao.com/_EJNlX')">
+        <div class="icon">💬</div>
+        <h3>카카오 채널 연결</h3>
+        <p>AI커리어숲 카카오채널 QR코드를 명함이나 강의자료에 삽입하세요. 수강생이 바로 팔로우하고 추가 상담을 요청할 수 있습니다.</p>
+      </div>
+      <div class="lecture-card" onclick="fillExample('https://careerforest.co.kr')">
+        <div class="icon">🌐</div>
+        <h3>홈페이지 바로가기</h3>
+        <p>careerforest.co.kr QR코드를 명함, 현수막, 교육 자료에 활용하세요. URL 입력 없이 스캔만으로 홈페이지에 접속합니다.</p>
+      </div>
+      <div class="lecture-card" onclick="fillExample('https://hun.liveklass.com')">
+        <div class="icon">🎓</div>
+        <h3>커리어숲 아카데미</h3>
+        <p>온라인 강의 플랫폼 링크를 QR코드로 제공하세요. 강의 현장에서 바로 수강 신청으로 연결됩니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 사용 가이드 -->
+<section class="guide-section">
+  <div class="container">
+    <p class="section-label">How to Use · 사용 방법</p>
+    <h2 class="section-title">딱 4단계로 완성</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-icon">📋</div>
+        <h4>URL 붙여넣기</h4>
+        <p>구글 폼, 카카오채널, 홈페이지 등 원하는 링크를 입력창에 붙여넣으세요</p>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-icon">🎨</div>
+        <h4>색상·크기 선택</h4>
+        <p>커리어숲 초록, 블랙, 골드 등 원하는 색상과 크기를 선택하세요</p>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-icon">✅</div>
+        <h4>QR코드 확인</h4>
+        <p>즉시 생성된 QR코드를 스마트폰으로 스캔해 정상 작동을 확인하세요</p>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-icon">🖨️</div>
+        <h4>인쇄·저장</h4>
+        <p>인쇄하거나 이미지로 저장해 강의 자료, 명함, 현수막에 활용하세요</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 푸터 -->
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-logo">🌲 커리어포레스트</div>
+      <div class="footer-info">
+        대표: 임금희 (커리어셀파) &nbsp;|&nbsp; info@careerforest.co.kr<br/>
+        © 2026 Career Forest. All rights reserved.
+      </div>
+      <div class="footer-links">
+        <a href="index.html">홈</a>
+        <a href="diagnosis-hub.html">무료진단</a>
+        <a href="index.html#cta">상담문의</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+let qrColor = '#2D5A3D';
+let qrSize = 200;
+let currentQR = null;
+
+// 기본 강의 목록 (수정 가능)
+let lectures = [
+  {date:'2026.04.14 (화)', place:'테크노파크', topic:'직업·직무전환 탐색', time:'14:00~17:00'},
+  {date:'2026.04.15 (수)', place:'인천 직업훈련 6회차', topic:'AI 취업전략', time:'09:30~10:30'},
+  {date:'2026.04.15 (수)', place:'인천 직업훈련 5회차', topic:'AI 취업전략', time:'13:00~14:00'},
+  {date:'2026.04.16 (목)', place:'인천 직업훈련 8회차', topic:'Gemini AI 코칭', time:'09:30~10:30'},
+  {date:'2026.04.16 (목)', place:'인천 직업훈련 7회차', topic:'Gemini AI 코칭', time:'13:00~14:00'},
+];
+
+function setColor(c, el) {
+  qrColor = c;
+  document.querySelectorAll('.color-dot').forEach(d => d.classList.remove('active'));
+  el.classList.add('active');
+}
+function setSize(s, el) {
+  qrSize = s;
+  document.querySelectorAll('.opt-btn').forEach(b => { if(['소','중','대','특대'].includes(b.textContent)) b.classList.remove('active'); });
+  el.classList.add('active');
+}
+
+function liveGen() {
+  const url = document.getElementById('singleUrl').value.trim();
+  if (url.length > 10) generateSingle();
+}
+
+function generateSingle() {
+  const url = document.getElementById('singleUrl').value.trim();
+  if (!url) { alert('URL을 입력해주세요!'); return; }
+
+  const area = document.getElementById('singleQR');
+  area.innerHTML = '';
+  try {
+    new QRCode(area, { text: url, width: qrSize, height: qrSize, colorDark: qrColor, colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.H });
+    document.getElementById('singleUrlDisplay').textContent = url;
+    document.getElementById('singleResult').classList.add('show');
+    currentQR = { url, size: qrSize, color: qrColor };
+  } catch(e) { alert('QR코드 생성 실패: URL을 확인해주세요.'); }
+}
+
+function generateBatch() {
+  const url = document.getElementById('batchUrl').value.trim();
+  if (!url) { alert('Google Forms 링크를 입력해주세요!'); return; }
+
+  const grid = document.getElementById('batchGrid');
+  grid.innerHTML = '';
+
+  // 강의 편집 입력값 반영
+  const inputs = document.querySelectorAll('.lecture-field');
+  if (inputs.length > 0) {
+    lectures = Array.from(inputs).map(inp => {
+      const [date, place, topic, time] = inp.value.split('|').map(s => s.trim());
+      return { date: date||'', place: place||'', topic: topic||'', time: time||'' };
+    });
+  }
+
+  lectures.forEach((lec, i) => {
+    const card = document.createElement('div');
+    card.className = 'qr-card';
+    card.innerHTML = `
+      <div class="qr-label">${lec.date}</div>
+      <div class="qr-sub">${lec.place} | ${lec.time}</div>
+      <div class="qr-area" id="bqr${i}"></div>
+      <div style="font-size:11px;color:#666;margin-top:4px;">${lec.topic}</div>
+      <div class="qr-url">${url}</div>
+      <div style="font-size:11px;color:var(--forest);font-weight:700;margin-top:8px;">커리어숲 아카데미 | 임금희 강사</div>
+    `;
+    grid.appendChild(card);
+    setTimeout(() => {
+      new QRCode(document.getElementById('bqr'+i), { text: url, width: 150, height: 150, colorDark: qrColor, colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.H });
+    }, 60 * i);
+  });
+
+  // 대형 스크린용 카드
+  const bigCard = document.createElement('div');
+  bigCard.className = 'qr-card';
+  bigCard.style.gridColumn = '1/-1';
+  bigCard.innerHTML = `
+    <div class="qr-label" style="font-size:14px;color:var(--gold);">📊 전체 공통 — 스크린 투영용</div>
+    <div class="qr-sub">강의 마지막 5분에 스크린에 띄워주세요</div>
+    <div style="display:flex;align-items:center;gap:32px;padding:16px;flex-wrap:wrap;justify-content:center;">
+      <div class="qr-area" id="bqrBig"></div>
+      <div style="text-align:left;max-width:280px;">
+        <div style="font-size:16px;font-weight:900;color:var(--forest);margin-bottom:6px;">강의 만족도 조사에 참여해주세요!</div>
+        <div style="font-size:12px;color:#666;line-height:1.8;margin-bottom:10px;">📱 QR코드 스캔 (약 3분 소요)<br>✅ Google 공인 트레이너 증빙 자료<br>🔒 익명 처리됩니다</div>
+        <div style="background:var(--light-gray);padding:6px 10px;border-radius:8px;font-size:10px;color:var(--forest);word-break:break-all;">${url}</div>
+        <div style="margin-top:10px;font-size:12px;color:var(--forest);font-weight:700;">커리어숲 아카데미 | 임금희 강사</div>
+      </div>
+    </div>
+  `;
+  grid.appendChild(bigCard);
+  setTimeout(() => {
+    new QRCode(document.getElementById('bqrBig'), { text: url, width: 180, height: 180, colorDark: qrColor, colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.H });
+  }, 400);
+
+  grid.classList.add('show');
+  document.getElementById('batchActions').style.display = 'block';
+}
+
+function toggleEdit() {
+  const div = document.getElementById('lectureEdit');
+  const btn = document.getElementById('editBtn');
+  if (div.style.display === 'none') {
+    div.style.display = 'block';
+    btn.textContent = '✕ 닫기';
+    renderLectureInputs();
+  } else {
+    div.style.display = 'none';
+    btn.textContent = '📝 강의 정보 수정';
+  }
+}
+
+function renderLectureInputs() {
+  const cont = document.getElementById('lectureInputs');
+  cont.innerHTML = lectures.map((l, i) => `
+    <div style="margin-bottom:8px;">
+      <label style="font-size:11px;color:var(--gray);">강의 ${i+1}</label>
+      <input class="lecture-field url-input" style="font-size:12px;padding:8px 12px;margin-top:3px;"
+        value="${l.date} | ${l.place} | ${l.topic} | ${l.time}"
+        placeholder="날짜 | 장소 | 주제 | 시간"/>
+    </div>
+  `).join('');
+}
+
+function fillExample(url) {
+  document.getElementById('singleUrl').value = url;
+  generateSingle();
+  document.querySelector('.generator-section').scrollIntoView({behavior:'smooth'});
+}
+
+function downloadQR() {
+  const canvas = document.querySelector('#singleQR canvas');
+  if (!canvas) { alert('먼저 QR코드를 생성해주세요!'); return; }
+  const a = document.createElement('a');
+  a.download = 'careerforest_qr.png';
+  a.href = canvas.toDataURL();
+  a.click();
+}
+</script>
+</body>
+</html>

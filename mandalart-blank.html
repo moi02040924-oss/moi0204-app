@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>만다라트 계획표 | 커리어포레스트</title>
+<meta name="description" content="나만의 만다라트 81칸 목표 계획표를 작성하고 출력하세요. AI 자동완성 기능도 제공합니다.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --primary:#085041;
+  --mid:#1D9E75;
+  --light:#E1F5EE;
+  --bg:#F4F8F6;
+  --surface:#fff;
+  --border:#D0E4DC;
+  --text:#1A2E26;
+  --muted:#6A8878;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Noto Sans KR',sans-serif;background:var(--bg);color:var(--text)}
+
+/* Header */
+.site-header{
+  background:var(--primary);padding:13px 24px;
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px
+}
+.brand{color:white;font-size:15px;font-weight:700;text-decoration:none}
+.brand span{font-weight:400;opacity:.65;font-size:12px;margin-left:6px}
+
+/* Hero */
+.hero{
+  background:linear-gradient(135deg,var(--primary) 0%,#1A6B52 100%);
+  padding:36px 20px 28px;text-align:center;position:relative;overflow:hidden
+}
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E")
+}
+.hero h1{font-size:26px;font-weight:700;color:white;position:relative;margin-bottom:8px}
+.hero h1 em{font-style:normal;color:#7DDFBA}
+.hero p{font-size:14px;color:rgba(255,255,255,.8);line-height:1.7;position:relative}
+
+/* Main */
+.main{max-width:960px;margin:0 auto;padding:24px 16px 60px}
+
+/* Goal input */
+.goal-card{
+  background:var(--surface);border-radius:12px;
+  border:1px solid var(--border);padding:22px 24px;
+  margin-bottom:20px;
+  box-shadow:0 1px 4px rgba(0,0,0,.06)
+}
+.goal-card label{font-size:13px;font-weight:500;color:var(--muted);display:block;margin-bottom:8px}
+.goal-input-row{display:flex;gap:8px}
+.goal-input-row input{
+  flex:1;font-family:inherit;font-size:15px;font-weight:500;
+  border:2px solid var(--border);border-radius:8px;
+  padding:11px 16px;outline:none;color:var(--text);
+  transition:border-color .2s
+}
+.goal-input-row input:focus{border-color:var(--mid)}
+.goal-input-row input::placeholder{color:#bbb;font-weight:400}
+.btn-apply{
+  background:var(--mid);color:white;border:none;
+  border-radius:8px;padding:11px 20px;font-family:inherit;
+  font-size:14px;font-weight:500;cursor:pointer;white-space:nowrap;
+  transition:background .2s
+}
+.btn-apply:hover{background:var(--primary)}
+
+/* Mandalart grid */
+.grid-wrap{overflow-x:auto;margin-bottom:20px}
+.mg{
+  display:grid;grid-template-columns:repeat(9,minmax(88px,1fr));
+  min-width:792px;
+  border:3px solid var(--primary);
+  border-radius:6px;overflow:hidden;
+  font-family:'Noto Sans KR',sans-serif
+}
+.cell{
+  position:relative;
+  aspect-ratio:1;min-height:80px;
+  display:flex;align-items:stretch;
+  border:0.5px solid rgba(0,0,0,.1);
+}
+.cell.br{border-right:3px solid var(--primary)}
+.cell.bb{border-bottom:3px solid var(--primary)}
+
+/* Center of center = core goal */
+.cell.core{background:var(--primary)}
+.cell.core input{
+  background:transparent;color:white;font-weight:700;font-size:12px;
+  text-align:center;
+}
+.cell.core input::placeholder{color:rgba(255,255,255,.5)}
+
+/* Sub-goal centers */
+.cell.sub-ctr input{
+  font-weight:700;font-size:11px;
+  color:white;background:transparent
+}
+
+/* Action cells */
+.cell.action input{font-size:10.5px}
+
+/* All cell inputs */
+.cell input{
+  width:100%;height:100%;border:none;outline:none;
+  padding:6px;font-family:inherit;line-height:1.4;
+  text-align:center;resize:none;
+  word-break:keep-all;cursor:text;
+  background:transparent;color:var(--text)
+}
+.cell input::placeholder{color:rgba(0,0,0,.2);font-size:10px}
+
+/* AI prompt card */
+.ai-card{
+  background:var(--surface);border-radius:12px;
+  border:1px solid var(--border);
+  overflow:hidden;margin-bottom:20px;
+  box-shadow:0 1px 4px rgba(0,0,0,.06)
+}
+.ai-card-header{
+  background:linear-gradient(90deg,#1a1a2e,#16213e);
+  padding:16px 20px;
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px
+}
+.ai-card-header h3{color:white;font-size:15px;font-weight:500}
+.ai-card-header p{color:rgba(255,255,255,.6);font-size:12px;margin-top:2px}
+.claude-btn{
+  background:#c96f34;color:white;border:none;
+  border-radius:8px;padding:9px 18px;font-family:inherit;
+  font-size:13px;font-weight:500;cursor:pointer;
+  text-decoration:none;display:inline-flex;align-items:center;gap:6px;
+  transition:background .2s;white-space:nowrap
+}
+.claude-btn:hover{background:#a85a28}
+.ai-card-body{padding:18px 20px}
+.prompt-label{font-size:12px;font-weight:500;color:var(--muted);margin-bottom:8px}
+.prompt-box{
+  background:#f8faf9;border:1px solid var(--border);
+  border-radius:8px;padding:14px 16px;
+  font-size:13px;line-height:1.8;color:var(--text);
+  white-space:pre-wrap;word-break:keep-all;
+  max-height:200px;overflow-y:auto;
+  font-family:'Noto Sans KR',sans-serif
+}
+.prompt-box .blank{
+  display:inline-block;background:var(--mid);color:white;
+  border-radius:4px;padding:1px 8px;font-size:12px;font-weight:500
+}
+.copy-row{display:flex;gap:8px;margin-top:10px;align-items:center;flex-wrap:wrap}
+.btn-copy{
+  background:var(--mid);color:white;border:none;
+  border-radius:7px;padding:8px 16px;font-family:inherit;
+  font-size:13px;font-weight:500;cursor:pointer;transition:background .2s
+}
+.btn-copy:hover{background:var(--primary)}
+.copy-hint{font-size:12px;color:var(--muted)}
+.step-list{
+  display:flex;gap:16px;flex-wrap:wrap;margin-top:14px;
+  border-top:1px solid var(--border);padding-top:14px
+}
+.step{display:flex;align-items:flex-start;gap:8px;flex:1;min-width:160px}
+.step-num{
+  width:22px;height:22px;border-radius:50%;
+  background:var(--primary);color:white;
+  font-size:11px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0
+}
+.step p{font-size:12px;color:var(--muted);line-height:1.6}
+
+/* Action bar */
+.action-bar{
+  display:flex;gap:10px;flex-wrap:wrap;
+  justify-content:center;margin-bottom:20px
+}
+.btn{
+  font-family:inherit;font-size:13px;font-weight:500;
+  border:1.5px solid var(--border);background:white;color:var(--text);
+  border-radius:8px;padding:9px 20px;cursor:pointer;transition:all .2s
+}
+.btn:hover{background:var(--light);border-color:var(--mid)}
+.btn.danger{border-color:#fdd;color:#c0392b}
+.btn.danger:hover{background:#fff0f0}
+
+/* Hallu warning */
+.hallu-card{
+  background:#fffbf0;border:1px solid #f9e4a0;
+  border-radius:12px;padding:18px 20px;margin-bottom:20px
+}
+.hallu-card h4{font-size:14px;font-weight:500;color:#7a5c00;margin-bottom:10px}
+.hallu-list{list-style:none;padding:0}
+.hallu-list li{
+  font-size:13px;color:#6b5000;line-height:1.7;
+  padding-left:18px;position:relative;margin-bottom:4px
+}
+.hallu-list li::before{content:'⚠';position:absolute;left:0;font-size:11px}
+
+/* Footer */
+footer{
+  text-align:center;padding:22px 16px;
+  font-size:12px;color:var(--muted);border-top:1px solid var(--border)
+}
+footer a{color:var(--mid);text-decoration:none}
+
+/* Print */
+@media print{
+  .site-header,.hero,.ai-card,.action-bar,.hallu-card,footer{display:none!important}
+  body{background:white}.main{padding:0}
+  .mg{page-break-inside:avoid;min-width:100%!important}
+  .cell{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .cell input{font-size:9px!important}
+}
+
+@media(max-width:600px){
+  .goal-input-row{flex-direction:column}
+  .step-list{flex-direction:column}
+}
+
+/* Colors per sub-block */
+.bg0{background:#E1F5EE}.sc0{background:#085041}
+.bg1{background:#EEEDFE}.sc1{background:#3C3489}
+.bg2{background:#FAECE7}.sc2{background:#7A2A10}
+.bg3{background:#EAF3DE}.sc3{background:#2B5A0A}
+.bg4{background:#FAEEDA}.sc4{background:#6B3D07}
+.bg5{background:#FBEAF0}.sc5{background:#7A2440}
+.bg6{background:#E6F1FB}.sc6{background:#0D4A82}
+.bg7{background:#EDEBE5}.sc7{background:#3A3A38}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <a class="brand" href="https://careerforest.co.kr">🌲 커리어포레스트 <span>careerforest.co.kr</span></a>
+</header>
+
+<section class="hero">
+  <h1>🗺️ 만다라트 <em>계획표</em></h1>
+  <p>핵심 목표를 중심에 쓰고 81칸을 채워보세요<br>AI 자동완성이 필요하면 아래 Claude.ai를 활용하세요</p>
+</section>
+
+<main class="main">
+
+  <!-- Goal input -->
+  <div class="goal-card">
+    <label for="coreGoal">✏️ 핵심 목표 입력 (중앙 칸에 자동 입력됩니다)</label>
+    <div class="goal-input-row">
+      <input type="text" id="coreGoal" placeholder="예: 1년 내에 동화작가로 동화책 내기" maxlength="20"
+        oninput="applyCore()">
+    </div>
+  </div>
+
+  <!-- Grid -->
+  <div class="grid-wrap">
+    <div class="mg" id="grid"></div>
+  </div>
+
+  <!-- Action bar -->
+  <div class="action-bar">
+    <button class="btn" onclick="window.print()">🖨️ 인쇄 / PDF 저장</button>
+    <button class="btn" onclick="copyText()">📋 텍스트 복사</button>
+    <button class="btn" onclick="saveLocal()">💾 임시저장</button>
+    <button class="btn" onclick="loadLocal()">📂 불러오기</button>
+    <button class="btn danger" onclick="clearAll()">🗑️ 전체 초기화</button>
+  </div>
+
+  <!-- AI 자동완성 안내 -->
+  <div class="ai-card">
+    <div class="ai-card-header">
+      <div>
+        <h3>✨ AI로 81칸 자동완성 하기</h3>
+        <p>Claude.ai에 아래 프롬프트를 붙여넣으면 AI가 대신 채워줍니다 · 무료 · 비용 없음</p>
+      </div>
+      <a class="claude-btn" href="https://claude.ai" target="_blank">Claude.ai 열기 →</a>
+    </div>
+    <div class="ai-card-body">
+      <div class="prompt-label">📋 복사해서 Claude.ai에 붙여넣으세요</div>
+      <div class="prompt-box" id="promptBox">만다라트 계획 전문가로서, 아래 핵심 목표에 맞는 만다라트를 만들어주세요.
+
+핵심 목표: <span class="blank" id="promptGoal">여기에 목표를 입력하세요</span>
+
+다음 형식으로 작성해주세요:
+• 핵심 목표를 중심으로 8가지 세부목표를 정해주세요
+• 각 세부목표마다 8가지 구체적인 실천과제를 적어주세요
+• 표 형식(만다라트 양식)으로 정리해주세요
+• 모든 내용은 한국어로, 각 항목은 15자 이내로 작성해주세요</div>
+      <div class="copy-row">
+        <button class="btn-copy" onclick="copyPrompt()">📋 프롬프트 복사</button>
+        <span class="copy-hint">복사 후 claude.ai 대화창에 붙여넣기 → 전송!</span>
+      </div>
+      <div class="step-list">
+        <div class="step"><span class="step-num">1</span><p><strong>프롬프트 복사</strong><br>위 버튼 클릭</p></div>
+        <div class="step"><span class="step-num">2</span><p><strong>Claude.ai 접속</strong><br>무료 계정으로 로그인</p></div>
+        <div class="step"><span class="step-num">3</span><p><strong>붙여넣기 → 전송</strong><br>AI가 81칸 자동 생성</p></div>
+        <div class="step"><span class="step-num">4</span><p><strong>결과 확인 후 수정</strong><br>내 상황에 맞게 편집</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 할루시네이션 주의 -->
+  <div class="hallu-card">
+    <h4>⚠️ AI 활용 시 주의사항 (할루시네이션 예방)</h4>
+    <ul class="hallu-list">
+      <li>AI가 생성한 결과물은 반드시 본인이 직접 사실 확인(팩트 체크)하세요</li>
+      <li>구체적인 정보와 데이터를 함께 입력할수록 오류가 줄어듭니다</li>
+      <li>숫자·통계 수치는 원본 자료를 통해 교차 검증하세요</li>
+      <li>AI 초안 작성 → 사람이 검수·수정하는 협업 프로세스를 권장합니다</li>
+    </ul>
+  </div>
+
+</main>
+
+<footer>
+  <p>🌲 <a href="https://careerforest.co.kr">커리어포레스트</a> · AI 커리어 & 소상공인 컨설팅 · <a href="mailto:info@careerforest.co.kr">info@careerforest.co.kr</a></p>
+  <p style="margin-top:6px">© 2025 커리어포레스트 · 이 도구는 100% 무료입니다</p>
+</footer>
+
+<script>
+// Sub-block index map
+// 9x9 grid: 3x3 blocks, each 3x3
+// MAP[row][col] within a 3x3 block → sub-goal index (center block center = core)
+const BLOCK_MAP=[[0,1,2],[3,-1,4],[5,6,7]];
+// Within each sub-block, cell order:
+// [0][1][2]
+// [3][C][4]   C = center (sub-goal)
+// [5][6][7]
+const CELL_MAP=[[0,1,2],[3,-1,4],[5,6,7]];
+
+let data={
+  core:'',
+  subs:Array.from({length:8},()=>({goal:'',actions:Array(8).fill('')}))
+};
+
+function buildGrid(){
+  const grid=document.getElementById('grid');
+  grid.innerHTML='';
+  for(let r=0;r<9;r++){
+    for(let c=0;c<9;c++){
+      const cell=document.createElement('div');
+      let cls='cell';
+      if(c%3===2&&c<8)cls+=' br';
+      if(r%3===2&&r<8)cls+=' bb';
+
+      const br=Math.floor(r/3),bc=Math.floor(c/3);
+      const cr=r%3,cc=c%3;
+      const isBlockCenter=cr===1&&cc===1;
+      const isGridCenter=br===1&&bc===1;
+
+      if(isGridCenter&&isBlockCenter){
+        // CORE
+        cls+=' core';
+        cell.className=cls;
+        const inp=document.createElement('input');
+        inp.type='text';inp.maxLength=20;inp.id='core';
+        inp.placeholder='핵심 목표';
+        inp.value=data.core;
+        inp.oninput=e=>{data.core=e.target.value;syncGoalInput();updatePrompt();};
+        cell.appendChild(inp);
+      }else{
+        const sgIdx=BLOCK_MAP[br][bc];
+        const col=sgIdx;
+        if(isGridCenter){
+          // Sub-goal label in center block (not center cell)
+          const idx=BLOCK_MAP[cr][cc];
+          cls+=` sc${idx}`;
+          cell.className=cls;
+          const inp=document.createElement('input');
+          inp.type='text';inp.maxLength=16;inp.id='sg'+idx;
+          inp.placeholder='세부목표 '+(idx+1);
+          inp.value=data.subs[idx].goal;
+          inp.oninput=e=>{data.subs[idx].goal=e.target.value;syncSubGoal(idx);};
+          cell.appendChild(inp);
+        }else if(isBlockCenter){
+          // Sub-goal center in other blocks
+          cls+=` sc${sgIdx} sub-ctr`;
+          cell.className=cls;
+          const inp=document.createElement('input');
+          inp.type='text';inp.maxLength=16;
+          inp.placeholder='세부목표 '+(sgIdx+1);
+          inp.value=data.subs[sgIdx].goal;
+          inp.oninput=e=>{data.subs[sgIdx].goal=e.target.value;syncSubGoal(sgIdx);};
+          cell.appendChild(inp);
+        }else{
+          // Action cell
+          const aIdx=CELL_MAP[cr][cc];
+          cls+=` bg${sgIdx} action`;
+          cell.className=cls;
+          const inp=document.createElement('input');
+          inp.type='text';inp.maxLength=16;
+          inp.placeholder='실천과제';
+          inp.value=data.subs[sgIdx].actions[aIdx];
+          inp.oninput=e=>{data.subs[sgIdx].actions[aIdx]=e.target.value;};
+          cell.appendChild(inp);
+        }
+      }
+      grid.appendChild(cell);
+    }
+  }
+}
+
+function syncGoalInput(){
+  document.getElementById('coreGoal').value=data.core;
+}
+function applyCore(){
+  data.core=document.getElementById('coreGoal').value;
+  const coreInp=document.getElementById('core');
+  if(coreInp)coreInp.value=data.core;
+  updatePrompt();
+}
+function syncSubGoal(idx){
+  // sync center block cell + sub-block center
+  const allSg=document.querySelectorAll('#sg'+idx);
+  allSg.forEach(el=>{if(el.value!==data.subs[idx].goal)el.value=data.subs[idx].goal;});
+}
+
+function updatePrompt(){
+  const goal=data.core||'여기에 목표를 입력하세요';
+  document.getElementById('promptGoal').textContent=goal;
+}
+
+function copyPrompt(){
+  const goal=data.core||'(목표를 입력해주세요)';
+  const text=`만다라트 계획 전문가로서, 아래 핵심 목표에 맞는 만다라트를 만들어주세요.
+
+핵심 목표: ${goal}
+
+다음 형식으로 작성해주세요:
+• 핵심 목표를 중심으로 8가지 세부목표를 정해주세요
+• 각 세부목표마다 8가지 구체적인 실천과제를 적어주세요
+• 표 형식(만다라트 양식)으로 정리해주세요
+• 모든 내용은 한국어로, 각 항목은 15자 이내로 작성해주세요`;
+  navigator.clipboard.writeText(text).then(()=>{
+    alert('📋 프롬프트가 복사되었습니다!\nClaude.ai 대화창에 붙여넣기 해주세요.');
+  });
+}
+
+function copyText(){
+  let t='[만다라트] 핵심 목표: '+(data.core||'(미입력)')+'\n\n';
+  data.subs.forEach((sg,i)=>{
+    t+=(i+1)+'. '+(sg.goal||'(미입력)')+'\n';
+    sg.actions.forEach((a,j)=>{t+='   '+(j+1)+') '+(a||'(미입력)')+'\n';});
+    t+='\n';
+  });
+  navigator.clipboard.writeText(t).then(()=>alert('📋 전체 내용이 복사되었습니다!'));
+}
+
+function saveLocal(){
+  localStorage.setItem('cf_mandalart',JSON.stringify(data));
+  alert('💾 임시저장 완료!');
+}
+function loadLocal(){
+  const d=localStorage.getItem('cf_mandalart');
+  if(!d){alert('저장된 내용이 없습니다.');return;}
+  data=JSON.parse(d);
+  buildGrid();
+  document.getElementById('coreGoal').value=data.core;
+  updatePrompt();
+  alert('📂 불러오기 완료!');
+}
+function clearAll(){
+  if(!confirm('전체 내용을 초기화할까요?'))return;
+  data={core:'',subs:Array.from({length:8},()=>({goal:'',actions:Array(8).fill('')}))};
+  document.getElementById('coreGoal').value='';
+  buildGrid();updatePrompt();
+}
+
+buildGrid();
+// Load saved if exists
+const saved=localStorage.getItem('cf_mandalart');
+if(saved){
+  try{
+    data=JSON.parse(saved);
+    buildGrid();
+    document.getElementById('coreGoal').value=data.core||'';
+    updatePrompt();
+  }catch(e){}
+}
+</script>
+</body>
+</html>
