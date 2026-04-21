@@ -1,0 +1,80 @@
+{
+  "date": "2026-04-21",
+  "issueNumber": 111,
+  "summary": "오늘은 전국 경영안정바우처와 함께 서울 업종닥터, 경기 연대상권, 인천 밸류업 특별보증 등 지역 맞춤 소식이 있습니다.",
+  "items": [
+    {
+      "title": "소상공인 경영안정 바우처 25만원 지원",
+      "category": "경영",
+      "categoryLabel": "경영안정",
+      "region": "전국",
+      "agency": "소상공인시장진흥공단",
+      "target": "연 매출 2억 미만 소상공인",
+      "support": "공과금·4대보험료·연료비 등 사용 가능한 25만원 포인트. 2026년 전통시장 화재공제료 신규 추가.",
+      "deadline": "2026-12-18",
+      "link": "https://www.sbiz.or.kr",
+      "tip": "본인 명의 카드에 포인트로 지급됩니다. 12월 18일까지이지만 예산 소진 시 조기 마감되니 서두르세요.",
+      "featured": true
+    },
+    {
+      "title": "서울 업종닥터 1:1 컨설팅",
+      "category": "교육",
+      "categoryLabel": "교육·컨설팅",
+      "region": "서울",
+      "agency": "서울신용보증재단",
+      "target": "서울 소재 소상공인",
+      "support": "업종별 전문가 1:1 맞춤 컨설팅 (무료)",
+      "deadline": "2026-05-15",
+      "link": "https://www.seoulshinbo.co.kr",
+      "tip": "업종닥터는 외식·소매·서비스업 모두 가능해요. 경영 고민이 막연할 때 첫 단추로 딱이에요."
+    },
+    {
+      "title": "2026 경기도 연대상권 육성지원",
+      "category": "디지털",
+      "categoryLabel": "디지털·스마트",
+      "region": "경기",
+      "agency": "경기도시장상권진흥원",
+      "target": "경기도 상권조직·상인회",
+      "support": "상권 활성화 공동사업비 최대 1억원 지원",
+      "deadline": "2026-05-30",
+      "link": "https://www.ggbaro.kr",
+      "tip": "개별 소상공인은 상권 단위로 신청. 가게 혼자가 아니라 골목 전체가 받는 지원이에요."
+    },
+    {
+      "title": "인천 밸류업 특별보증",
+      "category": "자금",
+      "categoryLabel": "정책자금",
+      "region": "인천",
+      "agency": "인천신용보증재단",
+      "target": "인천 소재 성장성 있는 소상공인",
+      "support": "기업당 최대 5천만원 특별보증 + 금리 우대",
+      "deadline": "2026-06-30",
+      "link": "https://www.icsinbo.or.kr",
+      "tip": "매출 성장률이 있는 곳이 유리해요. 최근 2년 매출 자료 미리 준비하시면 절차 단축됩니다."
+    },
+    {
+      "title": "새출발기금 채무조정 확대",
+      "category": "재기채무",
+      "categoryLabel": "채무조정",
+      "region": "전국",
+      "agency": "한국자산관리공사·캠코",
+      "target": "90일 이상 연체 또는 연체 위험 소상공인",
+      "support": "원금 감면 + 상환기간 연장 + 금리 부담 완화",
+      "deadline": "2026-12-31",
+      "link": "https://www.newstartfund.or.kr",
+      "tip": "피싱 주의! 공식 사이트는 반드시 newstartfund.or.kr 또는 새출발기금.kr 입니다."
+    },
+    {
+      "title": "희망리턴패키지 특화취업지원",
+      "category": "재기",
+      "categoryLabel": "재기지원",
+      "region": "전국",
+      "agency": "소상공인시장진흥공단",
+      "target": "폐업(예정) 소상공인",
+      "support": "취업성공 시 최대 3회 분할 지급 지원금",
+      "deadline": "2026-11-30",
+      "link": "https://www.sbiz.or.kr",
+      "tip": "10시간 기본교육 수료 필수. 60일 연속 고용 유지 시 2차 수당 지급 기억하세요."
+    }
+  ]
+}
