@@ -849,34 +849,46 @@ function printReport(){
   const win = window.open('', '_blank', 'width=900,height=700');
   if(!win){ alert('팝업이 차단되었습니다.\n브라우저 팝업 허용 후 다시 시도해주세요.'); return; }
 
-  win.document.write(`
-    <!DOCTYPE html>
-    <html lang="ko">
-    <head>
-      <meta charset="UTF-8"/>
-      <title>생애설계 진단 보고서 | 커리어포레스트</title>
-      <style>
-        *{margin:0;padding:0;box-sizing:border-box;}
-        body{font-family:'Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',sans-serif;background:white;padding:20px;}
-        .no-print{display:none!important;}
-        button{display:none!important;}
-        @media print{
-          body{padding:0;}
-          *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}
-        }
-      </style>
-    </head>
-    <body>
-      ${content.innerHTML}
-      <script>
-        // 버튼 모두 숨기기
-        document.querySelectorAll('button').forEach(b=>b.style.display='none');
-        document.querySelectorAll('.no-print').forEach(el=>el.style.display='none');
-        setTimeout(()=>{ window.print(); }, 800);
-      <\/script>
-    </html>
-  `);
+  const printHTML = `<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"/>
+<title>생애설계 진단 보고서 | 커리어포레스트</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',sans-serif;background:white;padding:20px;}
+.no-print{display:none!important;}
+button{display:none!important;}
+@media print{
+  body{padding:0;}
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}
+}
+</style>
+</head>
+<body>
+${content.innerHTML}
+</body>
+</html>`;
+
+  win.document.write(printHTML);
   win.document.close();
+
+  // 새 창이 로드된 후 버튼 숨기고 인쇄 실행 (script 태그 주입 대신 직접 조작)
+  const runPrint = () => {
+    try {
+      win.document.querySelectorAll('button').forEach(b => b.style.display = 'none');
+      win.document.querySelectorAll('.no-print').forEach(el => el.style.display = 'none');
+      setTimeout(() => { win.print(); }, 500);
+    } catch(e) {
+      console.error('인쇄 처리 중 오류:', e);
+    }
+  };
+
+  if(win.document.readyState === 'complete'){
+    runPrint();
+  } else {
+    win.addEventListener('load', runPrint);
+  }
 }
 
 // ── 이벤트 핸들러 ──
