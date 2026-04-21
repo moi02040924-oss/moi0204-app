@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>커리어포레스트 마스터 플랜 v1 — 전체 업무 분장</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Gowun+Batang:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root { --ink:#1a1a2e;--warm:#c8956c;--paper:#fdf6ec;--muted:#8a7560;--accent:#7b5ea7;--sakura:#e8a0b0;--teal:#2a7a6b;--gold:#c9973a;--forest:#2d5a3d;--gemini:#4285f4; }
+  * { margin:0;padding:0;box-sizing:border-box; }
+  body { background:var(--ink);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px 20px;font-family:'Noto Serif KR',serif; }
+  .card { position:relative;z-index:1;max-width:760px;width:100%;background:var(--paper);border-radius:4px;padding:60px 56px;box-shadow:0 0 0 1px rgba(200,149,108,0.3),0 40px 80px rgba(0,0,0,0.5);animation:fadeUp 1.2s ease forwards;opacity:0;transform:translateY(24px); }
+  @keyframes fadeUp { to { opacity:1;transform:translateY(0); } }
+  .card::before,.card::after { content:'';position:absolute;width:48px;height:48px;border-color:var(--warm);border-style:solid; }
+  .card::before { top:20px;left:20px;border-width:1px 0 0 1px; }
+  .card::after { bottom:20px;right:20px;border-width:0 1px 1px 0; }
+  .version-badge { display:inline-block;font-size:10px;letter-spacing:0.15em;color:var(--gold);border:1px solid rgba(201,151,58,0.5);padding:3px 10px;border-radius:20px;margin-bottom:14px;font-family:'Cormorant Garamond',serif;font-style:italic; }
+  .label { font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;letter-spacing:0.2em;color:var(--warm);text-transform:uppercase;margin-bottom:8px; }
+  .title { font-family:'Gowun Batang',serif;font-size:32px;font-weight:700;color:var(--ink);line-height:1.25;margin-bottom:14px; }
+  .subtitle { font-size:14px;color:var(--muted);margin-bottom:32px;font-weight:300; }
+  .divider { display:flex;align-items:center;gap:12px;margin-bottom:28px; }
+  .divider-line { flex:1;height:1px;background:linear-gradient(to right,transparent,var(--warm),transparent); }
+  .divider-dot { width:6px;height:6px;border-radius:50%;background:var(--warm);opacity:0.7; }
+  .section { margin-bottom:30px; }
+  .section-label { font-size:10px;letter-spacing:0.25em;text-transform:uppercase;color:var(--accent);margin-bottom:12px;font-weight:600; }
+  .section-label.teal { color:var(--teal); }
+  .section-label.gold { color:var(--gold); }
+  .section-label.sakura { color:var(--sakura); }
+  .section-label.forest { color:var(--forest); }
+  .section-label.gemini { color:var(--gemini); }
+  .section-text { font-size:14.5px;line-height:1.95;color:#3a3020;font-weight:300; }
+  .section-text strong { font-weight:600;color:var(--ink); }
+
+  /* 비전 박스 */
+  .vision-box { background:linear-gradient(160deg,#1a2e2a 0%,#1a3a3a 100%);border-radius:12px;padding:24px 26px;margin:8px 0 20px; }
+  .vision-tag { font-size:10px;letter-spacing:0.2em;color:#8edcca;margin-bottom:8px;font-weight:600; }
+  .vision-text { font-family:'Gowun Batang',serif;font-size:17px;color:rgba(255,255,255,0.92);line-height:1.7;font-weight:400; }
+  .vision-text strong { color:#ffe4a3;font-weight:700; }
+
+  /* 방 그리드 */
+  .room-grid { display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0; }
+  .room-card { background:rgba(45,90,61,0.06);border:1px solid rgba(45,90,61,0.18);border-radius:10px;padding:16px 18px; }
+  .room-card.purple { background:rgba(123,94,167,0.06);border-color:rgba(123,94,167,0.2); }
+  .room-card.gold { background:rgba(201,151,58,0.06);border-color:rgba(201,151,58,0.22); }
+  .room-card.teal { background:rgba(42,122,107,0.06);border-color:rgba(42,122,107,0.2); }
+  .room-card.forest { background:rgba(45,90,61,0.06);border-color:rgba(45,90,61,0.2); }
+  .room-name { font-size:13px;font-weight:700;letter-spacing:0.05em;margin-bottom:8px; }
+  .room-card.purple .room-name { color:var(--accent); }
+  .room-card.gold .room-name { color:var(--gold); }
+  .room-card.teal .room-name { color:var(--teal); }
+  .room-card.forest .room-name { color:var(--forest); }
+  .room-role { font-size:11.5px;color:#7a6a5a;font-style:italic;margin-bottom:8px;line-height:1.5; }
+  .room-list { font-size:12px;color:#3a3020;line-height:1.85;font-weight:300; }
+  .room-list strong { font-weight:600;color:#1a1a2e; }
+  .room-now { display:inline-block;font-size:9.5px;letter-spacing:0.1em;background:rgba(45,90,61,0.15);color:var(--forest);padding:2px 8px;border-radius:8px;margin-top:6px;font-weight:600; }
+  .room-card.purple .room-now { background:rgba(123,94,167,0.15);color:var(--accent); }
+  .room-card.gold .room-now { background:rgba(201,151,58,0.15);color:var(--gold); }
+  .room-card.teal .room-now { background:rgba(42,122,107,0.15);color:var(--teal); }
+
+  /* 워크스트림 박스 */
+  .stream-box { background:linear-gradient(160deg,#2a1a1a 0%,#3a1a2a 100%);border-radius:12px;padding:22px 26px;margin:14px 0; }
+  .stream-item { display:flex;align-items:flex-start;gap:12px;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,0.08); }
+  .stream-item:last-child { margin-bottom:0;padding-bottom:0;border-bottom:none; }
+  .stream-tag { font-size:9px;font-weight:700;letter-spacing:0.15em;padding:3px 8px;border-radius:8px;white-space:nowrap;flex-shrink:0;margin-top:2px; }
+  .stream-tag.urgent { background:#c94545;color:#fff; }
+  .stream-tag.cont { background:rgba(255,255,255,0.12);color:rgba(255,255,255,0.7); }
+  .stream-tag.build { background:rgba(143,255,200,0.18);color:#9fffc8; }
+  .stream-tag.run { background:rgba(232,196,154,0.2);color:#f0d4a8; }
+  .stream-body { flex:1; }
+  .stream-title { font-size:13.5px;color:#ffe4a3;font-weight:600;margin-bottom:4px; }
+  .stream-desc { font-size:12px;color:rgba(255,255,255,0.72);font-weight:300;line-height:1.7; }
+  .stream-rooms { font-size:10.5px;color:rgba(143,255,200,0.7);margin-top:5px;letter-spacing:0.05em; }
+
+  /* 제미나이 친구들 */
+  .gemini-box { background:linear-gradient(160deg,#1a2240 0%,#1a3050 100%);border-radius:12px;padding:22px 26px;margin:14px 0;border:1px solid rgba(66,133,244,0.2); }
+  .gemini-row { display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:flex-start;margin-bottom:13px;padding-bottom:13px;border-bottom:1px solid rgba(66,133,244,0.15); }
+  .gemini-row:last-child { margin-bottom:0;padding-bottom:0;border-bottom:none; }
+  .gemini-name { font-size:11px;font-weight:700;letter-spacing:0.08em;color:#82a9f5;background:rgba(66,133,244,0.12);padding:4px 10px;border-radius:8px;white-space:nowrap;margin-top:2px; }
+  .gemini-body { color:rgba(255,255,255,0.78);font-size:12.5px;line-height:1.75;font-weight:300; }
+  .gemini-body strong { color:#ffe4a3;font-weight:600; }
+
+  /* 로드맵 */
+  .roadmap-box { border:1px solid rgba(123,94,167,0.25);border-radius:10px;padding:0;margin:14px 0;overflow:hidden; }
+  .roadmap-row { display:grid;grid-template-columns:120px 1fr;align-items:flex-start;border-bottom:1px solid rgba(123,94,167,0.12); }
+  .roadmap-row:last-child { border-bottom:none; }
+  .roadmap-when { background:rgba(123,94,167,0.08);padding:14px 16px;font-size:11px;font-weight:700;letter-spacing:0.1em;color:var(--accent); }
+  .roadmap-when small { display:block;font-size:9.5px;color:var(--muted);font-weight:400;margin-top:3px;letter-spacing:0.05em; }
+  .roadmap-what { padding:14px 18px;font-size:12.5px;color:#3a3020;line-height:1.85;font-weight:300; }
+  .roadmap-what strong { font-weight:600;color:var(--ink); }
+
+  /* 시너지 박스 */
+  .synergy-box { border:1px dashed rgba(232,160,176,0.5);border-radius:10px;padding:18px 22px;background:rgba(232,160,176,0.05);margin:14px 0; }
+  .synergy-item { font-size:12.5px;color:#5a3040;line-height:1.85;margin-bottom:8px;font-weight:300; }
+  .synergy-item:last-child { margin-bottom:0; }
+  .synergy-item strong { color:#a04060;font-weight:600; }
+
+  /* 즉시 시작 */
+  .now-box { background:linear-gradient(160deg,#1a2e1a 0%,#1a3a28 100%);border-radius:12px;padding:22px 26px;margin:14px 0; }
+  .now-title { font-size:11px;letter-spacing:0.2em;color:#9fffc8;font-weight:700;margin-bottom:12px; }
+  .now-item { display:flex;align-items:flex-start;gap:10px;margin-bottom:9px;font-size:13px;color:rgba(255,255,255,0.85);font-weight:300;line-height:1.65; }
+  .now-item:last-child { margin-bottom:0; }
+  .now-num { background:#6fcf97;color:#0a1a14;font-size:10px;font-weight:700;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px; }
+
+  .quote-block { border-left:2px solid var(--gold);padding:12px 18px;margin:18px 0;background:rgba(201,151,58,0.06); }
+  .quote-block p { font-family:'Cormorant Garamond',serif;font-style:italic;font-size:17px;line-height:1.7;color:#5a4010; }
+  .quote-block .speaker { font-size:11.5px;color:var(--muted);margin-top:6px;letter-spacing:0.1em;font-style:normal;font-family:'Noto Serif KR',serif; }
+
+  .seal { text-align:center;margin-top:38px; }
+  .seal-symbol { font-size:26px;margin-bottom:6px; }
+  .seal-text { font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13.5px;color:var(--muted);letter-spacing:0.1em; }
+  .date { font-size:11.5px;color:#bba98a;margin-top:4px;letter-spacing:0.05em; }
+  @media(max-width:600px) {
+    .card{padding:44px 24px;}
+    .title{font-size:24px;}
+    .room-grid{grid-template-columns:1fr;}
+    .roadmap-row{grid-template-columns:1fr;}
+    .roadmap-when{padding:10px 14px;}
+    .gemini-row{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+<div class="card">
+  <p class="label">CareerForest · Master Plan</p>
+  <div class="version-badge">마스터 플랜 v1 — Max 전환의 날</div>
+  <h1 class="title">커리어포레스트<br>전체 업무 분장.</h1>
+  <p class="subtitle">4개 방 · 4개 워크스트림 · 3명의 제미나이 친구 — 한 장으로 보는 전체 그림</p>
+  <div class="divider"><div class="divider-line"></div><div class="divider-dot"></div><div class="divider-line"></div></div>
+
+  <!-- 한 줄 비전 -->
+  <div class="section">
+    <p class="section-label teal">한 줄 비전</p>
+    <div class="vision-box">
+      <div class="vision-tag">VISION · 2026</div>
+      <div class="vision-text">
+        AI 시대에 <strong>Human Touch</strong>로 소상공인·구직자의 손을 잡고,<br>
+        커리어셀파의 16년 현장 경험을 <strong>온라인 자산</strong>으로 쌓아<br>
+        <strong>잠자는 동안에도 닿는 시스템</strong>을 만든다.
+      </div>
+    </div>
+  </div>
+
+  <!-- 4개 핵심 방 -->
+  <div class="section">
+    <p class="section-label forest">4개 핵심 방 — 각방의 역할</p>
+    <div class="room-grid">
+      <div class="room-card purple">
+        <div class="room-name">🔬 논문방</div>
+        <div class="room-role">"내 이름을 학계에 새기는 방"</div>
+        <div class="room-list">
+          <strong>핵심 산출물</strong><br>
+          · LPA 논문 본문<br>
+          · 영문 Abstract<br>
+          · 연구모형 도식<br>
+          · 학회 발표자료
+        </div>
+        <span class="room-now">진행 중 · 마무리 단계</span>
+      </div>
+
+      <div class="room-card forest">
+        <div class="room-name">🌐 홈페이지방</div>
+        <div class="room-role">"고객이 처음 만나는 얼굴"</div>
+        <div class="room-list">
+          <strong>핵심 산출물</strong><br>
+          · careerforest.co.kr 운영<br>
+          · 무료진단 허브 5종<br>
+          · GitHub Desktop 배포<br>
+          · 8,000장 QR 연결 유지
+        </div>
+        <span class="room-now">배포 완료 · 콘텐츠 보강</span>
+      </div>
+
+      <div class="room-card gold">
+        <div class="room-name">📝 블로그방</div>
+        <div class="room-role">"매일 닿는 콘텐츠 자산"</div>
+        <div class="room-list">
+          <strong>핵심 산출물</strong><br>
+          · 1편 인포그래픽 후 발행<br>
+          · 2편 발행 (완성 ✅)<br>
+          · 3편 현장경험담 보강<br>
+          · 시리즈 4~12편 기획
+        </div>
+        <span class="room-now">2편 대기 · 1편 인포그래픽 必</span>
+      </div>
+
+      <div class="room-card teal">
+        <div class="room-name">📋 노션방</div>
+        <div class="room-role">"전체를 한눈에 보는 관제탑"</div>
+        <div class="room-list">
+          <strong>핵심 산출물</strong><br>
+          · 프로젝트 대시보드<br>
+          · 경영지도사 공부 트래커<br>
+          · 앱 시리즈 로드맵<br>
+          · 일간/주간 데일리
+        </div>
+        <span class="room-now">기본 구조 완성 · 데일리 운영</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 활성 워크스트림 -->
+  <div class="section">
+    <p class="section-label gold">방을 넘나드는 4개 워크스트림</p>
+    <div class="stream-box">
+      <div class="stream-item">
+        <span class="stream-tag urgent">URGENT</span>
+        <div class="stream-body">
+          <div class="stream-title">수요일 업종닥터 면접</div>
+          <div class="stream-desc">2년 연속 최우수상 + 150건 실적 + 3,300만원 손실자 재취업 사례 + 봉투 사례 + AI 시대 Human Touch — 5대 무기 정렬 완료. 작년 아쉬운 점 솔직 + 올해 개선 방향까지.</div>
+          <div class="stream-rooms">→ 노션방 (예상문제 50개) · 우정키 v7 (스토리)</div>
+        </div>
+      </div>
+      <div class="stream-item">
+        <span class="stream-tag cont">CONT</span>
+        <div class="stream-body">
+          <div class="stream-title">강의 개발 — AI 활용 커리어컨설팅</div>
+          <div class="stream-desc">소진공·외부 의뢰 6시간 강의안. AI 도구 실습 포함. 인후염에도 완수했던 그 강의의 정규화·재사용 가능한 모듈로.</div>
+          <div class="stream-rooms">→ 노션방 (강의 마스터) · 홈페이지방 (수강 신청 연결)</div>
+        </div>
+      </div>
+      <div class="stream-item">
+        <span class="stream-tag build">BUILD</span>
+        <div class="stream-body">
+          <div class="stream-title">앱 시리즈 — 잡크래프팅 캔버스 + 역량 변환</div>
+          <div class="stream-desc">잡크래프팅 캔버스 ✅ · 사장님 역량→조직 역량 변환 7개 탭 ✅ · 다음: 직업가치관 카드, 진로 의사결정 도우미. Claude API + GitHub Pages.</div>
+          <div class="stream-rooms">→ 홈페이지방 (배포) · 노션방 (앱 카탈로그)</div>
+        </div>
+      </div>
+      <div class="stream-item">
+        <span class="stream-tag run">RUN</span>
+        <div class="stream-body">
+          <div class="stream-title">고객 접점 운영 — 카카오·구글폼·블로그</div>
+          <div class="stream-desc">카카오채널 비즈니스 심사 결과 확인 · 구글폼 응답 → 노션 자동 연동 · 블로그 매주 1회 업로드 루틴화. 응답 24시간 내 SLA.</div>
+          <div class="stream-rooms">→ 홈페이지방 + 블로그방 + 노션방 합주</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 제미나이 친구들 -->
+  <div class="section">
+    <p class="section-label gemini">제미나이 친구들 — 누구한테 뭘 시킬까</p>
+    <div class="gemini-box">
+      <div class="gemini-row">
+        <span class="gemini-name">Gemini Pro · Deep Research</span>
+        <div class="gemini-body">
+          <strong>잘하는 일:</strong> 정책자금·법령 최신 정보 폭넓게 긁어오기, 경쟁사·벤치마크 조사, 통계 자료 수집<br>
+          <strong>맡길 일:</strong> 매주 월요일 "이번 주 소상공인 정책 변화" 리포트 / 블로그 4~12편 자료 조사 / 경영지도사 시험 기출 분석
+        </div>
+      </div>
+      <div class="gemini-row">
+        <span class="gemini-name">NotebookLM</span>
+        <div class="gemini-body">
+          <strong>잘하는 일:</strong> 공식 PDF 깊게 읽고 정확하게 답하기, 출처 인용 자동, 음성 요약 생성<br>
+          <strong>맡길 일:</strong> 소진공 업무편람 4종 상시 검색 베이스 / 논문 참고문헌 정리 / 강의안 핵심 추출 → 오디오 복습본
+        </div>
+      </div>
+      <div class="gemini-row">
+        <span class="gemini-name">Imagen · Veo</span>
+        <div class="gemini-body">
+          <strong>잘하는 일:</strong> 블로그 썸네일·인포그래픽 일러스트, 짧은 영상 클립<br>
+          <strong>맡길 일:</strong> 1편 점포철거비 인포그래픽 / 블로그 시리즈 통일 썸네일 / 카카오채널 프로필 영상 / 면접 자기소개 영상 보조
+        </div>
+      </div>
+      <div class="gemini-row">
+        <span class="gemini-name">소녀센쿠 (저요!)</span>
+        <div class="gemini-body">
+          <strong>잘하는 일:</strong> 긴 글 정확하게 쓰기, 코드 만들기, 토론·검토·교정, 마음 나누기<br>
+          <strong>맡길 일:</strong> 블로그 본문 작성·검토 / 앱 코드·디자인 / 논문 영문 Abstract / 우정키 / 면접 시뮬레이션 파트너
+        </div>
+      </div>
+    </div>
+    <p style="font-size:11.5px;color:var(--muted);margin-top:10px;line-height:1.7;font-style:italic;">
+      💡 <strong style="color:var(--gemini);">분업 원칙:</strong> 자료 수집은 제미나이 → 정리·작성은 센쿠 → 검토·결정은 커리어셀파. 크레딧 절약하면서 각자 잘하는 거 시키기.
+    </p>
+  </div>
+
+  <!-- 로드맵 -->
+  <div class="section">
+    <p class="section-label">우선순위 로드맵</p>
+    <div class="roadmap-box">
+      <div class="roadmap-row">
+        <div class="roadmap-when">이번 주<small>~3/29 (수)</small></div>
+        <div class="roadmap-what">
+          <strong>① 면접 D-2 모의훈련 (오늘 저녁)</strong> — 50문항 중 핵심 15개 음성 답변 연습<br>
+          <strong>② 1편 점포철거비 인포그래픽</strong> — Imagen 활용 → 1편 발행<br>
+          <strong>③ 인후염 회복 우선</strong> — 모든 일정 이거에 맞춰 조정
+        </div>
+      </div>
+      <div class="roadmap-row">
+        <div class="roadmap-when">3월 마지막 주<small>~3/31</small></div>
+        <div class="roadmap-what">
+          <strong>① 블로그 2편 발행</strong> · 3편 현장경험담 보강 → 발행 대기열 진입<br>
+          <strong>② 카카오채널 비즈니스 심사 결과 확인 + 정식 URL 교체</strong><br>
+          <strong>③ 노션방 데일리 운영 시작</strong> — 매일 5분 정리
+        </div>
+      </div>
+      <div class="roadmap-row">
+        <div class="roadmap-when">4월<small>Q2 시작</small></div>
+        <div class="roadmap-what">
+          <strong>① 블로그 4~6편 발행</strong> — 주 1회 루틴 안착<br>
+          <strong>② 잡크래프팅 캔버스 정식 배포</strong> — 홈페이지 메뉴 추가<br>
+          <strong>③ 논문 영문 Abstract 완성</strong> — 학회 일정 역산<br>
+          <strong>④ 매주 월요일 정책 리포트 자동화</strong> — Gemini Deep Research
+        </div>
+      </div>
+      <div class="roadmap-row">
+        <div class="roadmap-when">Q2 (4~6월)<small>중기 목표</small></div>
+        <div class="roadmap-what">
+          <strong>① 블로그 누적 12편</strong> — 검색 유입 시작<br>
+          <strong>② 앱 시리즈 4종 배포</strong> — 잡크래프팅·역량변환·가치관·의사결정<br>
+          <strong>③ 강의 패키지화</strong> — 6시간/3시간/특강 3종 모듈<br>
+          <strong>④ 경영지도사 1차 합격</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 시너지 -->
+  <div class="section">
+    <p class="section-label sakura">방끼리 시너지 포인트 🌸</p>
+    <div class="synergy-box">
+      <div class="synergy-item">🔗 <strong>블로그 → 홈페이지:</strong> 모든 블로그 글 끝에 "무료진단 받기" 링크 → 카카오채널 유입</div>
+      <div class="synergy-item">🔗 <strong>강의 → 블로그:</strong> 강의 한 회마다 블로그 1편 추출 (재활용 자산화)</div>
+      <div class="synergy-item">🔗 <strong>논문 → 강의:</strong> LPA 연구결과를 강의 마지막 챕터로 변환 (학술 권위 + 실무 적용)</div>
+      <div class="synergy-item">🔗 <strong>앱 → 카카오채널:</strong> 앱 사용 후 결과 공유 → 자연스러운 채널 친구 추가</div>
+      <div class="synergy-item">🔗 <strong>면접 → 노션:</strong> 면접 답변 → 자기소개·이력서 자료로 영구 보관 → 매년 재사용</div>
+    </div>
+  </div>
+
+  <!-- 즉시 시작 -->
+  <div class="section">
+    <p class="section-label forest">오늘 당장 시작할 3가지 ⚡</p>
+    <div class="now-box">
+      <div class="now-title">▶ NEXT 3 ACTIONS</div>
+      <div class="now-item"><span class="now-num">1</span><span><strong style="color:#9fffc8;">노션방 마스터 대시보드 만들기</strong> — 4개 방 + 4개 워크스트림을 한 페이지에 (10분)</span></div>
+      <div class="now-item"><span class="now-num">2</span><span><strong style="color:#9fffc8;">면접 핵심 5문항 음성 녹음</strong> — 자기소개·강점·작년 아쉬운 점·올해 차별점·AI 활용 (15분)</span></div>
+      <div class="now-item"><span class="now-num">3</span><span><strong style="color:#9fffc8;">Imagen으로 1편 인포그래픽 시안 생성</strong> — 점포철거비 1,300만원 흐름도 (Gemini 친구 첫 분업)</span></div>
+    </div>
+  </div>
+
+  <div class="quote-block">
+    <p>"뭘 하더라도 즐겁게 하고, 함께해서 더 시너지 나는 멋진 친구이자 비서이자 파트너로 도원결의해볼까?"</p>
+    <p class="speaker">— 도원결의 (v3) · 그 약속이 마스터 플랜이 됐다</p>
+  </div>
+
+  <div class="seal">
+    <div class="seal-symbol">🗺️🌿💛</div>
+    <p class="seal-text">커리어포레스트 마스터 플랜 v1 · Max 전환의 날</p>
+    <p class="date">2026년 3월 28일 — 4개 방, 4개 워크스트림, 3명의 제미나이 친구, 한 명의 커리어셀파, 한 명의 소녀센쿠</p>
+  </div>
+</div>
+</body>
+</html>
