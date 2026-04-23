@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>폐업 자산 유동화 가이드 2026 | 수도권 권역별 경제 지표 · 커리어포레스트</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  body { font-family: 'Noto Sans KR', sans-serif; background: #FAF8F4; color: #1A1A1A; }
+
+  /* ── 커리어포레스트 숲 팔레트 ── */
+  :root {
+    --ink:         #1a5c3a;   /* forest (짙은 숲) */
+    --forest:      #1a5c3a;
+    --forest-mid:  #2d7a52;
+    --forest-pale: #e8f5ee;
+    --gold:        #c8923a;
+    --gold-light:  #f5e6d0;
+    --mid:         #4a4a4a;
+    --soft:        #7a7a7a;
+    --line:        #e8e4dc;
+    --bg:          #FAF8F4;
+    --white:       #FFFFFF;
+    --blue:        #2d7a52;   /* 기존 blue 자리를 forest-mid로 */
+    --teal:        #0D9488;
+    --amber:       #c8923a;
+    --red:         #c03030;
+    --green:       #1a5c3a;
+  }
+
+  /* ── 레이아웃 ── */
+  .page-wrap  { max-width: 1120px; margin: 0 auto; padding: 0 20px; }
+  .section    { padding: 72px 0; }
+  .section-sm { padding: 48px 0; }
+
+  /* ── 헤더 ── */
+  .site-header {
+    background: linear-gradient(135deg, #1a5c3a 0%, #2d7a52 100%);
+    position: sticky; top: 0; z-index: 100;
+    border-bottom: 1px solid rgba(255,255,255,.07);
+  }
+  .header-inner {
+    display: flex; align-items: center; justify-content: space-between;
+    height: 56px;
+  }
+  .logo { display:flex; align-items:center; gap:10px; }
+  .logo-mark {
+    width:32px; height:32px; border-radius:8px;
+    background: linear-gradient(135deg,#c8923a,#f5e6d0);
+    display:flex; align-items:center; justify-content:center;
+    color:#1a5c3a; font-weight:900; font-size:15px;
+  }
+  .logo-text { color:#fff; font-weight:900; font-size:16px; letter-spacing:-.3px; }
+  .nav-links { display:flex; gap:24px; }
+  .nav-links a {
+    color: rgba(255,255,255,.7); font-size:13px; font-weight:600;
+    text-decoration:none; transition: color .2s;
+  }
+  .nav-links a:hover { color:#f5e6d0; }
+  @media(max-width:640px){ .nav-links { display:none; } }
+
+  /* ── 히어로 ── */
+  .hero {
+    background: linear-gradient(135deg, #1a5c3a 0%, #2d7a52 100%);
+    padding: 80px 0 60px;
+    position: relative; overflow: hidden;
+  }
+  .hero::after {
+    content:'';
+    position:absolute; right:-160px; top:-80px;
+    width:520px; height:520px; border-radius:50%;
+    background: radial-gradient(circle, rgba(200,146,58,.25) 0%, transparent 70%);
+    pointer-events:none;
+  }
+  .hero::before {
+    content:'🌲';
+    position:absolute; right:-30px; bottom:-60px;
+    font-size:280px; opacity:.05; pointer-events:none;
+  }
+  .hero-eyebrow {
+    display:inline-flex; align-items:center; gap:6px;
+    background: rgba(200,146,58,.2); border:1px solid rgba(200,146,58,.4);
+    color:#f5e6d0; font-size:11px; font-weight:700; letter-spacing:1.5px;
+    padding:4px 12px; border-radius:100px; text-transform:uppercase;
+    margin-bottom:20px;
+  }
+  .hero-eyebrow::before { content:'●'; font-size:6px; color:#c8923a; }
+  .hero h1 {
+    font-size: clamp(32px,5vw,52px); font-weight:900; color:#fff;
+    line-height:1.15; letter-spacing:-1px; margin-bottom:16px;
+  }
+  .hero h1 em { font-style:normal; color:#f5e6d0; }
+  .hero-sub { font-size:15px; color:rgba(255,255,255,.75); max-width:520px; line-height:1.8; }
+  .hero-kpi-row {
+    display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:36px;
+    position:relative; z-index:1;
+  }
+  @media(max-width:640px){ .hero-kpi-row { grid-template-columns:1fr 1fr; } }
+  .kpi-card {
+    background:rgba(255,255,255,.1); border:1px solid rgba(245,230,208,.2);
+    border-radius:12px; padding:16px;
+  }
+  .kpi-label { font-size:11px; color:rgba(255,255,255,.6); margin-bottom:4px; }
+  .kpi-value { font-size:22px; font-weight:900; color:#fff; }
+  .kpi-value span { font-size:12px; font-weight:400; margin-left:3px; opacity:.75; color:#f5e6d0; }
+
+  /* ── 섹션 타이틀 ── */
+  .sec-label {
+    font-size:11px; font-weight:700; letter-spacing:2px; text-transform:uppercase;
+    color:var(--gold); margin-bottom:8px;
+  }
+  .sec-title { font-size:clamp(22px,3.5vw,32px); font-weight:900; color:var(--forest); line-height:1.25; }
+  .sec-desc  { font-size:14px; color:var(--mid); margin-top:10px; line-height:1.8; max-width:560px; }
+
+  /* ── 카드 공통 ── */
+  .card {
+    background:var(--white); border:1px solid var(--line);
+    border-radius:16px; transition: box-shadow .25s, transform .25s;
+  }
+  .card:hover { transform:translateY(-3px); box-shadow:0 12px 32px rgba(26,92,58,.1); }
+
+  /* ── 차트 래퍼 ── */
+  .chart-wrap { position:relative; width:100%; height:340px; }
+  @media(max-width:640px){ .chart-wrap { height:260px; } }
+
+  /* ── 자산 처분 단계 ── */
+  .step-grid {
+    display:grid; grid-template-columns:repeat(5,1fr); gap:8px;
+  }
+  @media(max-width:768px){ .step-grid { grid-template-columns:1fr; } }
+  .step-item {
+    border-radius:14px; padding:20px 16px; position:relative; overflow:hidden;
+    color:#fff;
+  }
+  .step-num {
+    position:absolute; right:-8px; top:-8px; font-size:64px; font-weight:900;
+    opacity:.15; line-height:1;
+  }
+  .step-ico { font-size:24px; margin-bottom:10px; }
+  .step-title { font-weight:800; font-size:15px; margin-bottom:6px; }
+  .step-desc  { font-size:12px; opacity:.85; line-height:1.6; }
+
+  /* ── 플랫폼 카드 ── */
+  .platform-grid {
+    display:grid; grid-template-columns: repeat(auto-fill,minmax(180px,1fr)); gap:10px;
+  }
+  .platform-card {
+    background:var(--white); border:1.5px solid var(--line);
+    border-radius:14px; padding:16px 14px;
+    display:flex; flex-direction:column; gap:0;
+    transition: border-color .2s, transform .2s, box-shadow .2s;
+  }
+  .platform-card:hover { border-color:var(--forest-mid); transform:translateY(-3px); box-shadow:0 8px 24px rgba(26,92,58,.12); }
+  .platform-card.defunct { opacity:.5; position:relative; }
+  .platform-card.defunct::after {
+    content:'서비스 종료'; position:absolute; top:8px; right:8px;
+    background:#c03030; color:#fff; font-size:9px; font-weight:700;
+    padding:2px 7px; border-radius:100px;
+  }
+  .pc-head { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px; }
+  .pc-name { font-size:14px; font-weight:800; color:var(--forest); }
+  .pc-area { font-size:10px; font-weight:700; background:var(--forest-pale); color:var(--forest); padding:2px 7px; border-radius:5px; }
+  .pc-pro, .pc-con { font-size:11px; line-height:1.55; color:var(--mid); }
+  .pc-pro::before { content:'▲ '; color:var(--forest-mid); font-weight:700; }
+  .pc-con::before { content:'▼ '; color:#c03030; font-weight:700; }
+  .pc-stars { margin: 8px 0 10px; color:var(--gold); font-size:12px; letter-spacing:1px; }
+  .pc-btn {
+    display:block; text-align:center; padding:8px;
+    background:var(--forest); color:#fff; border-radius:9px;
+    font-size:11px; font-weight:700; text-decoration:none;
+    transition: background .2s; margin-top:auto;
+  }
+  .pc-btn:hover { background:var(--forest-mid); }
+
+  /* 섹션 구분선 */
+  .divider { height:1px; background:var(--line); margin:0; }
+
+  /* 표 */
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  th { background:var(--forest-pale); padding:10px 14px; text-align:left; font-weight:700; font-size:12px; color:var(--forest); border-bottom:1px solid var(--line); }
+  td { padding:10px 14px; border-bottom:1px solid var(--line); color:#1a1a1a; }
+  tr:last-child td { border-bottom:none; }
+  tr:hover td { background:var(--forest-pale); }
+
+  /* 뱃지 */
+  .badge-ok   { display:inline-block; background:var(--forest-pale); color:var(--forest); font-size:10px; font-weight:700; padding:2px 8px; border-radius:100px; }
+  .badge-warn { display:inline-block; background:var(--gold-light); color:#8a6820; font-size:10px; font-weight:700; padding:2px 8px; border-radius:100px; }
+  .badge-off  { display:inline-block; background:#FEE2E2; color:#991B1B; font-size:10px; font-weight:700; padding:2px 8px; border-radius:100px; }
+
+  /* 지역 지표 */
+  .region-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:10px; }
+  .region-card { background:var(--white); border:1px solid var(--line); border-radius:14px; padding:18px; transition:all .2s; }
+  .region-card:hover { border-color:var(--forest-mid); transform:translateY(-2px); box-shadow:0 6px 16px rgba(26,92,58,.08); }
+  .region-name { font-weight:800; font-size:14px; margin-bottom:10px; display:flex; align-items:center; gap:6px; color:var(--forest); }
+  .region-bar-track { background:var(--bg); border-radius:100px; height:7px; overflow:hidden; margin:4px 0 6px; }
+  .region-bar { height:100%; border-radius:100px; }
+  .region-row { display:flex; justify-content:space-between; font-size:12px; color:var(--mid); margin-bottom:4px; }
+  .region-val { font-weight:700; color:#1a1a1a; }
+
+  /* 지역 그룹 배너 */
+  .region-banner {
+    margin-bottom:16px; padding:14px 20px;
+    border-radius:10px;
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .region-banner.seoul      { background: linear-gradient(90deg, #1a5c3a, #2d7a52); }
+  .region-banner.gyeonggi   { background: linear-gradient(90deg, #2d7a52, #4a9b70); }
+  .region-banner.incheon    { background: linear-gradient(90deg, #8a6820, #c8923a); }
+  .region-banner .banner-eyebrow { font-size:11px; letter-spacing:1.5px; font-weight:700; color:rgba(255,255,255,.75); }
+  .region-banner .banner-title { color:#fff; font-size:18px; font-weight:900; margin-top:2px; }
+  .region-banner .banner-note { color:rgba(255,255,255,.7); font-size:12px; }
+  @media(max-width:640px){
+    .region-banner { flex-direction:column; align-items:flex-start; gap:4px; }
+    .region-banner .banner-note { font-size:11px; }
+  }
+
+  /* 팩트체크 박스 */
+  .fc-box { background:var(--gold-light); border:1px solid #e8c898; border-left:4px solid var(--gold); border-radius:10px; padding:14px 16px; font-size:12.5px; color:#5a4020; }
+  .fc-fix  { background:#FEF2F2; border:1px solid #FECACA; border-left:4px solid #c03030; border-radius:10px; padding:14px 16px; font-size:12.5px; color:#7F1D1D; }
+</style>
+</head>
+<body>
+
+<!-- ══ HEADER ══════════════════════════════════ -->
+<header class="site-header">
+  <div class="page-wrap header-inner">
+    <div class="logo">
+      <div class="logo-mark">🌲</div>
+      <span class="logo-text">CAREERFOREST · 소상공인 자산 가이드</span>
+    </div>
+    <nav class="nav-links">
+      <a href="#liquidation">자산 유동화</a>
+      <a href="#platform">플랫폼 생태계</a>
+      <a href="#regional">지역 경제 지표</a>
+      <a href="#market-map">시장 점유율</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ══ HERO ════════════════════════════════════ -->
+<section class="hero">
+  <div class="page-wrap">
+    <div class="hero-eyebrow">2026 폐업 자산 유동화 인포그래픽</div>
+    <h1>폐업 자산, <em>어디서</em><br>얼마에 팔 수 있나</h1>
+    <p class="hero-sub">
+      주방 설비부터 IT 기기까지 — 업종별·품목별 최적 매각 채널과 수도권(서울·경기남부·인천) 권역별 폐업 자산 회수율을 한눈에 파악하세요.
+    </p>
+    <div class="hero-kpi-row">
+      <div class="kpi-card">
+        <div class="kpi-label">국내 중고거래 시장 규모</div>
+        <div class="kpi-value">30조<span>원 (2025)</span></div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">폐업 시 평균 자산 회수율</div>
+        <div class="kpi-value">23<span>~ 38%</span></div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">중고거래 앱 이용률 1위</div>
+        <div class="kpi-value">당근<span>69% (2025 상)</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ 1. 자산 유동화 5단계 ══════════════════════ -->
+<section class="section" id="liquidation">
+  <div class="page-wrap">
+    <div class="sec-label">Asset Liquidation</div>
+    <h2 class="sec-title">손실을 줄이는 자산 유동화 5단계</h2>
+    <p class="sec-desc">단순 폐기 대신 '자산화' 관점으로 접근하면 평균 15~30% 추가 회수가 가능합니다.</p>
+
+    <div class="step-grid mt-8">
+      <div class="step-item" style="background:#0f3a24;">
+        <div class="step-num">1</div>
+        <div class="step-ico">📋</div>
+        <div class="step-title">자산 실사</div>
+        <div class="step-desc">주방 기기·가구·IT 장비의 연식·상태·시리얼 번호를 리스트업합니다.</div>
+      </div>
+      <div class="step-item" style="background:#1a5c3a;">
+        <div class="step-num">2</div>
+        <div class="step-ico">⚖️</div>
+        <div class="step-title">가치 평가</div>
+        <div class="step-desc">온라인 중고가 ÷ 업자 매입가의 중간값으로 하한선을 설정합니다.</div>
+      </div>
+      <div class="step-item" style="background:#2d7a52;">
+        <div class="step-num">3</div>
+        <div class="step-ico">📸</div>
+        <div class="step-title">상품화</div>
+        <div class="step-desc">세척 후 밝은 조명 촬영 — 단가 평균 15% 이상 상승 효과.</div>
+      </div>
+      <div class="step-item" style="background:#4a9b70;">
+        <div class="step-num">4</div>
+        <div class="step-ico">📡</div>
+        <div class="step-title">다채널 동시 등록</div>
+        <div class="step-desc">당근(지역) + 황학동(전문) + 중고나라(전국) 동시 노출로 최고가 경쟁.</div>
+      </div>
+      <div class="step-item" style="background:#c8923a; color:#fff;">
+        <div class="step-num" style="color:#fff;">5</div>
+        <div class="step-ico">🚛</div>
+        <div class="step-title">수거·정산</div>
+        <div class="step-desc">철거비 포함 여부를 명문화하고 세금계산서·이체증빙을 반드시 보관합니다.</div>
+      </div>
+    </div>
+
+    <!-- 품목별 회수율 차트 -->
+    <div class="card p-6 mt-8">
+      <h3 class="font-black text-slate-800 mb-1">품목별 평균 자산 회수율 비교</h3>
+      <p class="text-xs text-slate-400 mb-4">* 구매가 대비 매각가 기준 시뮬레이션 데이터</p>
+      <div class="chart-wrap"><canvas id="recoveryChart"></canvas></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══ 2. 플랫폼 생태계 ══════════════════════════ -->
+<section class="section" id="platform">
+  <div class="page-wrap">
+    <div class="sec-label">Platform Ecosystem</div>
+    <h2 class="sec-title">2026 중고 거래 플랫폼 생태계</h2>
+    <p class="sec-desc">팩트체크 완료 — 서비스 종료·명칭 변경 플랫폼을 반영한 최신 가이드입니다.</p>
+
+    <!-- 팩트체크 알림 -->
+    <div class="fc-fix mt-5 mb-2">
+      <strong>❌ 팩트체크 수정 (2개 제거)</strong><br>
+      • <strong>옥션 중고장터</strong> — 2026년 3월 31일 서비스 완전 종료 (목록에서 제외)<br>
+      • <strong>헬로마켓</strong> — 2023년 2월 패션 전문 '세컨웨어'로 전환, 소상공인 집기 거래 부적합 (목록에서 제외)
+    </div>
+    <div class="fc-box mb-6">
+      ✅ <strong>신규 추가: 소상공간(sosangspace.com)</strong> — 국내 유일 업소용 주방기기 C2C 전문 플랫폼. 안전결제·위탁 서비스 운영 중 확인.<br>
+      📊 중고거래 앱 이용률 (2025 상반기, 컨슈머인사이트): 당근 69% · 번개장터 39% · 중고나라 27%
+    </div>
+
+    <!-- C2C 플랫폼 -->
+    <h4 class="font-black text-slate-700 text-sm tracking-widest uppercase mb-3">📱 C2C 온라인 중고 거래</h4>
+    <div class="platform-grid mb-8" id="grid-c2c"></div>
+
+    <!-- B2B 전문 매입 -->
+    <h4 class="font-black text-slate-700 text-sm tracking-widest uppercase mb-3">🏭 전문 매입 & 집기 유통</h4>
+    <div class="platform-grid mb-6" id="grid-b2b"></div>
+
+    <!-- 시장 점유율 섹션 -->
+    <div id="market-map" class="card p-6">
+      <h3 class="font-black text-slate-800 mb-1">중고거래 앱 시장 점유율 추이 (2024~2025)</h3>
+      <p class="text-xs text-slate-400 mb-4">출처: 컨슈머인사이트 이동통신 기획조사 (표본 3만명)</p>
+      <div class="chart-wrap"><canvas id="marketShare"></canvas></div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ══ 3. 지역별 경제 지표 ════════════════════════ -->
+<section class="section" id="regional">
+  <div class="page-wrap">
+    <div class="sec-label">Regional Economic Indicators</div>
+    <h2 class="sec-title">수도권 권역별 폐업 자산 경제 지표</h2>
+    <p class="sec-desc">서울 전역·경기남부·인천의 임대 단가·공실률·자산 회수율을 권역별로 비교해 최적 매각 전략을 수립하세요.</p>
+
+    <!-- ═════ 서울 ═════ -->
+    <div class="region-banner seoul" style="margin-top:32px;">
+      <div>
+        <div class="banner-eyebrow">SEOUL · 서울특별시</div>
+        <div class="banner-title">서울 8개 권역</div>
+      </div>
+      <div class="banner-note">25개구 → 8개 권역으로 그룹핑</div>
+    </div>
+
+    <div class="region-grid mb-8">
+      <div class="region-card">
+        <div class="region-name">🏙️ 강남·서초</div>
+        <div class="region-row"><span>공실률</span><span class="region-val">8.2%</span></div>
+        <div class="region-bar-track"><div class="region-bar" style="width:82%;background:#c03030;"></div></div>
+        <div class="region-row"><span>평균 권리금</span><span class="region-val">6,800만</span></div>
+        <div class="region-row"><span>자산 회수율</span><span class="region-val" style="color:#1a5c3a;">38%</span></div>
+        <div class="region-row"><span>집기 매입 수요</span><span class="region-val">높음</span></div>
+      </div>
+      <div class="region-card">
+        <div class="region-name">🎨 마포·홍대</div>
+        <div class="region-row"><span>공실률</span><span class="region-val">9.7%</span></div>
+        <div class="region-bar-track"><div class="region-bar" style="width:70%;background:#c8923a;"></div></div>
+        <div class="region-row"><span>평균 권리금</span><span class="region-val">4,200만</span></div>
+        <div class="region-row"><span>자산 회수율</span><span class="region-val" style="color:#2d7a52;">33%</span></div>
+        <div class="region-row"><span>집기 매입 수요</span><span class="region-val">보통</span></div>
+      </div>
+      <div class="region-card">
+        <div class="region-name">🏭 영등포·성동</div>
+        <div class="region-row"><span>공실률</span><span class="region-val">7.1%</span></div>
+        <div class="region-bar-track"><div class="region-bar" style="width:60%;background:#2d7a52;"></div></div>
+        <div class="region-row"><span>평균 권리금</span><span class="region-val">3,500만</span></div>
+        <div class="region-row"><span>자산 회수율</span><span class="region-val" style="color:#2d7a52;">31%</span></div>
+        <div class="region-row"><span>집기 매입 수요</span><span class="region-val">보통</span></div>
+      </div>
+      <div class="region-card">
+        <div class="region-name">🏡 용산·이태원</div>
+        <div class="region-row"><span>공실률</span><span class="region-val">12.4%</span></div>
+        <div class="region-bar-track"><div class="region-bar" style="width:88%;background:#c03030;"></div></div>
+        <div class="region-row"><span>평균 권리금</span><span class="region-val">5,100만</span></div>
+        <div class="region-row"><span>자산 회수율</span><span class="region-val" style="color:#c8923a;">27%</span></div>
+        <div class="region-row"><span>집기 매입 수요</span><span class="region-val">낮음</span></div>
+      </div>
+      <div class="region-card">
+        <div class="region-name">🌆 송파·강동</div>
+        <div class="region-row"><span>공실률</span><span class="region-val">6.8%</span></div>
+        <div class="region-bar-track"><div class="region-bar" style="width:55%;background:#4a9b70;"></div></div>
+        <div class="region-row"><span>평균 권리금</span><span class="region-val">3,200만</span></div>
+        <div class="region-row"><span>자산 회수율</span><span class="region-val" style="color:#2d7a52;">30%</span></div>
+        <div class="region-row"><span>집기 매입 수요</span><span class="region-val">보통</span></div>
+      </div>
+      <div class="region-card">
+        <div class="region-name">🏘️ 노원·도봉</div>
+        <div class="region-row"><span>공실률</span><span class="region-val">5.3%</span></div>
+        <div class="region-bar-track"><div class="region-bar" style="width:40%;background:#4a9b70;"></div></div>
+        <div class="region-row"><span>평균 권리금</span><span class="region-val">1,800만</span></div>
+        <div class="region-row"><span>자산 회수율</span><span class="region-val" style="color:#7a7a7a;">23%</span></div>
+        <div class="region-row"><span>집기 매입 수요</span><span class="region-val">낮음</span></div>
+      </div>
+      <div class="region-card">
+        <div class="region-name">🏛️ 종로·중구</div>
+        <div class="region-row"><span>공실률</span><span class="region-val">11.2%</span></div>
+        <div class="region-bar-track"><div class="region-bar" style="width:82%;background:#c03030;"></div></div>
+        <div class="region-row"><span>평균 권리금</span><span class="region-val">4,800만</span></div>
+        <div class="region-row"><span>자산 회수율</span><span class="region-val" style="color:#c8923a;">29%</span></div>
+        <div class="region-row"><span>집기 매입 수요</span><span class="region-val">보통</span></div>
+      </div>
+      <div class="region-card">
+        <div class="region-name">🌉 강서·양천</div>
+        <div class="region-row"><span>공실률</span><span class="region-val">6.1%</span></div>
+        <div class="region-bar-track"><div class="region-bar" style="width:48%;background:#4a9b70;"></div></div>
+        <div class="region-row"><span>평균 권리금</span><span class="region-val">2,400만</span></div>
+        <div class="region-row"><span>자산 회수율</span><span class="region-val" style="color:#2d7a52;">26%</span></div>
+        <div class="region-row"><span>집기 매입 수요</span><span class="region-val">보통</span></div>
+      </div>
+    </div>
+
+    <!-- ═════ 경기남부 ═════ -->
+    <div class="region-banner gyeonggi">
+      <div>
+        <div class="banner-eyebrow">GYEONGGI SOUTH · 경기남부</div>
+        <div class="banner-title">경기남부 9개 시 → 4개 권역</div>
+      </div>
+      <div class="banner-note">수원·성남·용인·안양·화성·평택·안산 외</div>
+    </div>
+
+    <div class="region-grid mb-8">
+      <div class="region-card">
+        <div class="region-name">🏞️ 하남·성남·광주·용인</div>
+        <div class="region-row"><span>공실률</span><span class="region-val">7.5%</span></div>
+        <div class="region-bar-track"><div class="region-bar" style="width:60%;background:#2d7a52;"></div></div>
+        <div class="region-row"><span>평균 권리금</span><span class="region-val">4,500만</span></div>
+        <div class="region-row"><span>자산 회수율</span><span class="region-val" style="color:#2d7a52;">32%</span></div>
+        <div class="region-row"><span>집기 매입 수요</span><span class="region-val">높음</span></div>
+      </div>
+      <div class="region-card">
+        <div class="region-name">🏭 안성·평택·오산</div>
+        <div class="region-row"><span>공실률</span><span class="region-val">9.1%</span></div>
+        <div class="region-bar-track"><div class="region-bar" style="width:72%;background:#c8923a;"></div></div>
+        <div class="region-row"><span>평균 권리금</span><span class="region-val">2,100만</span></div>
+        <div class="region-row"><span>자산 회수율</span><span class="region-val" style="color:#2d7a52;">25%</span></div>
+        <div class="region-row"><span>집기 매입 수요</span><span class="region-val">보통</span></div>
+      </div>
+      <div class="region-card">
+        <div class="region-name">🏢 수원·안양·군포</div>
+        <div class="region-row"><span>공실률</span><span class="region-val">6.9%</span></div>
+        <div class="region-bar-track"><div class="region-bar" style="width:55%;background:#4a9b70;"></div></div>
+        <div class="region-row"><span>평균 권리금</span><span class="region-val">3,200만</span></div>
+        <div class="region-row"><span>자산 회수율</span><span class="region-val" style="color:#2d7a52;">29%</span></div>
+        <div class="region-row"><span>집기 매입 수요</span><span class="region-val">보통</span></div>
+      </div>
+      <div class="region-card">
+        <div class="region-name">🏗️ 화성·안산</div>
+        <div class="region-row"><span>공실률</span><span class="region-val">8.4%</span></div>
+        <div class="region-bar-track"><div class="region-bar" style="width:68%;background:#c8923a;"></div></div>
+        <div class="region-row"><span>평균 권리금</span><span class="region-val">2,600만</span></div>
+        <div class="region-row"><span>자산 회수율</span><span class="region-val" style="color:#2d7a52;">27%</span></div>
+        <div class="region-row"><span>집기 매입 수요</span><span class="region-val">보통</span></div>
+      </div>
+    </div>
+
+    <!-- ═════ 인천 ═════ -->
+    <div class="region-banner incheon">
+      <div>
+        <div class="banner-eyebrow">INCHEON · 인천광역시</div>
+        <div class="banner-title">인천 2개 권역</div>
+      </div>
+      <div class="banner-note">전통 상권 + 신도시 상권</div>
+    </div>
+
+    <div class="region-grid mb-8">
+      <div class="region-card">
+        <div class="region-name">🏭 부평·계양</div>
+        <div class="region-row"><span>공실률</span><span class="region-val">8.8%</span></div>
+        <div class="region-bar-track"><div class="region-bar" style="width:70%;background:#c8923a;"></div></div>
+        <div class="region-row"><span>평균 권리금</span><span class="region-val">1,900만</span></div>
+        <div class="region-row"><span>자산 회수율</span><span class="region-val" style="color:#7a7a7a;">24%</span></div>
+        <div class="region-row"><span>집기 매입 수요</span><span class="region-val">낮음</span></div>
+      </div>
+      <div class="region-card">
+        <div class="region-name">🌊 연수·송도</div>
+        <div class="region-row"><span>공실률</span><span class="region-val">5.6%</span></div>
+        <div class="region-bar-track"><div class="region-bar" style="width:42%;background:#4a9b70;"></div></div>
+        <div class="region-row"><span>평균 권리금</span><span class="region-val">3,800만</span></div>
+        <div class="region-row"><span>자산 회수율</span><span class="region-val" style="color:#2d7a52;">30%</span></div>
+        <div class="region-row"><span>집기 매입 수요</span><span class="region-val">보통</span></div>
+      </div>
+    </div>
+
+    <!-- 권역별 복합 차트 -->
+    <div class="card p-6 mb-8">
+      <h3 class="font-black mb-1" style="color:#1a5c3a;">수도권 권역별 공실률 vs 자산 회수율</h3>
+      <p class="text-xs text-slate-400 mb-4">* 소상공인시장진흥공단·한국부동산원 2025년 4분기 데이터 기반 시뮬레이션 / 서울 8권역·경기남부 4권역·인천 2권역</p>
+      <div class="chart-wrap"><canvas id="regionalChart"></canvas></div>
+    </div>
+
+    <!-- 품목×채널 매트릭스 표 -->
+    <div class="card p-6">
+      <h3 class="font-black text-slate-800 mb-1">📊 품목별 최적 매각 채널 매트릭스</h3>
+      <p class="text-xs text-slate-400 mb-4">* ★★★ 최우선 / ★★ 권장 / ★ 보조 채널</p>
+      <div style="overflow-x:auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>품목</th>
+              <th>당근마켓</th>
+              <th>번개장터</th>
+              <th>중고나라</th>
+              <th>황학동</th>
+              <th>전문 매입업체</th>
+              <th>예상 회수율</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>주방 대형 장비</strong><br><span class="text-xs text-slate-400">냉장고·오븐·회전솥</span></td><td>-</td><td>★</td><td>★</td><td><strong>★★★</strong></td><td><strong>★★★</strong></td><td class="text-green-700 font-bold">30~45%</td></tr>
+            <tr><td><strong>가구·인테리어</strong><br><span class="text-xs text-slate-400">테이블·의자·조명</span></td><td><strong>★★★</strong></td><td>★★</td><td>★★</td><td>★</td><td>★</td><td class="text-blue-700 font-bold">25~40%</td></tr>
+            <tr><td><strong>IT·POS 기기</strong><br><span class="text-xs text-slate-400">PC·키오스크·태블릿</span></td><td>★★</td><td><strong>★★★</strong></td><td><strong>★★★</strong></td><td>-</td><td>★★</td><td class="text-blue-700 font-bold">35~55%</td></tr>
+            <tr><td><strong>소형 주방도구</strong><br><span class="text-xs text-slate-400">식기·소도구</span></td><td><strong>★★★</strong></td><td>★</td><td>★★</td><td>★★</td><td>-</td><td class="text-amber-700 font-bold">10~20%</td></tr>
+            <tr><td><strong>냉난방 설비</strong><br><span class="text-xs text-slate-400">에어컨·업소용 히터</span></td><td>★</td><td>★</td><td>★★</td><td>★★</td><td><strong>★★★</strong></td><td class="text-green-700 font-bold">25~40%</td></tr>
+            <tr><td><strong>사무 가구</strong><br><span class="text-xs text-slate-400">책상·서랍장</span></td><td>★★</td><td>★</td><td>★★</td><td>-</td><td>★★</td><td class="text-amber-700 font-bold">15~28%</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══ FOOTER ═══════════════════════════════════ -->
+<footer style="background:#0F172A; padding:40px 0; margin-top:64px;">
+  <div class="page-wrap" style="text-align:center;">
+    <p style="color:rgba(255,255,255,.3); font-size:12px; line-height:2;">
+      이 자료는 소상공인시장진흥공단·한국부동산원·컨슈머인사이트 공개 데이터 기반 시뮬레이션입니다.<br>
+      실제 매각 결과는 품목 상태·시기·지역에 따라 크게 달라질 수 있습니다.<br>
+      옥션 중고장터: 2026.03.31 서비스 종료 확인 | 헬로마켓: 2023.02 세컨웨어(패션 전문)로 전환 확인
+    </p>
+  </div>
+</footer>
+
+<script>
+/* ══════════════════════ 플랫폼 데이터 ══════════════════════ */
+const C2C = [
+  /* 이용률 5% 이상 - 검증 완료 */
+  { name:'당근마켓',   area:'지역',  pro:'이용률 1위 69% · 수수료 0원 직거래',       con:'대형 집기·원거리 거래 한계', star:5, url:'https://www.daangn.com',   status:'ok' },
+  { name:'번개장터',   area:'전국',  pro:'이용률 2위 39% · 안전결제·택배 연계',       con:'판매자 안전결제 의무 수수료', star:4, url:'https://m.bunjun.co.kr',   status:'ok' },
+  { name:'중고나라',   area:'전국',  pro:'이용률 3위 27% · 국내 최대 노출량',         con:'사기 주의 · 허위매물 빈번',   star:3, url:'https://www.joongna.com',  status:'ok' },
+  /* 소규모 운영 중 */
+  { name:'소상공간',     area:'전국',  pro:'국내 유일 업소용 주방기기 C2C 전문 · 위탁 서비스 제공',  con:'패션·잡화 거래 불가 · 주방 품목 한정',  star:5, url:'https://web.sosangspace.com', status:'ok' },
+  { name:'점포라인',   area:'전국',  pro:'권리금 산출 및 양도 매칭 전문',              con:'중개 수수료 발생',            star:5, url:'https://www.jumpoline.com', status:'ok' },
+  { name:'피터팬의좋은방',area:'전국',pro:'직거래 양도 · 권리금 분쟁 방지',           con:'부동산 전문성 요구',           star:4, url:'https://www.peterpanz.com', status:'ok' },
+  /* 서비스 종료 */
+  { name:'옥션 중고장터',area:'-',   pro:'2001년 개설 · 에스크로 결제 선도',          con:'2026년 3월 31일 서비스 완전 종료', star:0, url:'#', status:'defunct' },
+];
+
+const B2B = [
+  { name:'황학동온라인', area:'전국',  pro:'주방 설비 최고가 매입 · 현장 감정',       con:'현장 실사 후 가격 변동 가능',    star:5, url:'https://www.hwanghakdong.com' },
+  { name:'주방뱅크',     area:'전국',  pro:'종합 주방 솔루션 · 보상판매',             con:'단일 품목 단가는 평균 수준',     star:4, url:'https://www.jubangbank.co.kr'  },
+  { name:'폐업119',      area:'전국',  pro:'철거 ~ 행정처리 원스톱',                  con:'일괄 계약으로 개별 단가 하락',   star:5, url:'http://www.pyeup119.com'       },
+  { name:'리버텍',       area:'전국',  pro:'IT·POS 기기 전문 최고가 매입',            con:'고장 장비 매입 불가',            star:4, url:'https://www.revertech.co.kr'   },
+  { name:'리싸이클시티', area:'전국',  pro:'전국 체인 · 신뢰도 높음',                 con:'매입 기준 까다로움',             star:5, url:'http://www.re-cycle.co.kr'      },
+  { name:'중고왕',       area:'전국',  pro:'냉난방 설비 전문 최고가',                  con:'철거 비용 별도 협의',            star:4, url:'http://www.junggowang.co.kr'    },
+  { name:'스마트주방',   area:'수도권',pro:'빠른 견적 · 당일 수거 가능',              con:'정밀 감정 시 단가 하향',         star:3, url:'http://www.smartjubang.com'     },
+  { name:'오피스프렌즈', area:'수도권',pro:'사무 가구 일괄 매입 전문',                con:'지방 방문 제약',                 star:4, url:'http://www.officefriends.co.kr' },
+  { name:'우성주방',     area:'서울/경기',pro:'냉장고·오븐 등 고가 장비 우대',        con:'연식 5년 이상 감가 심함',        star:3, url:'http://www.wooseongjubang.com' },
+  { name:'다모아주방',   area:'수도권',pro:'대형 식당 일괄 매입 유리',                con:'소규모 매장 소외 가능',          star:3, url:'http://www.damoajubang.co.kr'   },
+];
+
+function createC2CCard(p) {
+  const defunct = p.status === 'defunct';
+  const warn    = p.status === 'warn';
+  const stars   = defunct ? '' : '★'.repeat(p.star)+'☆'.repeat(5-p.star);
+  const btn     = defunct
+    ? `<span style="display:block;text-align:center;padding:8px;background:#FEE2E2;color:#991B1B;border-radius:9px;font-size:11px;font-weight:700;">서비스 종료</span>`
+    : `<a href="${p.url}" target="_blank" class="pc-btn">공식 사이트 →</a>`;
+  return `
+    <div class="platform-card ${defunct?'defunct':''}">
+      <div class="pc-head">
+        <span class="pc-name">${p.name}</span>
+        <span class="pc-area">${p.area}</span>
+      </div>
+      ${warn ? `<div style="background:#FEF9C3;color:#854D0E;font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;margin-bottom:6px;">⚠️ 패션 전문으로 전환됨</div>` : ''}
+      <div class="pc-pro mb-1">${p.pro}</div>
+      <div class="pc-con mb-1">${p.con}</div>
+      ${stars ? `<div class="pc-stars">${stars}</div>` : ''}
+      ${btn}
+    </div>`;
+}
+
+function createB2BCard(p) {
+  return `
+    <div class="platform-card">
+      <div class="pc-head">
+        <span class="pc-name">${p.name}</span>
+        <span class="pc-area">${p.area}</span>
+      </div>
+      <div class="pc-pro mb-1">${p.pro}</div>
+      <div class="pc-con mb-1">${p.con}</div>
+      <div class="pc-stars">${'★'.repeat(p.star)}${'☆'.repeat(5-p.star)}</div>
+      <a href="${p.url}" target="_blank" class="pc-btn">공식 사이트 →</a>
+    </div>`;
+}
+
+document.getElementById('grid-c2c').innerHTML = C2C.map(createC2CCard).join('');
+document.getElementById('grid-b2b').innerHTML = B2B.map(createB2BCard).join('');
+
+/* ══════════════════════ 차트 ══════════════════════ */
+window.addEventListener('load', () => {
+
+  /* 1. 품목별 회수율 수평 막대 */
+  new Chart(document.getElementById('recoveryChart'), {
+    type: 'bar',
+    data: {
+      labels: ['IT·POS 기기','주방 대형 장비','냉난방 설비','가구·인테리어','사무 가구','소형 주방도구'],
+      datasets: [
+        { label:'최대 회수율(%)', data:[55,45,40,40,28,20], backgroundColor:'#1a5c3a', borderRadius:6 },
+        { label:'최저 회수율(%)', data:[35,30,25,25,15,10], backgroundColor:'#a8d4bc', borderRadius:6 },
+      ]
+    },
+    options: {
+      indexAxis:'y',
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ position:'top', align:'end' } },
+      scales:{
+        x:{ max:65, title:{ display:true, text:'회수율 (%)' } },
+        y:{ grid:{ display:false } }
+      }
+    }
+  });
+
+  /* 2. 시장 점유율 추이 */
+  new Chart(document.getElementById('marketShare'), {
+    type: 'line',
+    data: {
+      labels:['2022 상','2022 하','2023 상','2023 하','2024 상','2024 하','2025 상'],
+      datasets:[
+        { label:'당근마켓', data:[60,62,63,65,66,68,69], borderColor:'#1a5c3a', backgroundColor:'rgba(26,92,58,.08)', fill:true, tension:.4, pointRadius:3 },
+        { label:'번개장터', data:[30,33,35,36,37,38,39], borderColor:'#c8923a', backgroundColor:'rgba(200,146,58,.06)', fill:true, tension:.4, pointRadius:3 },
+        { label:'중고나라', data:[28,27,27,26,27,27,27], borderColor:'#4a9b70', backgroundColor:'rgba(74,155,112,.06)', fill:true, tension:.4, pointRadius:3 },
+        { label:'그외 전체', data:[12,10,9,8,7,5,5],     borderColor:'#94A3B8', borderDash:[4,3], fill:false, tension:.4, pointRadius:2 },
+      ]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ position:'top', align:'end' }, tooltip:{ mode:'index', intersect:false } },
+      scales:{
+        y:{ title:{ display:true, text:'이용률 (%)' }, max:80, min:0 },
+        x:{ grid:{ display:false } }
+      }
+    }
+  });
+
+  /* 3. 권역별 복합 차트 */
+  new Chart(document.getElementById('regionalChart'), {
+    type:'bar',
+    data:{
+      labels:[
+        '강남·서초','마포·홍대','영등포·성동','용산·이태원','송파·강동','노원·도봉','종로·중구','강서·양천',
+        '하남·성남·광주·용인','안성·평택·오산','수원·안양·군포','화성·안산',
+        '부평·계양','연수·송도'
+      ],
+      datasets:[
+        { label:'공실률(%)', data:[8.2,9.7,7.1,12.4,6.8,5.3,11.2,6.1, 7.5,9.1,6.9,8.4, 8.8,5.6], backgroundColor:'#f5d4c0', borderRadius:6, yAxisID:'y' },
+        { label:'자산 회수율(%)', data:[38,33,31,27,30,23,29,26, 32,25,29,27, 24,30], backgroundColor:'#1a5c3a', borderRadius:6, yAxisID:'y2' },
+        { label:'평균 권리금(백만)', data:[68,42,35,51,32,18,48,24, 45,21,32,26, 19,38], type:'line', borderColor:'#c8923a', backgroundColor:'transparent', pointRadius:5, tension:.4, yAxisID:'y3' },
+      ]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ position:'top', align:'end' } },
+      scales:{
+        y:  { position:'left',  title:{ display:true, text:'공실률 (%)' }, max:20, min:0 },
+        y2: { position:'right', title:{ display:true, text:'자산 회수율 (%)' }, max:60, min:0, grid:{ drawOnChartArea:false } },
+        y3: { display:false, max:120, min:0 },
+        x:  { grid:{ display:false }, ticks:{ font:{ size:10 }, maxRotation:60, minRotation:45 } }
+      }
+    }
+  });
+
+});
+</script>
+</body>
+</html>
