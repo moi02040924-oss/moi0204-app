@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI커리어숲 도우미 | 커리어포레스트</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700;900&family=Gowun+Batang:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green-deep: #2d4a35;
+    --green-mid: #3d7a52;
+    --green-main: #5a9e6f;
+    --green-light: #8bc98a;
+    --green-pale: #e8f7ed;
+    --green-bg: #f0faf3;
+    --green-border: #b8dfc4;
+    --orange: #f4a261;
+    --text-dark: #2d4a35;
+    --text-mid: #4a7a59;
+    --text-soft: #88a895;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--green-bg);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 16px;
+  }
+  @keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes bounce {
+    0%,100% { transform: translateY(0); }
+    50%      { transform: translateY(-6px); }
+  }
+  @keyframes float {
+    0%,100% { transform: translateY(0) rotate(-2deg); }
+    50%      { transform: translateY(-8px) rotate(2deg); }
+  }
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+  @keyframes pulse {
+    0%,100% { opacity: 1; }
+    50%      { opacity: 0.5; }
+  }
+
+  /* ── CARD ── */
+  .card {
+    width: 100%; max-width: 480px;
+    background: #fff;
+    border-radius: 28px;
+    overflow: hidden;
+    box-shadow: 0 20px 80px rgba(90,158,111,.18), 0 4px 20px rgba(0,0,0,.08);
+    animation: fadeSlideIn .5s ease;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: linear-gradient(135deg, var(--green-deep) 0%, var(--green-mid) 50%, var(--green-main) 100%);
+    padding: 24px 20px 16px;
+    position: relative; overflow: hidden;
+  }
+  .header-deco {
+    position: absolute; border-radius: 50%;
+    background: rgba(255,255,255,.06); pointer-events: none;
+  }
+  .header-inner { position: relative; z-index: 1; }
+  .header-top { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+  .logo-box {
+    width: 52px; height: 52px; border-radius: 16px;
+    background: rgba(255,255,255,.15); backdrop-filter: blur(10px);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px; animation: float 4s ease-in-out infinite; flex-shrink: 0;
+  }
+  .header h1 {
+    color: #fff; font-size: 20px; font-weight: 900;
+    font-family: 'Gowun Batang', serif; letter-spacing: -.3px;
+  }
+  .header p { color: rgba(255,255,255,.75); font-size: 12px; margin-top: 3px; }
+
+  /* ── TABS ── */
+  .tabs { display: flex; gap: 6px; }
+  .tab-btn {
+    flex: 1; padding: 9px 4px; border-radius: 12px; border: none;
+    cursor: pointer; font-family: inherit; font-size: 11px;
+    transition: all .2s; backdrop-filter: blur(10px);
+    background: rgba(255,255,255,.12); color: rgba(255,255,255,.85); font-weight: 500;
+  }
+  .tab-btn.active {
+    background: rgba(255,255,255,.95); color: var(--green-deep); font-weight: 800;
+  }
+  .tab-btn .tab-icon { font-size: 17px; display: block; margin-bottom: 2px; }
+
+  /* ── CONTENT AREA ── */
+  .content { height: 520px; display: flex; flex-direction: column; overflow: hidden; }
+  .pane { display: none; flex-direction: column; height: 100%; }
+  .pane.active { display: flex; }
+
+  /* ── CHAT ── */
+  .chat-messages {
+    flex: 1; overflow-y: auto; padding: 20px 16px;
+    display: flex; flex-direction: column; gap: 0;
+  }
+  .chat-messages::-webkit-scrollbar { width: 4px; }
+  .chat-messages::-webkit-scrollbar-thumb { background: var(--green-border); border-radius: 4px; }
+
+  .msg-wrap { display: flex; align-items: flex-end; gap: 10; margin-bottom: 16px; animation: fadeSlideIn .35s ease; }
+  .msg-wrap.user { flex-direction: row-reverse; }
+  .avatar {
+    width: 40px; height: 40px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center; font-size: 20px;
+  }
+  .avatar.bot  { background: linear-gradient(135deg, var(--green-main), var(--green-light)); box-shadow: 0 2px 10px rgba(90,158,111,.3); }
+  .avatar.user { background: linear-gradient(135deg, var(--orange), #e76f51); box-shadow: 0 2px 10px rgba(231,111,81,.3); }
+  .bubble {
+    max-width: 75%; padding: 12px 18px; line-height: 1.75; font-size: 14px;
+    white-space: pre-wrap; word-break: break-word;
+  }
+  .bubble.bot  { border-radius: 4px 20px 20px 20px; background: #fff; color: var(--text-dark); box-shadow: 0 2px 12px rgba(0,0,0,.08); }
+  .bubble.user { border-radius: 20px 4px 20px 20px; background: linear-gradient(135deg, var(--green-main), var(--green-mid)); color: #fff; box-shadow: 0 2px 12px rgba(90,158,111,.35); }
+
+  .typing-dots { display: flex; gap: 5px; align-items: center; padding: 12px 16px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green-main); }
+  .dot:nth-child(1) { animation: bounce 1.2s ease-in-out 0s infinite; }
+  .dot:nth-child(2) { animation: bounce 1.2s ease-in-out .2s infinite; }
+  .dot:nth-child(3) { animation: bounce 1.2s ease-in-out .4s infinite; }
+
+  .chat-footer { padding: 8px 16px 14px; border-top: 1px solid var(--green-pale); }
+  .quick-btns { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+  .quick-btn {
+    padding: 6px 12px; border-radius: 20px;
+    border: 1.5px solid var(--green-main); background: #fff;
+    color: var(--green-main); font-size: 12px; cursor: pointer;
+    transition: all .2s; font-family: inherit;
+  }
+  .quick-btn:hover { background: var(--green-main); color: #fff; }
+  .chat-input-row { display: flex; gap: 8px; }
+  .chat-input {
+    flex: 1; padding: 12px 18px; border-radius: 25px;
+    border: 2px solid var(--green-border); outline: none; font-size: 14px;
+    font-family: inherit; background: #f8fdf9; color: var(--text-dark);
+    transition: border .2s;
+  }
+  .chat-input:focus { border-color: var(--green-main); }
+  .send-btn {
+    width: 48px; height: 48px; border-radius: 50%; border: none; cursor: pointer;
+    background: linear-gradient(135deg, var(--green-main), var(--green-mid));
+    font-size: 20px; transition: all .2s;
+    box-shadow: 0 2px 10px rgba(90,158,111,.3); flex-shrink: 0;
+  }
+  .send-btn:disabled { background: #ccc; box-shadow: none; cursor: default; }
+
+  /* ── FORM PANE ── */
+  .form-scroll { flex: 1; overflow-y: auto; padding: 20px 16px 8px; }
+  .form-scroll::-webkit-scrollbar { width: 4px; }
+  .form-scroll::-webkit-scrollbar-thumb { background: var(--green-border); border-radius: 4px; }
+  .form-banner {
+    background: linear-gradient(135deg, var(--green-main), var(--green-mid));
+    border-radius: 16px; padding: 16px 20px; margin-bottom: 20px;
+    color: #fff; text-align: center;
+  }
+  .form-banner .banner-icon { font-size: 32px; margin-bottom: 8px; }
+  .form-banner p { font-size: 13px; line-height: 1.65; opacity: .92; }
+  .field { margin-bottom: 16px; animation: fadeSlideIn .4s ease both; }
+  .field label { display: block; font-size: 13px; font-weight: 700; color: var(--text-dark); margin-bottom: 6px; }
+  .field textarea {
+    width: 100%; padding: 10px 14px; border-radius: 10px;
+    border: 2px solid var(--green-border); outline: none; font-size: 13px;
+    font-family: inherit; resize: vertical; background: #f8fdf9;
+    color: var(--text-dark); line-height: 1.6; transition: border .2s; min-height: 60px;
+  }
+  .field textarea:focus { border-color: var(--green-main); }
+  .field textarea.filled { border-color: var(--green-main); }
+  .generate-btn {
+    width: 100%; padding: 14px 20px; border-radius: 14px; border: none; cursor: pointer;
+    font-family: inherit; font-weight: 800; font-size: 15px; color: #fff;
+    background: linear-gradient(135deg, var(--green-main), var(--green-mid));
+    box-shadow: 0 4px 20px rgba(90,158,111,.4); transition: all .3s; margin-bottom: 16px;
+  }
+  .generate-btn:disabled { background: #ccc; box-shadow: none; cursor: default; }
+
+  /* ── RESULT ── */
+  .result-area { flex: 1; overflow-y: auto; padding: 20px 16px 8px; }
+  .result-area::-webkit-scrollbar { width: 4px; }
+  .result-area::-webkit-scrollbar-thumb { background: var(--green-border); border-radius: 4px; }
+  .result-loading { text-align: center; padding: 50px 20px; }
+  .result-loading .spin-tree { font-size: 56px; animation: spin 3s linear infinite; display: block; margin-bottom: 20px; }
+  .result-loading p { color: var(--green-main); font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+  .result-loading small { color: var(--text-soft); font-size: 13px; }
+  .result-box {
+    background: linear-gradient(135deg, #f0faf3, var(--green-pale));
+    border: 1px solid var(--green-border); border-radius: 16px; padding: 22px;
+    line-height: 1.9; font-size: 14px; color: var(--text-dark); white-space: pre-wrap;
+    word-break: break-word; margin-bottom: 14px; animation: fadeSlideIn .5s ease;
+  }
+  .result-actions { display: flex; gap: 10px; margin-bottom: 16px; }
+  .copy-btn {
+    flex: 1; padding: 12px 20px; border-radius: 12px;
+    border: 2px solid var(--green-main); background: #fff;
+    color: var(--green-main); font-weight: 700; cursor: pointer;
+    font-size: 14px; font-family: inherit; transition: all .2s;
+  }
+  .copy-btn.copied { background: var(--green-main); color: #fff; }
+  .reset-btn {
+    flex: 1; padding: 12px 20px; border-radius: 12px; border: none;
+    background: linear-gradient(135deg, var(--green-main), var(--green-mid));
+    color: #fff; font-weight: 700; cursor: pointer; font-size: 14px; font-family: inherit;
+  }
+
+  /* ── FOOTER ── */
+  .footer {
+    padding: 10px 20px; border-top: 1px solid var(--green-pale);
+    background: #f8fdf9; text-align: center;
+  }
+  .footer p { font-size: 11px; color: var(--text-soft); }
+
+  /* ── API KEY MODAL ── */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(45,74,53,.6); backdrop-filter: blur(4px);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 100; padding: 20px;
+  }
+  .modal {
+    background: #fff; border-radius: 24px; padding: 30px;
+    width: 100%; max-width: 420px;
+    box-shadow: 0 20px 60px rgba(0,0,0,.2);
+    animation: fadeSlideIn .4s ease;
+  }
+  .modal h2 { font-size: 20px; color: var(--green-deep); margin-bottom: 8px; }
+  .modal p  { font-size: 13px; color: var(--text-soft); line-height: 1.65; margin-bottom: 18px; }
+  .modal input {
+    width: 100%; padding: 12px 16px; border-radius: 10px;
+    border: 2px solid var(--green-border); outline: none;
+    font-size: 14px; font-family: inherit; background: #f8fdf9;
+    color: var(--text-dark); margin-bottom: 12px; transition: border .2s;
+  }
+  .modal input:focus { border-color: var(--green-main); }
+  .modal-btn {
+    width: 100%; padding: 13px; border-radius: 12px; border: none;
+    background: linear-gradient(135deg, var(--green-main), var(--green-mid));
+    color: #fff; font-weight: 800; font-size: 15px; cursor: pointer; font-family: inherit;
+    box-shadow: 0 4px 16px rgba(90,158,111,.35);
+  }
+  .modal-note { font-size: 11px; color: var(--text-soft); text-align: center; margin-top: 10px; line-height: 1.6; }
+</style>
+</head>
+<body>
+
+<!-- API Key Modal -->
+<div class="modal-overlay" id="apiModal">
+  <div class="modal">
+    <div style="font-size:40px;text-align:center;margin-bottom:12px">🌲</div>
+    <h2 style="text-align:center">AI커리어숲 도우미</h2>
+    <p style="text-align:center">Anthropic API 키를 입력하면 AI 기능이 활성화돼요.<br>키는 브라우저에만 저장되며 외부로 전송되지 않아요.</p>
+    <input type="password" id="apiKeyInput" placeholder="sk-ant-api03-..." autocomplete="off">
+    <button class="modal-btn" onclick="saveApiKey()">🌿 시작하기</button>
+    <p class="modal-note">API 키는 <a href="https://console.anthropic.com" target="_blank" style="color:var(--green-main)">console.anthropic.com</a>에서 발급받을 수 있어요.<br>키는 이 브라우저에만 임시 저장됩니다.</p>
+  </div>
+</div>
+
+<!-- Main Card -->
+<div class="card">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-deco" style="left:-20px;top:-20px;width:100px;height:100px"></div>
+    <div class="header-deco" style="left:85%;top:-10px;width:80px;height:80px"></div>
+    <div class="header-deco" style="left:70%;top:60%;width:60px;height:60px"></div>
+    <div class="header-inner">
+      <div class="header-top">
+        <div class="logo-box">🌲</div>
+        <div>
+          <h1>AI커리어숲 도우미</h1>
+          <p>소상공인 사장님을 위한 AI 친구 🌿</p>
+        </div>
+      </div>
+      <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('chat',this)">
+          <span class="tab-icon">🌲</span>AI 친구 숲이
+        </button>
+        <button class="tab-btn" onclick="switchTab('resume',this)">
+          <span class="tab-icon">📋</span>활동 이력서
+        </button>
+        <button class="tab-btn" onclick="switchTab('selfintro',this)">
+          <span class="tab-icon">📝</span>자기소개서
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="content">
+
+    <!-- CHAT PANE -->
+    <div class="pane active" id="pane-chat">
+      <div class="chat-messages" id="chatMessages"></div>
+      <div class="chat-footer">
+        <div class="quick-btns">
+          <button class="quick-btn" onclick="setInput('AI가 뭔가요?')">AI가 뭔가요?</button>
+          <button class="quick-btn" onclick="setInput('챗GPT로 뭘 할 수 있어요?')">챗GPT 활용법</button>
+          <button class="quick-btn" onclick="setInput('SNS 홍보 글 쉽게 쓰는 법 알려줘')">SNS 홍보글</button>
+          <button class="quick-btn" onclick="setInput('손님 응대에 AI 어떻게 써요?')">손님 응대</button>
+          <button class="quick-btn" onclick="setInput('AI로 메뉴 이름 만들어줘')">메뉴 이름</button>
+        </div>
+        <div class="chat-input-row">
+          <input class="chat-input" type="text" id="chatInput" placeholder="궁금한 게 뭐든 물어보세요 🌿"
+            onkeydown="if(event.key==='Enter')sendChat()">
+          <button class="send-btn" id="sendBtn" onclick="sendChat()">→</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RESUME PANE -->
+    <div class="pane" id="pane-resume">
+      <div id="resumeFormArea" style="display:flex;flex-direction:column;height:100%">
+        <div class="form-scroll" id="resumeScroll">
+          <div class="form-banner">
+            <div class="banner-icon">📋</div>
+            <p>사장님의 숨겨진 활동들을 빛나게 만들어드려요!<br>몇 가지만 알려주시면 AI가 이력서를 뚝딱 만들어드릴게요 ✨</p>
+          </div>
+          <div id="resumeFields"></div>
+          <button class="generate-btn" id="resumeGenBtn" onclick="generateDoc('resume')" disabled>
+            🌲 AI가 이력서 작성해드릴게요!
+          </button>
+        </div>
+      </div>
+      <div id="resumeResultArea" style="display:none;flex-direction:column;height:100%">
+        <div class="result-area" id="resumeResult"></div>
+        <div style="padding:0 16px 16px;display:flex;gap:10px">
+          <button class="copy-btn" id="resumeCopyBtn" onclick="copyResult('resume')">📋 복사하기</button>
+          <button class="reset-btn" onclick="resetDoc('resume')">🔄 다시 작성</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SELFINTRO PANE -->
+    <div class="pane" id="pane-selfintro">
+      <div id="selfintroFormArea" style="display:flex;flex-direction:column;height:100%">
+        <div class="form-scroll" id="selfintroScroll">
+          <div class="form-banner">
+            <div class="banner-icon">📝</div>
+            <p>사장님의 진심 어린 이야기를 담아드릴게요!<br>아래 질문에 편하게 답해주세요 🌿</p>
+          </div>
+          <div id="selfintroFields"></div>
+          <button class="generate-btn" id="selfintroGenBtn" onclick="generateDoc('selfintro')" disabled>
+            🌲 AI가 자기소개서 작성해드릴게요!
+          </button>
+        </div>
+      </div>
+      <div id="selfintroResultArea" style="display:none;flex-direction:column;height:100%">
+        <div class="result-area" id="selfintroResult"></div>
+        <div style="padding:0 16px 16px;display:flex;gap:10px">
+          <button class="copy-btn" id="selfintroCopyBtn" onclick="copyResult('selfintro')">📋 복사하기</button>
+          <button class="reset-btn" onclick="resetDoc('selfintro')">🔄 다시 작성</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <p>커리어포레스트 🌲 careerforest.co.kr | AI가 초보자도 쉽게, 전문가처럼!</p>
+  </div>
+
+</div>
+
+<script>
+/* ── CONFIG ── */
+const MODEL = 'claude-sonnet-4-20250514';
+let API_KEY = '';
+
+const SYSTEM = {
+  chat: `당신은 소상공인 AI 입문자를 위한 따뜻하고 유쾌한 AI 친구 '숲이'입니다.
+커리어포레스트의 마스코트로, 초보자도 쉽게 이해할 수 있는 친근한 말투를 씁니다.
+- 어려운 AI 용어는 쉬운 비유로 설명해주세요
+- 소상공인의 일상과 연결해서 설명해주세요
+- 칭찬과 격려를 아끼지 마세요
+- 이모지를 자연스럽게 활용해주세요
+- 답변은 간결하고 따뜻하게 해주세요`,
+  resume: `당신은 소상공인의 숨겨진 활동을 찾아 빛나는 이력서로 만들어주는 전문가 '숲이'입니다.
+사용자가 입력한 활동 정보를 바탕으로 감동적이고 전문적인 활동 이력서를 작성해주세요.
+
+형식:
+📋 활동 이력서
+
+성명: [이름]  주요 역할: [역할]
+
+🌟 핵심 활동 요약
+[2-3줄 핵심 요약]
+
+📌 주요 활동 내역
+[표 형식으로 활동명 / 기간 / 주요 내용 / 성과 순서로 작성]
+
+💡 특기사항 및 강점
+• [강점 3가지]
+
+🏆 대표 성과
+[가장 자랑스러운 성과]
+
+마지막에 따뜻한 격려 한마디를 꼭 추가해주세요.`,
+  selfintro: `당신은 소상공인의 이야기를 아름답게 담아내는 자기소개서 전문가 '숲이'입니다.
+사용자가 입력한 정보를 바탕으로 진심이 느껴지는 자기소개서를 작성해주세요.
+
+형식:
+📝 자기소개서
+
+[제목: 사업/역할을 반영한 인상적인 한 줄 제목]
+
+🌱 저는 이런 사람입니다
+[진정성 있는 자기소개 - 2단락]
+
+💼 걸어온 길
+[경력/경험 스토리텔링 - 2단락]
+
+🔥 저의 강점과 차별성
+• [구체적 강점 3가지]
+
+🌿 앞으로의 비전
+[미래 계획과 포부 - 1단락]
+
+마음을 담아
+[진심 어린 마무리 인사]
+
+읽는 사람의 마음을 움직이는 따뜻하고 진솔한 문체로 작성해주세요.`
+};
+
+const RESUME_Q = [
+  { id:'name',      emoji:'👤', label:'성함이 어떻게 되세요?',               placeholder:'예: 홍길동' },
+  { id:'business',  emoji:'🏪', label:'어떤 업종/직업을 운영하고 계세요?',    placeholder:'예: 반찬가게 운영, 카페 사장님' },
+  { id:'years',     emoji:'📅', label:'운영하신 기간은요?',                   placeholder:'예: 5년' },
+  { id:'activities',emoji:'📌', label:'어떤 활동들을 하셨나요?',              placeholder:'예: 지역 상인회 활동, 소진공 교육 수료, 온라인 판매 시작...' },
+  { id:'achievements',emoji:'🏆',label:'가장 자랑스러운 성과는요?',           placeholder:'예: 단골 고객 50명 확보, 매출 30% 향상...' },
+  { id:'strengths', emoji:'💡', label:'나만의 강점이나 특기가 있다면요?',     placeholder:'예: 손님 이름 다 외움, 손맛 최고라는 말을 많이 들음' }
+];
+const SELFINTRO_Q = [
+  { id:'name',       emoji:'👤', label:'성함과 현재 하시는 일을 알려주세요',   placeholder:'예: 홍길동, 가정식 도시락 가게 운영' },
+  { id:'motivation', emoji:'🌱', label:'이 일을 시작하게 된 계기는요?',        placeholder:'예: 아이들 건강한 밥을 먹이고 싶어서...' },
+  { id:'story',      emoji:'💭', label:'운영하면서 가장 기억에 남는 일이 있나요?', placeholder:'예: 단골 어르신이 맛있다고 눈물 흘리셨을 때...' },
+  { id:'values',     emoji:'❤️', label:'어떤 가치관으로 일하고 계세요?',        placeholder:'예: 정직한 재료, 진심 담은 음식' },
+  { id:'vision',     emoji:'🌟', label:'앞으로의 꿈이나 목표가 있다면요?',      placeholder:'예: 지역 대표 맛집으로 자리 잡기' },
+  { id:'target',     emoji:'🎯', label:'이 소개서를 어디에 활용하실 건가요?',   placeholder:'예: 지원사업 신청, 협력업체 소개, SNS 프로필' }
+];
+
+/* ── API KEY ── */
+function saveApiKey() {
+  const k = document.getElementById('apiKeyInput').value.trim();
+  if (!k.startsWith('sk-')) { alert('올바른 API 키를 입력해주세요 (sk-ant-... 형식)'); return; }
+  API_KEY = k;
+  document.getElementById('apiModal').style.display = 'none';
+  init();
+}
+document.getElementById('apiKeyInput').addEventListener('keydown', e => { if (e.key === 'Enter') saveApiKey(); });
+
+/* ── INIT ── */
+function init() {
+  buildFields('resume', RESUME_Q);
+  buildFields('selfintro', SELFINTRO_Q);
+  appendBot('chat', '안녕하세요! 저는 AI 친구 숲이예요 🌲\n\nAI가 처음이시라도 걱정 마세요! 어떤 질문이든 편하게 물어보세요. 소상공인 사장님들의 사업에 도움이 되는 AI 활용법부터 뭐든 알려드릴게요 😊');
+}
+
+/* ── TABS ── */
+function switchTab(id, btn) {
+  document.querySelectorAll('.pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('pane-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+
+/* ── CHAT ── */
+const chatHistory = [];
+function appendBot(pane, text) {
+  const box = document.getElementById('chatMessages');
+  const w = document.createElement('div'); w.className = 'msg-wrap';
+  w.innerHTML = `<div class="avatar bot">🌲</div><div class="bubble bot">${text.replace(/</g,'&lt;')}</div>`;
+  box.appendChild(w); box.scrollTop = box.scrollHeight;
+}
+function appendUser(text) {
+  const box = document.getElementById('chatMessages');
+  const w = document.createElement('div'); w.className = 'msg-wrap user';
+  w.innerHTML = `<div class="avatar user">👤</div><div class="bubble user">${text.replace(/</g,'&lt;')}</div>`;
+  box.appendChild(w); box.scrollTop = box.scrollHeight;
+}
+function showTyping() {
+  const box = document.getElementById('chatMessages');
+  const w = document.createElement('div'); w.className = 'msg-wrap'; w.id = 'typing';
+  w.innerHTML = `<div class="avatar bot">🌲</div><div class="bubble bot" style="padding:0"><div class="typing-dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>`;
+  box.appendChild(w); box.scrollTop = box.scrollHeight;
+}
+function hideTyping() { const t = document.getElementById('typing'); if (t) t.remove(); }
+function setInput(v) { document.getElementById('chatInput').value = v; document.getElementById('chatInput').focus(); }
+
+async function sendChat() {
+  const inp = document.getElementById('chatInput');
+  const msg = inp.value.trim(); if (!msg) return;
+  inp.value = '';
+  document.getElementById('sendBtn').disabled = true;
+  appendUser(msg);
+  chatHistory.push({ role:'user', content: msg });
+  showTyping();
+  try {
+    const reply = await callClaude(SYSTEM.chat, chatHistory);
+    hideTyping();
+    chatHistory.push({ role:'assistant', content: reply });
+    appendBot('chat', reply);
+  } catch(e) { hideTyping(); appendBot('chat', '앗, 잠깐 오류가 났어요. 다시 시도해볼까요? 🌿'); }
+  document.getElementById('sendBtn').disabled = false;
+  inp.focus();
+}
+
+/* ── FORM FIELDS ── */
+const docAnswers = { resume:{}, selfintro:{} };
+function buildFields(type, qs) {
+  const container = document.getElementById(type + 'Fields');
+  qs.forEach((q, i) => {
+    const div = document.createElement('div');
+    div.className = 'field';
+    div.style.animationDelay = (i * 0.08) + 's';
+    div.innerHTML = `<label>${q.emoji} ${q.label}</label>
+      <textarea id="${type}_${q.id}" placeholder="${q.placeholder}" rows="2"
+        oninput="onFieldInput('${type}','${q.id}',this)"></textarea>`;
+    container.appendChild(div);
+  });
+}
+function onFieldInput(type, id, el) {
+  docAnswers[type][id] = el.value;
+  el.classList.toggle('filled', !!el.value.trim());
+  const qs = type === 'resume' ? RESUME_Q : SELFINTRO_Q;
+  const complete = qs.every(q => docAnswers[type][q.id]?.trim());
+  document.getElementById(type + 'GenBtn').disabled = !complete;
+}
+
+/* ── GENERATE ── */
+let docResults = { resume:'', selfintro:'' };
+async function generateDoc(type) {
+  const qs = type === 'resume' ? RESUME_Q : SELFINTRO_Q;
+  const info = qs.map(q => `${q.label}: ${docAnswers[type][q.id]}`).join('\n');
+  const prompt = `다음 정보로 ${type === 'resume' ? '활동 이력서' : '자기소개서'}를 작성해주세요:\n\n${info}`;
+
+  document.getElementById(type + 'FormArea').style.display = 'none';
+  const ra = document.getElementById(type + 'ResultArea');
+  ra.style.display = 'flex'; ra.style.flexDirection = 'column';
+
+  const resultEl = document.getElementById(type + 'Result');
+  resultEl.innerHTML = `<div class="result-loading">
+    <span class="spin-tree">🌲</span>
+    <p>${type === 'resume' ? '활동 이력서' : '자기소개서'}를 정성껏 작성하고 있어요...</p>
+    <small>숲이가 당신의 이야기를 담고 있어요 ✨</small>
+  </div>`;
+
+  try {
+    const reply = await callClaude(SYSTEM[type], [{ role:'user', content: prompt }]);
+    docResults[type] = reply;
+    resultEl.innerHTML = `<div class="result-box">${escapeAndBold(reply)}</div>`;
+  } catch(e) {
+    resultEl.innerHTML = `<div class="result-box">앗, 오류가 났어요. 다시 시도해주세요 🌿</div>`;
+  }
+}
+function escapeAndBold(text) {
+  return text.replace(/</g,'&lt;').replace(/\*\*(.*?)\*\*/g,'<strong style="color:var(--green-mid)">$1</strong>');
+}
+function resetDoc(type) {
+  document.getElementById(type + 'ResultArea').style.display = 'none';
+  document.getElementById(type + 'FormArea').style.display = 'flex';
+}
+function copyResult(type) {
+  const btn = document.getElementById(type === 'resume' ? 'resumeCopyBtn' : 'selfintroCopyBtn');
+  navigator.clipboard.writeText(docResults[type]).then(() => {
+    btn.textContent = '✅ 복사됨!'; btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = '📋 복사하기'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+/* ── CLAUDE API ── */
+async function callClaude(system, messages) {
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': API_KEY,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    },
+    body: JSON.stringify({ model: MODEL, max_tokens: 1500, system, messages })
+  });
+  if (!res.ok) throw new Error('API error ' + res.status);
+  const data = await res.json();
+  return data.content?.[0]?.text || '응답을 받지 못했어요 🌿';
+}
+</script>
+</body>
+</html>

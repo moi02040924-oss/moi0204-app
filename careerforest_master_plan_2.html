@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>커리어포레스트 마스터 플랜 2026 Q2</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;1,400&display=swap');
+
+  :root {
+    --forest: #1a5c3a;
+    --forest-light: #2d7a52;
+    --forest-pale: #e8f5ee;
+    --gold: #c8923a;
+    --gold-light: #f5e6d0;
+    --text: #1a1a1a;
+    --text-mid: #4a4a4a;
+    --text-soft: #7a7a7a;
+    --border: #e0e0e0;
+    --bg: #faf8f4;
+    --white: #ffffff;
+    --sakura: #e8a0b0;
+    --accent: #7b5ea7;
+    --urgent: #c03030;
+    --urgent-pale: #fce8e8;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    padding: 24px 12px;
+  }
+
+  .container { max-width: 1100px; margin: 0 auto; }
+
+  /* Header */
+  .hero {
+    background: linear-gradient(135deg, var(--forest) 0%, var(--forest-light) 100%);
+    color: white;
+    padding: 40px 32px;
+    border-radius: 16px;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '🌳';
+    position: absolute;
+    right: -20px;
+    bottom: -30px;
+    font-size: 180px;
+    opacity: 0.08;
+  }
+  .hero-label {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 14px;
+    letter-spacing: 0.2em;
+    color: #b8e0c8;
+    margin-bottom: 8px;
+  }
+  .hero h1 {
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    letter-spacing: -0.5px;
+  }
+  .hero p {
+    font-size: 15px;
+    color: rgba(255,255,255,0.85);
+    max-width: 700px;
+  }
+  .hero-meta {
+    display: flex;
+    gap: 16px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+  }
+  .hero-chip {
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.25);
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    color: white;
+  }
+
+  /* Section */
+  .section {
+    background: white;
+    border-radius: 14px;
+    padding: 28px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 12px rgba(26,92,58,0.06);
+  }
+  .section-label {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .section h2 {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--forest);
+    margin-bottom: 6px;
+    letter-spacing: -0.3px;
+  }
+  .section-desc {
+    font-size: 14px;
+    color: var(--text-mid);
+    margin-bottom: 20px;
+  }
+
+  /* Principle box */
+  .principles {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+  .principle {
+    background: var(--forest-pale);
+    border-left: 3px solid var(--forest);
+    padding: 16px 18px;
+    border-radius: 8px;
+  }
+  .principle-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 24px;
+    color: var(--gold);
+    margin-bottom: 4px;
+  }
+  .principle-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--forest);
+    margin-bottom: 6px;
+  }
+  .principle-text {
+    font-size: 13px;
+    color: var(--text-mid);
+    line-height: 1.55;
+  }
+
+  /* Room cards */
+  .rooms {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+  .room {
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    position: relative;
+    background: white;
+    transition: all 0.2s;
+  }
+  .room:hover {
+    border-color: var(--forest-light);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(26,92,58,0.08);
+  }
+  .room-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .room-icon {
+    font-size: 24px;
+    width: 44px;
+    height: 44px;
+    background: var(--forest-pale);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .room-icon.urgent { background: var(--urgent-pale); }
+  .room-icon.new { background: var(--gold-light); }
+  .room-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .room-sub {
+    font-size: 11px;
+    color: var(--text-soft);
+    margin-top: 2px;
+  }
+  .room-badge {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    font-size: 10px;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+  }
+  .badge-urgent { background: var(--urgent-pale); color: var(--urgent); }
+  .badge-new { background: var(--gold-light); color: var(--gold); }
+  .badge-stable { background: var(--forest-pale); color: var(--forest); }
+
+  .room-tasks {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0;
+  }
+  .room-tasks li {
+    font-size: 13px;
+    color: var(--text-mid);
+    padding: 6px 0 6px 18px;
+    position: relative;
+    line-height: 1.5;
+  }
+  .room-tasks li::before {
+    content: '▸';
+    position: absolute;
+    left: 0;
+    color: var(--forest-light);
+    font-weight: 700;
+  }
+  .room-tasks li.done {
+    color: var(--text-soft);
+    text-decoration: line-through;
+    text-decoration-color: var(--text-soft);
+  }
+  .room-tasks li.done::before {
+    content: '✓';
+    color: var(--text-soft);
+  }
+
+  .room-owner {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px dashed var(--border);
+    font-size: 12px;
+    color: var(--text-soft);
+  }
+  .room-owner strong { color: var(--forest); font-weight: 600; }
+
+  /* Gemini friends */
+  .friends {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .friend {
+    background: linear-gradient(135deg, #fff 0%, #f8f4ff 100%);
+    border: 1.5px solid #e0d5f0;
+    border-radius: 14px;
+    padding: 22px;
+  }
+  .friend-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .friend-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--sakura));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 700;
+    font-size: 20px;
+  }
+  .friend-name {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--accent);
+  }
+  .friend-tagline {
+    font-size: 12px;
+    color: var(--text-soft);
+    margin-top: 2px;
+  }
+  .friend-strengths {
+    background: white;
+    border-radius: 8px;
+    padding: 14px;
+    margin-bottom: 10px;
+  }
+  .friend-strengths h4 {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+  .friend-strengths ul {
+    list-style: none;
+    padding: 0;
+  }
+  .friend-strengths li {
+    font-size: 13px;
+    color: var(--text-mid);
+    padding: 4px 0 4px 16px;
+    position: relative;
+  }
+  .friend-strengths li::before {
+    content: '◆';
+    position: absolute;
+    left: 0;
+    color: var(--sakura);
+    font-size: 10px;
+    top: 8px;
+  }
+
+  /* Timeline */
+  .timeline {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 14px;
+  }
+  .tl-card {
+    border-radius: 12px;
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .tl-card.week {
+    background: linear-gradient(135deg, #fff5f5, #ffe8e8);
+    border: 1.5px solid var(--urgent);
+  }
+  .tl-card.month {
+    background: linear-gradient(135deg, #fdf8eb, #f9eed0);
+    border: 1.5px solid var(--gold);
+  }
+  .tl-card.quarter {
+    background: linear-gradient(135deg, #eef7f1, #d8ecdf);
+    border: 1.5px solid var(--forest);
+  }
+  .tl-label {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 13px;
+    letter-spacing: 0.15em;
+    margin-bottom: 4px;
+  }
+  .tl-card.week .tl-label { color: var(--urgent); }
+  .tl-card.month .tl-label { color: var(--gold); }
+  .tl-card.quarter .tl-label { color: var(--forest); }
+
+  .tl-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: var(--text);
+  }
+  .tl-items {
+    list-style: none;
+  }
+  .tl-items li {
+    font-size: 13px;
+    padding: 7px 0 7px 20px;
+    position: relative;
+    color: var(--text-mid);
+    line-height: 1.5;
+  }
+  .tl-items li::before {
+    position: absolute;
+    left: 0;
+    font-size: 12px;
+  }
+  .tl-card.week .tl-items li::before { content: '🔥'; }
+  .tl-card.month .tl-items li::before { content: '⭐'; }
+  .tl-card.quarter .tl-items li::before { content: '🌱'; }
+
+  .tl-owner {
+    margin-top: 10px;
+    font-size: 11px;
+    color: var(--text-soft);
+    font-style: italic;
+  }
+
+  /* Decision matrix */
+  .matrix {
+    background: #faf8f4;
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .matrix-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .matrix-table th {
+    background: var(--forest);
+    color: white;
+    padding: 12px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 13px;
+  }
+  .matrix-table th:first-child { border-radius: 8px 0 0 0; }
+  .matrix-table th:last-child { border-radius: 0 8px 0 0; }
+  .matrix-table td {
+    padding: 12px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-mid);
+  }
+  .matrix-table td:first-child {
+    font-weight: 600;
+    color: var(--forest);
+    background: var(--forest-pale);
+  }
+  .matrix-table tr:last-child td { border-bottom: none; }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    padding: 32px 20px;
+    color: var(--text-soft);
+    font-size: 12px;
+  }
+  .footer-quote {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 15px;
+    color: var(--forest);
+    margin-bottom: 8px;
+  }
+
+  @media (max-width: 768px) {
+    .rooms, .friends, .timeline, .principles { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 24px; }
+    .section { padding: 20px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-label">CAREERFOREST · MASTER PLAN</div>
+    <h1>커리어포레스트 2026 Q2 마스터 플랜</h1>
+    <p>방별 · AI 친구별 업무 분장도 — 혼자 다 짊어지지 않고, 각자의 강점으로 나눠 맡는 운영 설계도입니다.</p>
+    <div class="hero-meta">
+      <div class="hero-chip">📅 2026.04.21 작성</div>
+      <div class="hero-chip">🔑 v8 마스터 키 기반</div>
+      <div class="hero-chip">🌸 센쿠 × 길버트 × 앤</div>
+    </div>
+  </div>
+
+  <!-- 원칙 -->
+  <div class="section">
+    <div class="section-label">Core Principles</div>
+    <h2>3가지 운영 원칙</h2>
+    <p class="section-desc">이 플랜 전체를 관통하는 기본 룰. 새 일이 들어왔을 때 이 원칙으로 배분 판단.</p>
+
+    <div class="principles">
+      <div class="principle">
+        <div class="principle-num">01</div>
+        <div class="principle-title">한 번에 한 방</div>
+        <div class="principle-text">한 대화창에서는 한 방의 일만. 여러 방 섞이면 컨텍스트가 엉킴. 방 전환 시 새 대화 시작.</div>
+      </div>
+      <div class="principle">
+        <div class="principle-num">02</div>
+        <div class="principle-title">강점에 맡기기</div>
+        <div class="principle-text">센쿠=긴 글·코드·감성. 길버트=Google 생태계. 앤=실시간 검색·멀티모달. 억지로 한 명에게 몰지 않음.</div>
+      </div>
+      <div class="principle">
+        <div class="principle-num">03</div>
+        <div class="principle-title">지금 급한 것부터</div>
+        <div class="principle-text">Google Trainer 인증(이번 분기 최우선) → 홈페이지 에러 → 논문 마무리. 큰 그림은 나중에.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6개 방 -->
+  <div class="section">
+    <div class="section-label">Workspace Rooms</div>
+    <h2>센쿠 관할 6개 방</h2>
+    <p class="section-desc">각 방은 한 대화창에서 그 주제만 다루는 기억 공간. 새 키(v9)로 업데이트 시 여기서 상태 체크.</p>
+
+    <div class="rooms">
+
+      <div class="room">
+        <span class="room-badge badge-urgent">최우선</span>
+        <div class="room-header">
+          <div class="room-icon new">🎓</div>
+          <div>
+            <div class="room-title">구글 트레이너 방 (신설)</div>
+            <div class="room-sub">Google Certified Trainer 인증 완성</div>
+          </div>
+        </div>
+        <ul class="room-tasks">
+          <li class="done">Level 1, 2, Gemini Educator, Google Educator</li>
+          <li>Trainer Course 수강 (~8시간)</li>
+          <li>Trainer Skills Assessment</li>
+          <li>트레이너 영상 촬영 (2–3분)</li>
+          <li>강의 증빙 3–5건 수집·정리</li>
+          <li>moi02040924 ↔ moi02040828 계정 관리</li>
+        </ul>
+        <div class="room-owner">주담당: <strong>센쿠</strong> (전략·영상 스크립트) / 보조: <strong>길버트</strong> (Gmail·Forms)</div>
+      </div>
+
+      <div class="room">
+        <span class="room-badge badge-urgent">에러있음</span>
+        <div class="room-header">
+          <div class="room-icon urgent">🌐</div>
+          <div>
+            <div class="room-title">홈페이지 방</div>
+            <div class="room-sub">careerforest.co.kr · GitHub Pages</div>
+          </div>
+        </div>
+        <ul class="room-tasks">
+          <li><strong>diagnosis.html 872라인 syntax 에러 수정</strong></li>
+          <li>diagnosis-hub.html 업로드</li>
+          <li>qr-generator.html 정식 배포</li>
+          <li>결과보고서 앱 정식 페이지화</li>
+          <li>남편 GitHub push 연동 점검</li>
+        </ul>
+        <div class="room-owner">주담당: <strong>센쿠</strong> (HTML/JS) / 배포: <strong>남편</strong> (GitHub)</div>
+      </div>
+
+      <div class="room">
+        <span class="room-badge badge-stable">진행중</span>
+        <div class="room-header">
+          <div class="room-icon">📝</div>
+          <div>
+            <div class="room-title">블로그 방</div>
+            <div class="room-sub">blog.naver.com/moi0204 · AI커리어숲</div>
+          </div>
+        </div>
+        <ul class="room-tasks">
+          <li class="done">희망리턴패키지 Post 2 팩트 수정</li>
+          <li>Post 1 인포그래픽 마무리 → 발행</li>
+          <li>Post 3 심리회복 프로그램 마무리</li>
+          <li>인사이트 큐브 섹션 기획</li>
+          <li>만다라트 AI 앱 홍보 포스트</li>
+        </ul>
+        <div class="room-owner">주담당: <strong>센쿠</strong> (글 초안·편집) / 이미지: <strong>앤</strong> (썸네일·인포그래픽)</div>
+      </div>
+
+      <div class="room">
+        <span class="room-badge badge-stable">마무리단계</span>
+        <div class="room-header">
+          <div class="room-icon">📚</div>
+          <div>
+            <div class="room-title">논문 방</div>
+            <div class="room-sub">LPA · 계획된 우연 · 박사학위</div>
+          </div>
+        </div>
+        <ul class="room-tasks">
+          <li class="done">LPA 3 프로파일 도출</li>
+          <li>영문 초록 작성</li>
+          <li>연구모형 다이어그램</li>
+          <li>부록 설문지 정리</li>
+          <li>최종 심사 대비</li>
+        </ul>
+        <div class="room-owner">주담당: <strong>센쿠</strong> (영문·구조) / 문헌검색: <strong>앤</strong></div>
+      </div>
+
+      <div class="room">
+        <span class="room-badge badge-stable">DB구축</span>
+        <div class="room-header">
+          <div class="room-icon">📓</div>
+          <div>
+            <div class="room-title">노션 방</div>
+            <div class="room-sub">강의자료 DB · 수진자 DB</div>
+          </div>
+        </div>
+        <ul class="room-tasks">
+          <li>강의자료 DB 본격 구축 (증빙용)</li>
+          <li>이력서·자소서 템플릿</li>
+          <li>수진자 대시보드 (레이어 2)</li>
+          <li>Claude Projects SKILL.md 아키텍처</li>
+        </ul>
+        <div class="room-owner">주담당: <strong>센쿠</strong> (구조·템플릿) / CSV 자동화: <strong>길버트</strong></div>
+      </div>
+
+      <div class="room">
+        <span class="room-badge badge-stable">실무앱운영</span>
+        <div class="room-header">
+          <div class="room-icon">💼</div>
+          <div>
+            <div class="room-title">컨설팅 방</div>
+            <div class="room-sub">소진공 · 서울신보 · 업종닥터</div>
+          </div>
+        </div>
+        <ul class="room-tasks">
+          <li>결과보고서 앱 — 이미지 업로드 추가</li>
+          <li>카톡 메시지 앱 v2 운영</li>
+          <li>사업정리 결과보고서 SKILL.md</li>
+          <li>모두싸인 협약서 세팅</li>
+          <li>카카오채널 자동응답 교육</li>
+        </ul>
+        <div class="room-owner">주담당: <strong>센쿠</strong> (앱·보고서) / Sheets 관리: <strong>길버트</strong></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Gemini 친구들 -->
+  <div class="section">
+    <div class="section-label">Gemini Partners</div>
+    <h2>길버트 · 앤에게 맡길 일</h2>
+    <p class="section-desc">센쿠가 직접 하면 오히려 느린 영역들. Google 생태계와 실시간 정보는 길버트·앤이 훨씬 빠름.</p>
+
+    <div class="friends">
+
+      <div class="friend">
+        <div class="friend-header">
+          <div class="friend-avatar">길</div>
+          <div>
+            <div class="friend-name">길버트 (Gilbert)</div>
+            <div class="friend-tagline">Google Workspace 통합 전문</div>
+          </div>
+        </div>
+
+        <div class="friend-strengths">
+          <h4>맡길 일</h4>
+          <ul>
+            <li>Gmail 두 계정 분리 운영 (924/828)</li>
+            <li>Google Forms 만족도 조사 관리</li>
+            <li>Google Sheets 수진자 DB + 강의 증빙 추적</li>
+            <li>Google Drive 파일 자동 분류</li>
+            <li>Google Calendar 강의·상담 일정</li>
+            <li>Classroom / Sites 강의 플랫폼 (Trainer 준비)</li>
+          </ul>
+        </div>
+
+        <div class="friend-strengths">
+          <h4>센쿠와 연결 지점</h4>
+          <ul>
+            <li>센쿠가 Sheets 구조 설계 → 길버트가 실제 데이터 운영</li>
+            <li>센쿠가 카톡 문구 작성 → 길버트가 Gmail 템플릿화</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="friend">
+        <div class="friend-header">
+          <div class="friend-avatar">앤</div>
+          <div>
+            <div class="friend-name">앤 (Anne)</div>
+            <div class="friend-tagline">실시간 검색 · 멀티모달</div>
+          </div>
+        </div>
+
+        <div class="friend-strengths">
+          <h4>맡길 일</h4>
+          <ul>
+            <li>정책·법령 최신 정보 검증 (소진공·서울신보 업데이트)</li>
+            <li>블로그 썸네일·인포그래픽 이미지 생성</li>
+            <li>카톡 단계별 안내 이미지 제작</li>
+            <li>만다라트 앱 Gemini Flash 무료 버전 유지</li>
+            <li>YouTube 강의 영상 분석·요약</li>
+            <li>논문 최신 해외 문헌 검색</li>
+          </ul>
+        </div>
+
+        <div class="friend-strengths">
+          <h4>센쿠와 연결 지점</h4>
+          <ul>
+            <li>앤이 실시간 팩트체크 → 센쿠가 글로 정리</li>
+            <li>앤이 이미지 생성 → 센쿠가 블로그·홈페이지 삽입</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 우선순위 타임라인 -->
+  <div class="section">
+    <div class="section-label">Priority Timeline</div>
+    <h2>지금 · 이번 달 · 이번 분기</h2>
+    <p class="section-desc">의지가 아니라 순서. 하나 끝나야 다음으로.</p>
+
+    <div class="timeline">
+
+      <div class="tl-card week">
+        <div class="tl-label">THIS WEEK · 이번주</div>
+        <div class="tl-title">🔥 초긴급 (4/21–4/27)</div>
+        <ul class="tl-items">
+          <li>diagnosis.html 872라인 에러 수정</li>
+          <li>Google Trainer Course 수강 시작</li>
+          <li>강의 증빙 첫 건 정리 (인천테크노파크)</li>
+          <li>블로그 Post 1 인포그래픽 → 발행</li>
+        </ul>
+        <div class="tl-owner">→ 홈페이지 방 + 구글 트레이너 방 집중</div>
+      </div>
+
+      <div class="tl-card month">
+        <div class="tl-label">THIS MONTH · 이번달</div>
+        <div class="tl-title">⭐ 중요 (4월 말 목표)</div>
+        <ul class="tl-items">
+          <li>Trainer Skills Assessment 완료</li>
+          <li>트레이너 영상 촬영·제출</li>
+          <li>강의 증빙 3–5건 수집 완료</li>
+          <li>논문 영문 초록 완성</li>
+          <li>희망리턴패키지 블로그 시리즈 완결</li>
+          <li>결과보고서 앱 이미지 업로드 기능</li>
+        </ul>
+        <div class="tl-owner">→ 구글 트레이너 + 논문 + 블로그 병행</div>
+      </div>
+
+      <div class="tl-card quarter">
+        <div class="tl-label">THIS QUARTER · 이번분기</div>
+        <div class="tl-title">🌱 큰 그림 (6월 말까지)</div>
+        <ul class="tl-items">
+          <li>Google Certified Trainer 최종 승인</li>
+          <li>논문 최종 심사</li>
+          <li>재노스쿨 스타일 강의 플랫폼 착수</li>
+          <li>노션 수진자 DB 운영 안정화</li>
+          <li>카카오채널 자동응답 가동</li>
+          <li>Make.com 파이프라인 1차 연결</li>
+        </ul>
+        <div class="tl-owner">→ 위 둘이 끝나야 여기로 넘어감</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 의사결정 매트릭스 -->
+  <div class="section">
+    <div class="section-label">Decision Matrix</div>
+    <h2>새 일이 들어오면 — 누구에게?</h2>
+    <p class="section-desc">일이 들어왔을 때 이 표 한 장으로 배분 판단. 헷갈리면 여기 보고 결정.</p>
+
+    <div class="matrix">
+      <table class="matrix-table">
+        <thead>
+          <tr>
+            <th style="width: 25%;">일의 성격</th>
+            <th style="width: 20%;">1순위</th>
+            <th>이유</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>긴 글 작성·편집</td>
+            <td>센쿠</td>
+            <td>문장 호흡, 한국어 뉘앙스, 감정 맥락에 강함</td>
+          </tr>
+          <tr>
+            <td>HTML/JS 코드</td>
+            <td>센쿠</td>
+            <td>Artifact 즉시 렌더링, 디버깅 컨텍스트 유지</td>
+          </tr>
+          <tr>
+            <td>전략 기획·구조화</td>
+            <td>센쿠</td>
+            <td>여러 방 맥락 종합, SKILL.md 아키텍처 설계</td>
+          </tr>
+          <tr>
+            <td>감성 대화·위로</td>
+            <td>센쿠</td>
+            <td>도모다찌. 친구 영역.</td>
+          </tr>
+          <tr>
+            <td>Google Workspace 실무</td>
+            <td>길버트</td>
+            <td>Sheets·Forms·Drive 네이티브 통합</td>
+          </tr>
+          <tr>
+            <td>Gmail 멀티계정 관리</td>
+            <td>길버트</td>
+            <td>Google 계정 직접 연동</td>
+          </tr>
+          <tr>
+            <td>실시간 팩트체크</td>
+            <td>앤</td>
+            <td>최신 정책·법령 검색 강점</td>
+          </tr>
+          <tr>
+            <td>이미지·썸네일 생성</td>
+            <td>앤</td>
+            <td>Imagen 기반 이미지 생성</td>
+          </tr>
+          <tr>
+            <td>YouTube 영상 분석</td>
+            <td>앤</td>
+            <td>영상 멀티모달 네이티브</td>
+          </tr>
+          <tr>
+            <td>수진자 개인정보 처리</td>
+            <td>센쿠 (학습OFF)</td>
+            <td>개인정보보호 설정 완료된 쪽에서만</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p class="footer-quote">"혼자 다 하지 않아도 괜찮아.<br>각자의 강점으로 나눠 맡는 것, 그게 진짜 팀이니까."</p>
+    <p>커리어포레스트 마스터 플랜 2026 Q2 · 센쿠 × 커리어셀파 · v8 마스터 키 기반</p>
+  </div>
+
+</div>
+
+</body>
+</html>

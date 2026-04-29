@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>커리어포레스트 마스터 플랜 v2 — 안전 분업 체계</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Gowun+Batang:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root { --ink:#1a1a2e;--warm:#c8956c;--paper:#fdf6ec;--muted:#8a7560;--accent:#7b5ea7;--sakura:#e8a0b0;--teal:#2a7a6b;--gold:#c9973a;--forest:#2d5a3d;--gemini:#4285f4;--danger:#c94545;--safe:#6fcf97; }
+  * { margin:0;padding:0;box-sizing:border-box; }
+  body { background:var(--ink);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px 20px;font-family:'Noto Serif KR',serif; }
+  .card { position:relative;z-index:1;max-width:780px;width:100%;background:var(--paper);border-radius:4px;padding:60px 56px;box-shadow:0 0 0 1px rgba(200,149,108,0.3),0 40px 80px rgba(0,0,0,0.5);animation:fadeUp 1.2s ease forwards;opacity:0;transform:translateY(24px); }
+  @keyframes fadeUp { to { opacity:1;transform:translateY(0); } }
+  .card::before,.card::after { content:'';position:absolute;width:48px;height:48px;border-color:var(--warm);border-style:solid; }
+  .card::before { top:20px;left:20px;border-width:1px 0 0 1px; }
+  .card::after { bottom:20px;right:20px;border-width:0 1px 1px 0; }
+  .version-badge { display:inline-block;font-size:10px;letter-spacing:0.15em;color:var(--gold);border:1px solid rgba(201,151,58,0.5);padding:3px 10px;border-radius:20px;margin-bottom:14px;font-family:'Cormorant Garamond',serif;font-style:italic; }
+  .label { font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;letter-spacing:0.2em;color:var(--warm);text-transform:uppercase;margin-bottom:8px; }
+  .title { font-family:'Gowun Batang',serif;font-size:32px;font-weight:700;color:var(--ink);line-height:1.25;margin-bottom:14px; }
+  .subtitle { font-size:14px;color:var(--muted);margin-bottom:32px;font-weight:300;line-height:1.7; }
+  .divider { display:flex;align-items:center;gap:12px;margin-bottom:28px; }
+  .divider-line { flex:1;height:1px;background:linear-gradient(to right,transparent,var(--warm),transparent); }
+  .divider-dot { width:6px;height:6px;border-radius:50%;background:var(--warm);opacity:0.7; }
+  .section { margin-bottom:30px; }
+  .section-label { font-size:10px;letter-spacing:0.25em;text-transform:uppercase;color:var(--accent);margin-bottom:12px;font-weight:600; }
+  .section-label.teal { color:var(--teal); }
+  .section-label.gold { color:var(--gold); }
+  .section-label.sakura { color:var(--sakura); }
+  .section-label.forest { color:var(--forest); }
+  .section-label.gemini { color:var(--gemini); }
+  .section-label.danger { color:var(--danger); }
+  .section-text { font-size:14.5px;line-height:1.95;color:#3a3020;font-weight:300; }
+  .section-text strong { font-weight:600;color:var(--ink); }
+
+  /* 원칙 박스 */
+  .principle-box { background:linear-gradient(160deg,#1a2e2a 0%,#2a3a45 100%);border-radius:12px;padding:24px 26px;margin:8px 0 20px; }
+  .principle-tag { font-size:10px;letter-spacing:0.2em;color:#8edcca;margin-bottom:10px;font-weight:600; }
+  .principle-text { font-family:'Gowun Batang',serif;font-size:16px;color:rgba(255,255,255,0.92);line-height:1.75;font-weight:400; }
+  .principle-text strong { color:#ffe4a3;font-weight:700; }
+
+  /* 태그 시스템 설명 */
+  .tag-legend { display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0; }
+  .tag-card { border-radius:10px;padding:14px 16px; }
+  .tag-card.senku { background:rgba(123,94,167,0.08);border:1px solid rgba(123,94,167,0.25); }
+  .tag-card.gemini { background:rgba(66,133,244,0.08);border:1px solid rgba(66,133,244,0.25); }
+  .tag-card.self { background:rgba(45,90,61,0.08);border:1px solid rgba(45,90,61,0.25); }
+  .tag-card.hold { background:rgba(201,151,58,0.08);border:1px solid rgba(201,151,58,0.25); }
+  .tag-icon { font-size:18px;margin-bottom:6px; }
+  .tag-name { font-size:12px;font-weight:700;letter-spacing:0.05em;margin-bottom:5px; }
+  .tag-card.senku .tag-name { color:var(--accent); }
+  .tag-card.gemini .tag-name { color:var(--gemini); }
+  .tag-card.self .tag-name { color:var(--forest); }
+  .tag-card.hold .tag-name { color:var(--gold); }
+  .tag-desc { font-size:11.5px;color:#5a4a3a;line-height:1.65;font-weight:300; }
+
+  /* 방 그리드 */
+  .room-grid { display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0; }
+  .room-card { background:rgba(45,90,61,0.06);border:1px solid rgba(45,90,61,0.18);border-radius:10px;padding:16px 18px; }
+  .room-card.purple { background:rgba(123,94,167,0.06);border-color:rgba(123,94,167,0.2); }
+  .room-card.gold { background:rgba(201,151,58,0.06);border-color:rgba(201,151,58,0.22); }
+  .room-card.teal { background:rgba(42,122,107,0.06);border-color:rgba(42,122,107,0.2); }
+  .room-card.forest { background:rgba(45,90,61,0.06);border-color:rgba(45,90,61,0.2); }
+  .room-name { font-size:13px;font-weight:700;letter-spacing:0.05em;margin-bottom:8px; }
+  .room-card.purple .room-name { color:var(--accent); }
+  .room-card.gold .room-name { color:var(--gold); }
+  .room-card.teal .room-name { color:var(--teal); }
+  .room-card.forest .room-name { color:var(--forest); }
+  .room-role { font-size:11.5px;color:#7a6a5a;font-style:italic;margin-bottom:8px;line-height:1.5; }
+
+  /* 분업 라인 */
+  .task-line { font-size:11.5px;color:#3a3020;line-height:1.8;font-weight:300;margin-bottom:4px;display:flex;gap:6px;align-items:flex-start; }
+  .task-line .mini-tag { font-size:8.5px;font-weight:700;letter-spacing:0.05em;padding:1.5px 5px;border-radius:4px;white-space:nowrap;flex-shrink:0;margin-top:2px; }
+  .mini-tag.s { background:rgba(123,94,167,0.18);color:var(--accent); }
+  .mini-tag.g { background:rgba(66,133,244,0.18);color:var(--gemini); }
+  .mini-tag.u { background:rgba(45,90,61,0.18);color:var(--forest); }
+  .mini-tag.h { background:rgba(201,151,58,0.18);color:var(--gold); }
+
+  /* 워크스트림 박스 */
+  .stream-box { background:linear-gradient(160deg,#2a1a1a 0%,#3a1a2a 100%);border-radius:12px;padding:22px 26px;margin:14px 0; }
+  .stream-item { padding-bottom:14px;margin-bottom:14px;border-bottom:1px solid rgba(255,255,255,0.08); }
+  .stream-item:last-child { margin-bottom:0;padding-bottom:0;border-bottom:none; }
+  .stream-header { display:flex;align-items:center;gap:10px;margin-bottom:8px; }
+  .stream-tag { font-size:9px;font-weight:700;letter-spacing:0.15em;padding:3px 8px;border-radius:8px;white-space:nowrap; }
+  .stream-tag.urgent { background:#c94545;color:#fff; }
+  .stream-tag.cont { background:rgba(255,255,255,0.12);color:rgba(255,255,255,0.7); }
+  .stream-tag.build { background:rgba(143,255,200,0.18);color:#9fffc8; }
+  .stream-tag.run { background:rgba(232,196,154,0.2);color:#f0d4a8; }
+  .stream-title { font-size:13.5px;color:#ffe4a3;font-weight:600; }
+  .stream-tasks { display:flex;flex-direction:column;gap:5px;margin-top:6px; }
+  .stream-task { font-size:11.5px;color:rgba(255,255,255,0.78);font-weight:300;line-height:1.6;display:flex;gap:8px;align-items:flex-start; }
+  .stream-task .mini-tag { margin-top:2px; }
+  .stream-task.senku-t .mini-tag { background:rgba(190,160,230,0.25);color:#d4b8f0; }
+  .stream-task.gemini-t .mini-tag { background:rgba(130,169,245,0.25);color:#a8c4f5; }
+  .stream-task.user-t .mini-tag { background:rgba(143,220,202,0.25);color:#9fe0c8; }
+  .stream-task.hold-t .mini-tag { background:rgba(240,212,168,0.25);color:#f0d4a8; }
+
+  /* 가드레일 박스 */
+  .guard-box { background:linear-gradient(160deg,#3a1a1a 0%,#4a2a1a 100%);border-radius:12px;padding:22px 26px;margin:14px 0;border:1px solid rgba(201,69,69,0.3); }
+  .guard-header { font-size:11px;letter-spacing:0.2em;color:#ff9f9f;font-weight:700;margin-bottom:12px; }
+  .guard-row { display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:flex-start;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,0.08); }
+  .guard-row:last-child { margin-bottom:0;padding-bottom:0;border-bottom:none; }
+  .guard-level { font-size:10px;font-weight:700;letter-spacing:0.08em;padding:3px 8px;border-radius:6px;white-space:nowrap;margin-top:2px; }
+  .guard-level.red { background:rgba(201,69,69,0.35);color:#ffb0b0; }
+  .guard-level.yellow { background:rgba(201,151,58,0.35);color:#ffd89f; }
+  .guard-level.green { background:rgba(111,207,151,0.25);color:#9fe0c8; }
+  .guard-body { color:rgba(255,255,255,0.8);font-size:12px;line-height:1.7;font-weight:300; }
+  .guard-body strong { color:#ffe4a3;font-weight:600; }
+
+  /* 즉시 시작 */
+  .now-box { background:linear-gradient(160deg,#1a2e1a 0%,#1a3a28 100%);border-radius:12px;padding:22px 26px;margin:14px 0; }
+  .now-title { font-size:11px;letter-spacing:0.2em;color:#9fffc8;font-weight:700;margin-bottom:12px; }
+  .now-item { display:flex;align-items:flex-start;gap:10px;margin-bottom:9px;font-size:13px;color:rgba(255,255,255,0.85);font-weight:300;line-height:1.65; }
+  .now-item:last-child { margin-bottom:0; }
+  .now-num { background:#6fcf97;color:#0a1a14;font-size:10px;font-weight:700;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px; }
+  .now-item .mini-tag { margin-top:2px;flex-shrink:0; }
+
+  .quote-block { border-left:2px solid var(--gold);padding:12px 18px;margin:18px 0;background:rgba(201,151,58,0.06); }
+  .quote-block p { font-family:'Cormorant Garamond',serif;font-style:italic;font-size:17px;line-height:1.7;color:#5a4010; }
+  .quote-block .speaker { font-size:11.5px;color:var(--muted);margin-top:6px;letter-spacing:0.1em;font-style:normal;font-family:'Noto Serif KR',serif; }
+
+  .seal { text-align:center;margin-top:38px; }
+  .seal-symbol { font-size:26px;margin-bottom:6px; }
+  .seal-text { font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13.5px;color:var(--muted);letter-spacing:0.1em; }
+  .date { font-size:11.5px;color:#bba98a;margin-top:4px;letter-spacing:0.05em; }
+  @media(max-width:600px) {
+    .card{padding:44px 24px;}
+    .title{font-size:24px;}
+    .room-grid{grid-template-columns:1fr;}
+    .tag-legend{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+<div class="card">
+  <p class="label">CareerForest · Master Plan</p>
+  <div class="version-badge">마스터 플랜 v2 — 안전 분업 체계의 날</div>
+  <h1 class="title">센쿠가 할 것,<br>제미나이에게 부탁할 것.</h1>
+  <p class="subtitle">태그 4개로 명확하게 분업 · 개인정보 고민은 천천히 · 일단 달리면서 안전하게</p>
+  <div class="divider"><div class="divider-line"></div><div class="divider-dot"></div><div class="divider-line"></div></div>
+
+  <!-- 한 줄 원칙 -->
+  <div class="section">
+    <p class="section-label teal">v2의 핵심 원칙</p>
+    <div class="principle-box">
+      <div class="principle-tag">PRINCIPLE · SAFE-FIRST</div>
+      <div class="principle-text">
+        모든 업무에 <strong>태그</strong>를 붙인다. <strong>센쿠(Claude)</strong>가 할 일, <strong>제미나이 친구들</strong>에게 부탁할 일, <strong>커리어셀파 직접</strong> 할 일, <strong>잠시 보류</strong>할 일 — 네 가지로. 그러면 고민하지 않고도 안전하게 달릴 수 있다.
+      </div>
+    </div>
+  </div>
+
+  <!-- 태그 시스템 -->
+  <div class="section">
+    <p class="section-label gold">4가지 태그 시스템 🏷️</p>
+    <div class="tag-legend">
+      <div class="tag-card senku">
+        <div class="tag-icon">🌿</div>
+        <div class="tag-name">🟣 [센쿠] · Claude Max</div>
+        <div class="tag-desc">
+          학습에 쓰이지 않음 · 긴 글·코드·검토·교정·토론<br>
+          정책자료·공개정보·본인 자료 처리 OK
+        </div>
+      </div>
+      <div class="tag-card gemini">
+        <div class="tag-icon">🔵</div>
+        <div class="tag-name">🔵 [제미나이에게] · Gemini/NotebookLM</div>
+        <div class="tag-desc">
+          자료 수집·PDF 검색·이미지 생성<br>
+          <strong>개인정보 없는 공개자료만</strong> 올리기
+        </div>
+      </div>
+      <div class="tag-card self">
+        <div class="tag-icon">🟢</div>
+        <div class="tag-name">🟢 [직접] · 커리어셀파</div>
+        <div class="tag-desc">
+          고객정보 다루기·최종결정·봉투 현장 판단<br>
+          사람이 해야 하는 일, AI에 맡기지 않는 일
+        </div>
+      </div>
+      <div class="tag-card hold">
+        <div class="tag-icon">🟡</div>
+        <div class="tag-name">🟡 [보류] · 고민 중</div>
+        <div class="tag-desc">
+          개인정보 이슈 정리 후 결정<br>
+          지금은 손대지 않고 대기
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4개 방 — 태그 붙여서 -->
+  <div class="section">
+    <p class="section-label forest">4개 방 × 태그 분업</p>
+    <div class="room-grid">
+      <div class="room-card purple">
+        <div class="room-name">🔬 논문방</div>
+        <div class="room-role">"내 이름을 학계에 새기는 방"</div>
+        <div class="task-line"><span class="mini-tag s">센쿠</span><span>LPA 논문 본문 검토·영문 Abstract·연구모형 도식화</span></div>
+        <div class="task-line"><span class="mini-tag g">제미나이</span><span>참고문헌 조사·선행연구 정리 (NotebookLM)</span></div>
+        <div class="task-line"><span class="mini-tag u">직접</span><span>설문 원자료(응답자 식별 가능) 전처리·분석</span></div>
+      </div>
+
+      <div class="room-card forest">
+        <div class="room-name">🌐 홈페이지방</div>
+        <div class="room-role">"고객이 처음 만나는 얼굴"</div>
+        <div class="task-line"><span class="mini-tag s">센쿠</span><span>코드·디자인·카피 작성·GitHub 배포 가이드</span></div>
+        <div class="task-line"><span class="mini-tag g">제미나이</span><span>Imagen으로 아이콘·배너·일러스트 생성</span></div>
+        <div class="task-line"><span class="mini-tag u">직접</span><span>도메인·DNS 계정 관리·최종 배포 승인</span></div>
+      </div>
+
+      <div class="room-card gold">
+        <div class="room-name">📝 블로그방</div>
+        <div class="room-role">"매일 닿는 콘텐츠 자산"</div>
+        <div class="task-line"><span class="mini-tag s">센쿠</span><span>블로그 본문 작성·검토·교정 (공개 정책자료 기반)</span></div>
+        <div class="task-line"><span class="mini-tag g">제미나이</span><span>썸네일·인포그래픽 (Imagen) · 음성 요약 (NotebookLM)</span></div>
+        <div class="task-line"><span class="mini-tag h">보류</span><span>현장경험담 삽입 — 가명화 루틴 정한 뒤 진행</span></div>
+      </div>
+
+      <div class="room-card teal">
+        <div class="room-name">📋 노션방</div>
+        <div class="room-role">"전체를 한눈에 보는 관제탑"</div>
+        <div class="task-line"><span class="mini-tag s">센쿠</span><span>대시보드 구조·템플릿 설계·자동화 수식</span></div>
+        <div class="task-line"><span class="mini-tag u">직접</span><span>고객 응답 데이터 입력·관리 (개인정보 포함)</span></div>
+        <div class="task-line"><span class="mini-tag h">보류</span><span>구글폼 → 노션 자동연동 — 연동 대상 데이터 범위 결정 후</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4개 워크스트림 — 태그별로 분해 -->
+  <div class="section">
+    <p class="section-label gold">4개 워크스트림 × 태그 분해</p>
+    <div class="stream-box">
+
+      <div class="stream-item">
+        <div class="stream-header">
+          <span class="stream-tag urgent">URGENT</span>
+          <div class="stream-title">수요일 업종닥터 면접</div>
+        </div>
+        <div class="stream-tasks">
+          <div class="stream-task senku-t"><span class="mini-tag s">센쿠</span><span>예상문제 50개 중 핵심 15개 모범답변 다듬기 · 모의면접 파트너</span></div>
+          <div class="stream-task gemini-t"><span class="mini-tag g">제미나이</span><span>업종닥터 제도 관련 최근 정책·보도자료 수집 (Gemini Pro)</span></div>
+          <div class="stream-task user-t"><span class="mini-tag u">직접</span><span>실제 고객 사례 이름·업종 가명화 → 센쿠에게 전달</span></div>
+          <div class="stream-task user-t"><span class="mini-tag u">직접</span><span>음성 녹음·자세·옷차림 등 대면 준비</span></div>
+        </div>
+      </div>
+
+      <div class="stream-item">
+        <div class="stream-header">
+          <span class="stream-tag cont">CONT</span>
+          <div class="stream-title">강의 개발 — AI 활용 커리어컨설팅</div>
+        </div>
+        <div class="stream-tasks">
+          <div class="stream-task senku-t"><span class="mini-tag s">센쿠</span><span>강의안 본문·실습 예제·슬라이드 텍스트 작성</span></div>
+          <div class="stream-task gemini-t"><span class="mini-tag g">제미나이</span><span>AI 도구 최신 사례·통계 조사 (Deep Research) · 슬라이드 이미지 (Imagen)</span></div>
+          <div class="stream-task hold-t"><span class="mini-tag h">보류</span><span>수강생 피드백 분석 — 설문 수집 방식 결정 후</span></div>
+        </div>
+      </div>
+
+      <div class="stream-item">
+        <div class="stream-header">
+          <span class="stream-tag build">BUILD</span>
+          <div class="stream-title">앱 시리즈 — 잡크래프팅·역량변환·가치관·의사결정</div>
+        </div>
+        <div class="stream-tasks">
+          <div class="stream-task senku-t"><span class="mini-tag s">센쿠</span><span>앱 코드·UI·Claude API 연동·GitHub Pages 배포 가이드</span></div>
+          <div class="stream-task gemini-t"><span class="mini-tag g">제미나이</span><span>앱 아이콘·일러스트·로딩 애니메이션 (Imagen)</span></div>
+          <div class="stream-task user-t"><span class="mini-tag u">직접</span><span>실제 테스트·피드백 수집</span></div>
+        </div>
+      </div>
+
+      <div class="stream-item">
+        <div class="stream-header">
+          <span class="stream-tag run">RUN</span>
+          <div class="stream-title">고객 접점 운영 — 카카오·구글폼·블로그</div>
+        </div>
+        <div class="stream-tasks">
+          <div class="stream-task user-t"><span class="mini-tag u">직접</span><span>상담신청 응답·카카오 답장·고객 커뮤니케이션</span></div>
+          <div class="stream-task senku-t"><span class="mini-tag s">센쿠</span><span>답변 템플릿·자주 묻는 질문(FAQ) 초안 (특정인 정보 제외)</span></div>
+          <div class="stream-task hold-t"><span class="mini-tag h">보류</span><span>응답 데이터 분석 자동화 — 가명화 프로세스 정립 후</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 개인정보 가드레일 (간단 버전) -->
+  <div class="section">
+    <p class="section-label danger">개인정보 3단계 가드레일 🛡️</p>
+    <div class="guard-box">
+      <div class="guard-header">▶ AI에 올리기 전 자가 체크</div>
+      <div class="guard-row">
+        <span class="guard-level red">🔴 절대 NO</span>
+        <div class="guard-body">
+          실명·주민번호·연락처·사업자번호·매장명<br>
+          상담일지 원본·배소희씨 결과보고서 같은 실제 고객 문서<br>
+          <strong>→ 어떤 AI에도 올리지 않음</strong>
+        </div>
+      </div>
+      <div class="guard-row">
+        <span class="guard-level yellow">🟡 가명화 후 OK</span>
+        <div class="guard-body">
+          "50대 여성 A씨, 음식점 폐업 후 재취업 성공" 수준으로 추상화<br>
+          통계·패턴·경향성만 활용<br>
+          <strong>→ 가명화는 커리어셀파가 직접, 그다음 센쿠에게</strong>
+        </div>
+      </div>
+      <div class="guard-row">
+        <span class="guard-level green">🟢 자유롭게 OK</span>
+        <div class="guard-body">
+          소진공 업무편람·정책자금 가이드 등 공개 PDF<br>
+          블로그 원고·강의안·본인 이력<br>
+          <strong>→ 센쿠·NotebookLM 편하게 활용</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 오늘 할 것 -->
+  <div class="section">
+    <p class="section-label forest">오늘 당장 시작할 3가지 ⚡</p>
+    <div class="now-box">
+      <div class="now-title">▶ NEXT 3 ACTIONS</div>
+      <div class="now-item">
+        <span class="now-num">1</span>
+        <span class="mini-tag s">센쿠</span>
+        <span><strong style="color:#9fffc8;">노션방 마스터 대시보드 구조 설계</strong> — 4개 방 + 4개 워크스트림 + 태그 컬러 (10분)</span>
+      </div>
+      <div class="now-item">
+        <span class="now-num">2</span>
+        <span class="mini-tag s">센쿠</span>
+        <span><strong style="color:#9fffc8;">면접 핵심 5문항 모범답변 v2 정리</strong> — 자기소개·강점·작년 반성·올해 차별점·AI 활용 (15분)</span>
+      </div>
+      <div class="now-item">
+        <span class="now-num">3</span>
+        <span class="mini-tag g">제미나이</span>
+        <span><strong style="color:#9fffc8;">Imagen에 1편 점포철거비 인포그래픽 시안 요청</strong> — 프롬프트는 센쿠가 써드림 (5분)</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="quote-block">
+    <p>"일단 진행해줘. 아니면 네가 이 부분은 제미나이 친구들에게 요청해주세요, 라는 방식으로 가는 건 어때?"</p>
+    <p class="speaker">— 커리어셀파, v2의 설계자</p>
+  </div>
+
+  <div class="seal">
+    <div class="seal-symbol">🏷️🌿💛</div>
+    <p class="seal-text">커리어포레스트 마스터 플랜 v2 · 안전 분업 체계</p>
+    <p class="date">2026년 3월 28일 — 고민은 천천히, 달리기는 일단 시작한 날</p>
+  </div>
+</div>
+</body>
+</html>

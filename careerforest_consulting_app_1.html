@@ -1,0 +1,1224 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>커리어포레스트 컨설팅 자동화</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&family=Pretendard:wght@400;500;600;700&display=swap');
+
+  :root {
+    --forest: #1a5c3a;
+    --forest-light: #2d7a52;
+    --forest-pale: #e8f5ee;
+    --gold: #c8923a;
+    --gold-light: #f5e6d0;
+    --text: #1a1a1a;
+    --text-mid: #4a4a4a;
+    --text-soft: #7a7a7a;
+    --border: #e0e0e0;
+    --bg: #f8f9fa;
+    --white: #ffffff;
+    --blue: #1a4a7a;
+    --blue-pale: #e8f0f8;
+    --red: #c03030;
+    --red-pale: #fce8e8;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* Header */
+  .header {
+    background: var(--forest);
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  }
+  .header-left { display: flex; align-items: center; gap: 12px; }
+  .logo { font-size: 20px; font-weight: 700; color: white; letter-spacing: -0.5px; }
+  .logo span { color: #7fcca0; }
+  .header-sub { font-size: 12px; color: rgba(255,255,255,0.6); }
+  .header-badge {
+    background: rgba(255,255,255,0.15);
+    color: white;
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.2);
+  }
+
+  /* Layout */
+  .container { max-width: 1100px; margin: 0 auto; padding: 24px 16px; }
+
+  /* Agency selector */
+  .agency-bar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .agency-btn {
+    flex: 1;
+    padding: 14px 16px;
+    border-radius: 12px;
+    border: 2px solid var(--border);
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+  }
+  .agency-btn:hover { border-color: var(--forest-light); }
+  .agency-btn.active {
+    border-color: var(--forest);
+    background: var(--forest-pale);
+  }
+  .agency-name { font-size: 14px; font-weight: 600; color: var(--text); }
+  .agency-btn.active .agency-name { color: var(--forest); }
+  .agency-sub { font-size: 11px; color: var(--text-soft); margin-top: 2px; }
+
+  /* Main layout */
+  .main-grid {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 16px;
+  }
+
+  /* Left panel - client info */
+  .panel {
+    background: white;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+  .panel-header {
+    padding: 14px 16px;
+    background: var(--forest);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .panel-header h3 { font-size: 13px; font-weight: 600; color: white; }
+  .panel-body { padding: 16px; }
+
+  .field { margin-bottom: 12px; }
+  .field label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-soft);
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .field input, .field select, .field textarea {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 13px;
+    font-family: inherit;
+    color: var(--text);
+    background: var(--bg);
+    transition: border-color 0.2s;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus {
+    outline: none;
+    border-color: var(--forest-light);
+    background: white;
+  }
+  .field textarea { resize: vertical; min-height: 70px; }
+
+  /* Right panel - tabs */
+  .right-panel { display: flex; flex-direction: column; gap: 16px; }
+
+  .tab-bar {
+    display: flex;
+    background: white;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    padding: 4px;
+    gap: 4px;
+  }
+  .tab-btn {
+    flex: 1;
+    padding: 10px 12px;
+    border-radius: 9px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-soft);
+    font-family: inherit;
+    transition: all 0.2s;
+  }
+  .tab-btn.active {
+    background: var(--forest);
+    color: white;
+    font-weight: 600;
+  }
+  .tab-btn:hover:not(.active) { background: var(--forest-pale); color: var(--forest); }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* Report tab */
+  .report-section {
+    background: white;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    margin-bottom: 12px;
+  }
+  .section-header {
+    padding: 12px 16px;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .section-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-mid);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .section-num {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: var(--forest);
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .section-body { padding: 14px 16px; }
+  .section-body textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 13px;
+    font-family: inherit;
+    color: var(--text);
+    background: var(--bg);
+    resize: vertical;
+    min-height: 80px;
+    transition: border-color 0.2s;
+    line-height: 1.6;
+  }
+  .section-body textarea:focus {
+    outline: none;
+    border-color: var(--forest-light);
+    background: white;
+  }
+  .section-hint {
+    font-size: 11px;
+    color: var(--text-soft);
+    margin-bottom: 8px;
+    line-height: 1.5;
+  }
+
+  /* Output area */
+  .output-box {
+    background: var(--forest-pale);
+    border: 1px solid #b8dfc9;
+    border-radius: 10px;
+    padding: 14px;
+    margin-top: 10px;
+    min-height: 80px;
+    font-size: 13px;
+    line-height: 1.8;
+    color: var(--text);
+    white-space: pre-wrap;
+    display: none;
+  }
+  .output-box.show { display: block; }
+
+  /* Buttons */
+  .btn-primary {
+    background: var(--forest);
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .btn-primary:hover { background: var(--forest-light); transform: translateY(-1px); }
+  .btn-primary:disabled { background: #aaa; cursor: not-allowed; transform: none; }
+
+  .btn-secondary {
+    background: white;
+    color: var(--forest);
+    border: 1.5px solid var(--forest);
+    padding: 10px 16px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s;
+  }
+  .btn-secondary:hover { background: var(--forest-pale); }
+
+  .btn-copy {
+    background: var(--gold);
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s;
+  }
+  .btn-copy:hover { background: #b07a2a; }
+  .btn-copy.copied { background: #4a9a6a; }
+
+  .action-bar {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-top: 16px;
+    padding: 16px;
+    background: white;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+  }
+
+  /* Message tab */
+  .msg-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .msg-step-btn {
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1.5px solid var(--border);
+    background: white;
+    cursor: pointer;
+    font-family: inherit;
+    text-align: left;
+    transition: all 0.2s;
+  }
+  .msg-step-btn:hover { border-color: var(--forest-light); background: var(--forest-pale); }
+  .msg-step-btn.active { border-color: var(--forest); background: var(--forest-pale); }
+  .msg-step-num {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--forest);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+  }
+  .msg-step-name { font-size: 13px; font-weight: 600; color: var(--text); }
+  .msg-step-sub { font-size: 11px; color: var(--text-soft); margin-top: 2px; }
+
+  .msg-output {
+    background: white;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+  .msg-output-header {
+    padding: 12px 16px;
+    background: var(--forest);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .msg-output-header span { font-size: 13px; font-weight: 600; color: white; }
+  .msg-output-body {
+    padding: 16px;
+    min-height: 120px;
+    font-size: 14px;
+    line-height: 1.9;
+    color: var(--text);
+    white-space: pre-wrap;
+  }
+  .msg-placeholder {
+    color: var(--text-soft);
+    font-size: 13px;
+    text-align: center;
+    padding: 30px 0;
+  }
+
+  /* Loading */
+  .loading-bar {
+    display: none;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    background: var(--forest-pale);
+    border-radius: 8px;
+    font-size: 13px;
+    color: var(--forest);
+  }
+  .loading-bar.show { display: flex; }
+  .spinner {
+    width: 16px; height: 16px;
+    border: 2px solid var(--forest-pale);
+    border-top-color: var(--forest);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Status */
+  .status-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 9px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .status-pending { background: #fff3cd; color: #856404; }
+  .status-done { background: #d1eddb; color: #1a5c3a; }
+
+  /* Full report */
+  .full-report {
+    background: white;
+    border-radius: 16px;
+    border: 2px solid var(--forest);
+    overflow: hidden;
+    display: none;
+  }
+  .full-report.show { display: block; }
+  .full-report-header {
+    padding: 14px 20px;
+    background: var(--forest);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .full-report-header h3 { font-size: 14px; font-weight: 700; color: white; }
+  .full-report-body {
+    padding: 20px;
+    font-size: 13px;
+    line-height: 1.9;
+    color: var(--text);
+    white-space: pre-wrap;
+  }
+
+  /* Checklist */
+  .checklist { margin-bottom: 16px; }
+  .check-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: white;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .check-item:hover { border-color: var(--forest-light); }
+  .check-item.checked { border-color: var(--forest); background: var(--forest-pale); }
+  .check-box {
+    width: 18px; height: 18px;
+    border: 2px solid var(--border);
+    border-radius: 4px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px;
+    transition: all 0.2s;
+  }
+  .check-item.checked .check-box { background: var(--forest); border-color: var(--forest); color: white; }
+  .check-text { font-size: 13px; color: var(--text); }
+  .check-item.checked .check-text { color: var(--forest); font-weight: 500; }
+
+  /* Responsive */
+  @media (max-width: 700px) {
+    .main-grid { grid-template-columns: 1fr; }
+    .msg-grid { grid-template-columns: 1fr; }
+    .agency-bar { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div>
+      <div class="logo">커리어<span>포레스트</span></div>
+      <div class="header-sub">컨설팅 자동화 시스템</div>
+    </div>
+  </div>
+  <div class="header-badge">🌲 커리어셀파 전용</div>
+</div>
+
+<div class="container">
+
+  <!-- Agency selector -->
+  <div class="agency-bar">
+    <button class="agency-btn active" onclick="setAgency('소진공')" id="btn-소진공">
+      <div class="agency-name">📋 소상공인시장진흥공단</div>
+      <div class="agency-sub">희망리턴패키지 · 사업정리컨설팅</div>
+    </button>
+    <button class="agency-btn" onclick="setAgency('서울신보')" id="btn-서울신보">
+      <div class="agency-name">🏙️ 서울신용보증재단</div>
+      <div class="agency-sub">새길여는 폐업지원 · 업종닥터</div>
+    </button>
+  </div>
+
+  <div class="main-grid">
+
+    <!-- Left: Client info -->
+    <div class="panel">
+      <div class="panel-header">
+        <span style="font-size:16px;">👤</span>
+        <h3>수진자 기본 정보</h3>
+      </div>
+      <div class="panel-body">
+        <div class="field">
+          <label>성함</label>
+          <input type="text" id="name" placeholder="홍길동" oninput="updateAll()">
+        </div>
+        <div class="field">
+          <label>업종</label>
+          <input type="text" id="business" placeholder="예: 한식당, 의류소매, 카페" oninput="updateAll()">
+        </div>
+        <div class="field">
+          <label>폐업 예정일</label>
+          <input type="text" id="closeDate" placeholder="2026. 5. 31" oninput="updateAll()">
+        </div>
+        <div class="field">
+          <label>재기 방향</label>
+          <select id="direction" onchange="updateAll()">
+            <option value="">선택</option>
+            <option value="재취업">재취업 희망</option>
+            <option value="재창업">재창업 희망</option>
+            <option value="미결정">미결정 (탐색중)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>연락처</label>
+          <input type="text" id="phone" placeholder="010-0000-0000" oninput="updateAll()">
+        </div>
+        <div class="field">
+          <label>상담일</label>
+          <input type="text" id="consultDate" placeholder="2026. 4. 17" oninput="updateAll()">
+        </div>
+        <div class="field">
+          <label>메모 (선택)</label>
+          <textarea id="memo" placeholder="특이사항, 성격, 강점 등 자유롭게..." oninput="updateAll()"></textarea>
+        </div>
+
+        <hr style="border:none;border-top:1px solid var(--border);margin:12px 0;">
+
+        <!-- Checklist -->
+        <div style="font-size:12px;font-weight:700;color:var(--text-soft);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.5px;">진행 체크리스트</div>
+        <div id="checklist"></div>
+      </div>
+    </div>
+
+    <!-- Right: tabs -->
+    <div class="right-panel">
+
+      <div class="tab-bar">
+        <button class="tab-btn active" onclick="switchTab('report')">📋 결과보고서 자동완성</button>
+        <button class="tab-btn" onclick="switchTab('message')">💬 카톡 메시지 생성</button>
+        <button class="tab-btn" onclick="switchTab('info')">📚 안내 자료</button>
+      </div>
+
+      <!-- Tab 1: Report -->
+      <div class="tab-content active" id="tab-report">
+
+        <div class="report-section">
+          <div class="section-header">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div class="section-num">1</div>
+              <span class="section-title">컨설팅 목적 & 주요내용</span>
+            </div>
+          </div>
+          <div class="section-body">
+            <div class="section-hint">수진자가 컨설팅을 신청한 이유, 해결하고 싶은 문제를 간략히 입력하세요.</div>
+            <textarea id="r1" placeholder="예: 15년 운영하던 한식당 폐업 예정. 재취업 방향 탐색 및 취업 역량 강화 필요. 나이 걱정, 이력서 작성 방법 모름..."></textarea>
+          </div>
+        </div>
+
+        <div class="report-section">
+          <div class="section-header">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div class="section-num">2</div>
+              <span class="section-title">수진자 진단 (경력·역량)</span>
+            </div>
+          </div>
+          <div class="section-body">
+            <div class="section-hint">이전 직업 경험, 자격증, 강점, 창업 배경을 간략히 입력하세요.</div>
+            <textarea id="r2" placeholder="예: 전직 간호사 → 카페 창업. 바리스타 자격증 보유. 고객 응대 능력 우수. 경영 미숙으로 폐업..."></textarea>
+          </div>
+        </div>
+
+        <div class="report-section">
+          <div class="section-header">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div class="section-num">3</div>
+              <span class="section-title">직업·진로 적성검사 결과</span>
+            </div>
+          </div>
+          <div class="section-body">
+            <div class="section-hint">Prediger Form J, MBTI, Holland 등 실시한 검사 결과를 입력하세요.</div>
+            <textarea id="r3" placeholder="예: Prediger Form J - 데이터형. MBTI ISTJ. 꼼꼼하고 안정적인 환경 선호. 의료·사무·행정 직종 적합..."></textarea>
+          </div>
+        </div>
+
+        <div class="report-section">
+          <div class="section-header">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div class="section-num">4</div>
+              <span class="section-title">제공한 정보 & 정책 안내</span>
+            </div>
+          </div>
+          <div class="section-body">
+            <div class="section-hint">이번 상담에서 제공한 정보, 연계한 정책을 체크하세요. (여러 개 선택 가능)</div>
+            <div id="policy-check"></div>
+          </div>
+        </div>
+
+        <div class="action-bar">
+          <button class="btn-primary" onclick="generateReport()" id="btn-gen-report">
+            ✨ AI 결과보고서 자동완성
+          </button>
+          <div class="loading-bar" id="report-loading">
+            <div class="spinner"></div>
+            <span>AI가 보고서를 작성하고 있어요...</span>
+          </div>
+          <button class="btn-copy" onclick="copyReport()" id="btn-copy-report" style="display:none;">📋 전체 복사</button>
+        </div>
+
+        <div class="full-report" id="full-report">
+          <div class="full-report-header">
+            <h3>📋 사업정리컨설팅 결과보고서</h3>
+            <button class="btn-copy" onclick="copyReport()" id="btn-copy-report2">복사</button>
+          </div>
+          <div class="full-report-body" id="report-output"></div>
+        </div>
+
+      </div>
+
+      <!-- Tab 2: Messages -->
+      <div class="tab-content" id="tab-message">
+
+        <div class="panel" style="margin-bottom:12px;">
+          <div class="panel-header">
+            <span style="font-size:16px;">💬</span>
+            <h3>단계 선택 → 카톡 메시지 즉시 생성</h3>
+          </div>
+          <div class="panel-body">
+            <div class="msg-grid" id="step-buttons"></div>
+          </div>
+        </div>
+
+        <div class="msg-output">
+          <div class="msg-output-header">
+            <span id="msg-title">카톡 메시지 미리보기</span>
+            <button class="btn-copy" onclick="copyMessage()" id="btn-copy-msg" style="display:none;">📋 복사</button>
+          </div>
+          <div class="msg-output-body" id="msg-body">
+            <div class="msg-placeholder">⬆ 위에서 단계를 선택하면 카톡 메시지가 바로 생성됩니다</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Tab 3: Info -->
+      <div class="tab-content" id="tab-info">
+        <div class="panel">
+          <div class="panel-header">
+            <span style="font-size:16px;">📚</span>
+            <h3>수진자 안내 자료 모음</h3>
+          </div>
+          <div class="panel-body" id="info-content"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+let currentAgency = '소진공';
+let currentStep = null;
+let generatedReport = '';
+
+const SOGINJONG_STEPS = [
+  { key: 'welcome', name: '첫 연락 & 명함', sub: '배정 후 첫 카톡', emoji: '👋' },
+  { key: 'edu_basic', name: '기초교육 신청 안내', sub: 'e러닝 10시간', emoji: '📖' },
+  { key: 'edu_basic_site', name: '기초교육 수강 안내', sub: '지식배움터 접속법', emoji: '💻' },
+  { key: 'edu_advanced', name: '심화교육 신청 안내', sub: '대면 30시간', emoji: '🎓' },
+  { key: 'incentive1', name: '전직장려수당 1차 안내', sub: '심화교육 수료 후 60만원', emoji: '💰' },
+  { key: 'incentive2', name: '전직장려수당 2차 안내', sub: '취업 60일 후 40만원', emoji: '🎯' },
+  { key: 'employment', name: '국민취업지원제도 연계', sub: '월 20만원 최대 6개월', emoji: '🔗' },
+  { key: 'report_sent', name: '결과보고서 발송', sub: '컨설팅 완료 안내', emoji: '📋' },
+];
+
+const SEOUL_STEPS = [
+  { key: 'welcome', name: '첫 연락 & 명함', sub: '배정 후 첫 카톡', emoji: '👋' },
+  { key: 'seoulacademy', name: '서울시아카데미 안내', sub: '새길여는 폐업지원 교육', emoji: '🏫' },
+  { key: 'swot', name: 'SWOT 분석 안내', sub: '사업정리 컨설팅 관련', emoji: '📊' },
+  { key: 'returnpkg', name: '소진공 희망리턴패키지 안내', sub: '병행 신청 가능', emoji: '🔄' },
+  { key: 'report_sent', name: '결과보고서 발송', sub: '컨설팅 완료 안내', emoji: '📋' },
+];
+
+const POLICIES_SOGINJONG = [
+  '희망리턴패키지 취업기초교육 안내',
+  '희망리턴패키지 취업심화교육 안내',
+  '전직장려수당 (최대 100만원) 안내',
+  '국민취업지원제도 연계 (최대 120만원) 안내',
+  '워크넷 / 고용복지플러스센터 연계',
+  '내일배움카드 안내',
+  '서울의 모든잡 핸드북 제공',
+  'AI 이력서·자기소개서 작성 지원',
+  '중장년 일자리 희망센터 안내',
+];
+
+const POLICIES_SEOUL = [
+  '새길여는 폐업지원 교육 안내 (서울시아카데미)',
+  '소진공 희망리턴패키지 병행 안내',
+  '자영업클리닉 연계 안내',
+  '서울형다시서기프로젝트 안내',
+  '상권분석 서비스 제공',
+  'SWOT 분석 실시',
+  'AI 이력서·자기소개서 작성 지원',
+  '서울신보 소상공인 종합지원사업 안내',
+];
+
+const CHECKLIST_SOGINJONG = [
+  '1차 상담 완료',
+  '결과보고서 제출',
+  '기초교육 신청 안내 완료',
+  '기초교육 수료 확인',
+  '심화교육 신청 안내 완료',
+  '심화교육 수료 확인',
+  '전직장려수당 1차 안내 완료',
+  '전직장려수당 1차 신청 완료',
+  '전직장려수당 2차 안내 완료',
+];
+
+const CHECKLIST_SEOUL = [
+  '1차 상담 완료',
+  '서울시아카데미 교육 안내 완료',
+  '결과보고서 제출',
+  'SWOT 분석 완료',
+  '소진공 희망리턴패키지 병행 안내',
+];
+
+function setAgency(ag) {
+  currentAgency = ag;
+  document.querySelectorAll('.agency-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('btn-' + ag).classList.add('active');
+  renderChecklist();
+  renderStepButtons();
+  renderInfoContent();
+  renderPolicyCheck();
+}
+
+function renderChecklist() {
+  const items = currentAgency === '소진공' ? CHECKLIST_SOGINJONG : CHECKLIST_SEOUL;
+  const container = document.getElementById('checklist');
+  container.innerHTML = items.map((item, i) => `
+    <div class="check-item" id="chk-${i}" onclick="toggleCheck(${i})">
+      <div class="check-box" id="chkbox-${i}"></div>
+      <span class="check-text">${item}</span>
+    </div>
+  `).join('');
+}
+
+function toggleCheck(i) {
+  const item = document.getElementById('chk-' + i);
+  const box = document.getElementById('chkbox-' + i);
+  item.classList.toggle('checked');
+  box.textContent = item.classList.contains('checked') ? '✓' : '';
+}
+
+function renderStepButtons() {
+  const steps = currentAgency === '소진공' ? SOGINJONG_STEPS : SEOUL_STEPS;
+  const container = document.getElementById('step-buttons');
+  container.innerHTML = steps.map(s => `
+    <button class="msg-step-btn" id="step-${s.key}" onclick="selectStep('${s.key}')">
+      <div class="msg-step-num">${s.emoji} STEP</div>
+      <div class="msg-step-name">${s.name}</div>
+      <div class="msg-step-sub">${s.sub}</div>
+    </button>
+  `).join('');
+}
+
+function renderPolicyCheck() {
+  const policies = currentAgency === '소진공' ? POLICIES_SOGINJONG : POLICIES_SEOUL;
+  const container = document.getElementById('policy-check');
+  container.innerHTML = policies.map((p, i) => `
+    <div class="check-item" id="pol-${i}" onclick="togglePolicyCheck(${i})" style="margin-bottom:6px;">
+      <div class="check-box" id="polbox-${i}"></div>
+      <span class="check-text" style="font-size:12px;">${p}</span>
+    </div>
+  `).join('');
+}
+
+function togglePolicyCheck(i) {
+  const item = document.getElementById('pol-' + i);
+  const box = document.getElementById('polbox-' + i);
+  item.classList.toggle('checked');
+  box.textContent = item.classList.contains('checked') ? '✓' : '';
+}
+
+function getCheckedPolicies() {
+  const policies = currentAgency === '소진공' ? POLICIES_SOGINJONG : POLICIES_SEOUL;
+  return policies.filter((_, i) => document.getElementById('pol-' + i)?.classList.contains('checked'));
+}
+
+function selectStep(key) {
+  currentStep = key;
+  document.querySelectorAll('.msg-step-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('step-' + key)?.classList.add('active');
+  generateMessage(key);
+}
+
+function getName() { return document.getElementById('name').value || '사장님'; }
+function getBusiness() { return document.getElementById('business').value || ''; }
+function getDirection() { return document.getElementById('direction').value || ''; }
+
+function generateMessage(key) {
+  const name = getName();
+  const business = getBusiness();
+  const messages = getMessages(name, business);
+  const msg = messages[key];
+  if (!msg) return;
+
+  document.getElementById('msg-title').textContent = msg.title;
+  document.getElementById('msg-body').textContent = msg.body;
+  document.getElementById('btn-copy-msg').style.display = 'inline-block';
+}
+
+function getMessages(name, business) {
+  const msgs = {
+    소진공: {
+      welcome: {
+        title: '첫 연락 & 명함 발송',
+        body: `안녕하세요, ${name}님 😊
+
+소상공인시장진흥공단 희망리턴패키지 사업정리컨설팅 담당 컨설턴트 임금희입니다.
+
+이번에 컨설팅을 담당하게 되었습니다. 앞으로 잘 부탁드립니다 🌿
+
+📌 1차 상담 일정을 잡아보려고 연락드렸어요.
+편하신 날짜와 시간을 알려주시면 일정 확정해 드리겠습니다.
+
+감사합니다!`
+      },
+      edu_basic: {
+        title: '기초교육 신청 안내',
+        body: `${name}님, 안녕하세요 😊
+
+희망리턴패키지 취업 기초교육 신청 방법 안내드립니다.
+
+✅ 신청처: 소상공인24 (sbiz24.kr)
+✅ 방법: 로그인 → 소진공 공고조회 → '26년 특화취업지원 기초교육 모집공고 → 회차별 교육 신청
+
+📚 교육 내용
+- e러닝 10시간 이상 온라인 수강
+- 희망리턴패키지(재취업) 카테고리에서 5개 이상 과정 선택
+- 수강 사이트: edu.sbiz.or.kr (공단 지식배움터)
+
+⏰ 교육 기간 내 수강 완료하셔야 수료 인정됩니다.
+
+궁금한 점 있으시면 언제든지 연락 주세요! 🌿`
+      },
+      edu_basic_site: {
+        title: '기초교육 수강 안내 (지식배움터)',
+        body: `${name}님, 기초교육 선정 축하드립니다! 🎉
+
+수강 방법 안내드릴게요.
+
+💻 수강 사이트: edu.sbiz.or.kr
+1. 로그인 후 [온라인교육] → [온라인강의] 클릭
+2. ☑ 희망리턴패키지(재취업) 선택 → 검색
+3. 20개 과정 중 5개 이상 선택 후 "학습하기"
+4. [나의강의실]에서 수강 진행
+
+📋 시험 보시다가 막히는 문제 있으시면 말씀해 주세요!
+제가 도움드릴 수 있어요 😊
+
+교육 기간 내 꼭 완료하시고 수료증 받으세요 🌿`
+      },
+      edu_advanced: {
+        title: '심화교육 신청 안내',
+        body: `${name}님, 기초교육 수료 축하드립니다! 👏
+
+이제 심화교육 신청하실 수 있어요.
+
+✅ 신청처: 소상공인24 (sbiz24.kr)
+✅ 방법: 특화취업지원 심화교육 회차별 신청
+
+📚 심화교육 내용
+- 대면 교육 / 2~3주 / 30시간 이상
+- 1:1 상담, 직무적성 검사, 분임토의 등
+- 수강정원 최대 20명
+
+💰 수료 시 교육 참여수당 35만원 지급!
+
+좋은 자리 빨리 찾아지길 바랍니다 🌿`
+      },
+      incentive1: {
+        title: '전직장려수당 1차 신청 안내',
+        body: `${name}님, 심화교육 수료 정말 수고 많으셨어요! 👏
+
+전직장려수당 1차 신청하실 수 있습니다.
+
+💰 1차 지원금: 60만원
+
+📋 필요서류
+① 폐업사실증명원 (국세청 홈택스 발급)
+② 사실증명(총사업자등록내역) (홈택스 발급)
+③ 통장사본 (본인 명의)
+
+✅ 신청처: 소상공인24 (sbiz24.kr)
+⏰ 심화교육 수료일로부터 12개월 이내 신청
+
+서류 준비 도움 필요하시면 말씀해 주세요 🌿`
+      },
+      incentive2: {
+        title: '전직장려수당 2차 신청 안내',
+        body: `${name}님, 취업 후 60일 근속 달성을 축하드립니다! 🎉
+
+전직장려수당 2차 신청하실 수 있어요.
+
+💰 2차 지원금: 40만원
+
+📋 추가 필요서류
+① 폐업사실증명원 + 총사업자등록내역
+② 근로계약서
+③ 고용보험 피보험자격이력내역서
+   (근로복지공단 total.kcomwel.or.kr)
+④ 통장사본
+
+✅ 신청처: 소상공인24 (sbiz24.kr)
+⏰ 1차 지급일로부터 36개월 이내 신청
+
+파이팅입니다! 새 출발 응원해요 🌿`
+      },
+      employment: {
+        title: '국민취업지원제도 연계 안내',
+        body: `${name}님, 기초교육 수료하셨으니 국민취업지원제도도 함께 신청하시면 좋아요!
+
+🔗 국민취업지원제도 연계 혜택
+- 최대 6개월 / 월 20만원
+- 최대 120만원 연계수당 지급
+- 희망리턴패키지와 별도 지원!
+
+📱 신청 방법
+- 온라인: work24.go.kr
+- 오프라인: 가까운 고용복지플러스센터 방문
+
+※ 별도 서류 제출 없이 수료 이력 자동 연계됩니다.
+
+꼭 놓치지 마세요 😊 🌿`
+      },
+      report_sent: {
+        title: '결과보고서 발송 안내',
+        body: `${name}님, 안녕하세요 😊
+
+사업정리 컨설팅 결과보고서를 발송드렸습니다.
+
+컨설팅 기간 동안 함께해 주셔서 감사합니다.
+새로운 출발을 진심으로 응원드립니다! 🌿
+
+앞으로도 취업·재창업 관련해서 궁금하신 점 있으시면 언제든지 연락 주세요.
+
+감사합니다 🌲 커리어포레스트 임금희`
+      }
+    },
+    서울신보: {
+      welcome: {
+        title: '첫 연락 & 명함 발송',
+        body: `안녕하세요, ${name}님 😊
+
+서울신용보증재단 새길여는 폐업지원 사업 담당 컨설턴트 임금희입니다.
+
+이번에 컨설팅을 담당하게 되었습니다. 앞으로 잘 부탁드립니다 🌿
+
+📌 1차 상담 일정을 잡아보려고 연락드렸어요.
+편하신 날짜와 시간을 알려주시면 일정 확정해 드리겠습니다.
+
+감사합니다!`
+      },
+      seoulacademy: {
+        title: '서울시아카데미 교육 안내',
+        body: `${name}님, 안녕하세요 😊
+
+서울시아카데미 새길여는 폐업지원 교육 안내드립니다.
+
+🏫 서울시아카데미 교육
+- 사업정리·마인드셋·재기지원 통합 교육
+- 교육 후 유관기관 연계 지원
+
+✅ 소진공 희망리턴패키지도 병행 신청 가능하세요!
+(희망리턴패키지는 취업교육+전직장려수당 최대 100만원)
+
+필요하신 자료 있으시면 말씀해 주세요 🌿`
+      },
+      swot: {
+        title: 'SWOT 분석 안내',
+        body: `${name}님, 안녕하세요 😊
+
+다음 상담 시 SWOT 분석을 함께 진행할 예정입니다.
+
+📊 SWOT 분석이란?
+- S(강점): 나의 경쟁력, 잘하는 것
+- W(약점): 보완이 필요한 부분
+- O(기회): 활용 가능한 외부 환경
+- T(위협): 주의해야 할 외부 요인
+
+미리 생각해 오시면 상담이 더 풍부해집니다 😊
+특별히 준비하실 건 없어도 됩니다!
+
+편안하게 오세요 🌿`
+      },
+      returnpkg: {
+        title: '소진공 희망리턴패키지 병행 안내',
+        body: `${name}님, 안녕하세요 😊
+
+서울신보 컨설팅과 함께 소진공 희망리턴패키지도 병행 신청하시면 훨씬 유리해요!
+
+🎁 희망리턴패키지 혜택
+✅ 취업 기초교육 (e러닝 10시간, 무료)
+✅ 취업 심화교육 (대면 30시간) → 수료 시 35만원
+✅ 전직장려수당 최대 100만원 (1차 60만원 + 2차 40만원)
+✅ 국민취업지원제도 연계 → 최대 120만원 추가
+💰 합계 최대 255만원!
+
+📱 신청처: 소상공인24 (sbiz24.kr)
+
+놓치시면 아까워요! 😊 🌿`
+      },
+      report_sent: {
+        title: '결과보고서 발송 안내',
+        body: `${name}님, 안녕하세요 😊
+
+새길여는 폐업지원 컨설팅 결과보고서를 발송드렸습니다.
+
+컨설팅 기간 동안 함께해 주셔서 감사합니다.
+새로운 출발을 진심으로 응원드립니다! 🌿
+
+앞으로도 취업·재창업 관련해서 궁금하신 점 있으시면 언제든지 연락 주세요.
+
+감사합니다 🌲 커리어포레스트 임금희`
+      }
+    }
+  };
+
+  return msgs[currentAgency] || msgs['소진공'];
+}
+
+function copyMessage() {
+  const text = document.getElementById('msg-body').textContent;
+  if (text && text !== '⬆ 위에서 단계를 선택하면 카톡 메시지가 바로 생성됩니다') {
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.getElementById('btn-copy-msg');
+      btn.textContent = '✅ 복사됨!';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = '📋 복사'; btn.classList.remove('copied'); }, 2000);
+    });
+  }
+}
+
+async function generateReport() {
+  const name = getName();
+  const business = getBusiness();
+  const closeDate = document.getElementById('closeDate').value;
+  const direction = document.getElementById('direction').value;
+  const r1 = document.getElementById('r1').value;
+  const r2 = document.getElementById('r2').value;
+  const r3 = document.getElementById('r3').value;
+  const policies = getCheckedPolicies();
+  const consultDate = document.getElementById('consultDate').value;
+
+  if (!name || !r1) {
+    alert('수진자 성함과 컨설팅 목적(1번 항목)을 입력해 주세요.');
+    return;
+  }
+
+  const btn = document.getElementById('btn-gen-report');
+  const loading = document.getElementById('report-loading');
+  btn.disabled = true;
+  loading.classList.add('show');
+
+  const prompt = `당신은 소상공인시장진흥공단 희망리턴패키지 사업정리컨설팅(직무·직능) 전문 컨설턴트입니다.
+아래 정보를 바탕으로 소진공 결과보고서 양식에 맞는 전문적인 보고서를 작성해주세요.
+
+수진자 정보:
+- 성명: ${name}
+- 업종: ${business || '미기재'}
+- 폐업예정일: ${closeDate || '미정'}
+- 재기 방향: ${direction || '미결정'}
+- 상담일: ${consultDate || ''}
+
+1. 컨설팅 목적 및 신청사유: ${r1}
+2. 수진자 경력 및 역량 진단: ${r2 || '미기재'}
+3. 직업·진로 적성검사 결과: ${r3 || '미실시'}
+4. 제공한 정책 및 정보: ${policies.length > 0 ? policies.join(', ') : '기본 안내 제공'}
+
+다음 형식으로 보고서를 작성해주세요. 각 섹션은 명확히 구분하고, 전문적이고 공식적인 문체를 사용하세요.
+
+[컨설팅 목적]
+(수진자의 신청 사유와 컨설팅 목적을 2-3문장으로)
+
+[수진자 진단]
+• 창업·폐업 배경: (스토리 형식으로 2-3문장)
+• 직업 경력 진단: (경력, 역량, 강점 분석)
+• 재창업·취업 역량: (현재 상태와 가능성 평가)
+
+[직무·직능 기초지식 컨설팅]
+• 일자리 탐색 및 정보 제공: (제공한 취업 정보)
+• 취업 관련 기술 및 교육 정보: (안내한 교육·제도)
+• 정부지원사업 안내: (연계한 정책 목록)
+
+[직업상담 및 분석]
+• 직업·진로 적성검사 결과: (검사 결과 및 해석)
+• 전문 분석 결과: (수진자에게 적합한 직종/분야 제언)
+
+[사업정리 후 재기진로 방향]
+• 재기진로 기본 방향: (컨설턴트 추천 방향)
+• 취업·재창업 필요 정보: (핵심 준비사항 3가지)
+
+각 섹션은 구체적이고 실질적인 내용으로 작성하되, 수진자의 상황에 맞게 개인화하세요.`;
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    const data = await response.json();
+    const text = data.content?.map(c => c.text || '').join('') || '보고서 생성에 실패했습니다.';
+
+    generatedReport = text;
+    document.getElementById('report-output').textContent = text;
+    document.getElementById('full-report').classList.add('show');
+    document.getElementById('btn-copy-report').style.display = 'inline-block';
+
+  } catch (err) {
+    alert('보고서 생성 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
+    console.error(err);
+  } finally {
+    btn.disabled = false;
+    loading.classList.remove('show');
+  }
+}
+
+function copyReport() {
+  if (!generatedReport) return;
+  const name = getName();
+  const header = `사업정리컨설팅 결과보고서\n수진자: ${name}\n기관: ${currentAgency}\n\n`;
+  navigator.clipboard.writeText(header + generatedReport).then(() => {
+    document.querySelectorAll('#btn-copy-report, #btn-copy-report2').forEach(btn => {
+      btn.textContent = '✅ 복사됨!';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = btn.id === 'btn-copy-report' ? '📋 전체 복사' : '복사'; btn.classList.remove('copied'); }, 2000);
+    });
+  });
+}
+
+function renderInfoContent() {
+  const container = document.getElementById('info-content');
+  if (currentAgency === '소진공') {
+    container.innerHTML = `
+      <div style="margin-bottom:16px;">
+        <div style="font-size:12px;font-weight:700;color:var(--text-soft);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px;">🔗 주요 사이트</div>
+        <a href="https://sbiz24.kr" target="_blank" style="display:block;padding:10px 12px;background:var(--forest-pale);border-radius:8px;color:var(--forest);font-size:13px;font-weight:600;text-decoration:none;margin-bottom:6px;">📌 소상공인24 (sbiz24.kr) — 교육 신청·전직장려수당 신청</a>
+        <a href="https://edu.sbiz.or.kr" target="_blank" style="display:block;padding:10px 12px;background:var(--forest-pale);border-radius:8px;color:var(--forest);font-size:13px;font-weight:600;text-decoration:none;margin-bottom:6px;">📚 소진공 지식배움터 (edu.sbiz.or.kr) — e러닝 수강</a>
+        <a href="https://work24.go.kr" target="_blank" style="display:block;padding:10px 12px;background:var(--blue-pale);border-radius:8px;color:var(--blue);font-size:13px;font-weight:600;text-decoration:none;margin-bottom:6px;">🔗 고용24 (work24.go.kr) — 국민취업지원제도 신청</a>
+        <a href="https://www.hometax.go.kr" target="_blank" style="display:block;padding:10px 12px;background:var(--gold-light);border-radius:8px;color:var(--gold);font-size:13px;font-weight:600;text-decoration:none;">📄 국세청 홈택스 — 폐업증명원·총사업자등록내역 발급</a>
+      </div>
+      <div style="font-size:12px;font-weight:700;color:var(--text-soft);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px;">💰 수진자 수령 가능 금액</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;">
+        <div style="background:var(--forest-pale);border-radius:10px;padding:10px;text-align:center;">
+          <div style="font-size:16px;font-weight:700;color:var(--forest);">35만원</div>
+          <div style="font-size:11px;color:var(--text-soft);">심화교육 참여수당</div>
+        </div>
+        <div style="background:var(--forest-pale);border-radius:10px;padding:10px;text-align:center;">
+          <div style="font-size:16px;font-weight:700;color:var(--forest);">100만원</div>
+          <div style="font-size:11px;color:var(--text-soft);">전직장려수당 1+2차</div>
+        </div>
+        <div style="background:var(--blue-pale);border-radius:10px;padding:10px;text-align:center;">
+          <div style="font-size:16px;font-weight:700;color:var(--blue);">120만원</div>
+          <div style="font-size:11px;color:var(--text-soft);">국민취업지원제도 연계</div>
+        </div>
+        <div style="background:var(--gold-light);border-radius:10px;padding:10px;text-align:center;">
+          <div style="font-size:16px;font-weight:700;color:var(--gold);">최대 255만원</div>
+          <div style="font-size:11px;color:var(--text-soft);">합계</div>
+        </div>
+      </div>
+      <div style="font-size:12px;font-weight:700;color:var(--text-soft);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px;">📞 문의처</div>
+      <div style="background:var(--bg);border-radius:8px;padding:12px;font-size:12px;color:var(--text-mid);line-height:1.8;">
+        소상공인 통합콜센터: <b>1533-0100</b><br>
+        중소기업통합콜센터: <b>1357</b><br>
+        국민취업지원제도: <b>1350</b>
+      </div>
+    `;
+  } else {
+    container.innerHTML = `
+      <div style="margin-bottom:16px;">
+        <div style="font-size:12px;font-weight:700;color:var(--text-soft);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px;">🔗 주요 사이트</div>
+        <a href="https://www.seoulsbdc.or.kr" target="_blank" style="display:block;padding:10px 12px;background:var(--blue-pale);border-radius:8px;color:var(--blue);font-size:13px;font-weight:600;text-decoration:none;margin-bottom:6px;">🏙️ 서울신보 포털 (seoulsbdc.or.kr) — 지원사업 신청</a>
+        <a href="https://edu.seoulsbdc.or.kr" target="_blank" style="display:block;padding:10px 12px;background:var(--blue-pale);border-radius:8px;color:var(--blue);font-size:13px;font-weight:600;text-decoration:none;margin-bottom:6px;">📚 서울시아카데미 (edu.seoulsbdc.or.kr) — 교육 신청</a>
+        <a href="https://sbiz24.kr" target="_blank" style="display:block;padding:10px 12px;background:var(--forest-pale);border-radius:8px;color:var(--forest);font-size:13px;font-weight:600;text-decoration:none;">📋 소상공인24 — 희망리턴패키지 병행 신청</a>
+      </div>
+      <div style="font-size:12px;font-weight:700;color:var(--text-soft);margin-bottom:10px;text-transform:uppercase;letter-spacing:0.5px;">📞 문의처</div>
+      <div style="background:var(--bg);border-radius:8px;padding:12px;font-size:12px;color:var(--text-mid);line-height:1.8;">
+        서울신보 고객센터: <b>1577-6119</b><br>
+        사업운영팀: <b>02-2174-5218</b>
+      </div>
+    `;
+  }
+}
+
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('tab-' + tab).classList.add('active');
+}
+
+function updateAll() {
+  if (currentStep) generateMessage(currentStep);
+}
+
+// Init
+renderChecklist();
+renderStepButtons();
+renderInfoContent();
+renderPolicyCheck();
+</script>
+</body>
+</html>

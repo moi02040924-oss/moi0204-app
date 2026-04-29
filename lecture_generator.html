@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>강의안 자동화 앱 · 커리어포레스트</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;1,400&display=swap');
+
+  :root {
+    --forest: #1a5c3a;
+    --forest-light: #2d7a52;
+    --forest-pale: #e8f5ee;
+    --gold: #c8923a;
+    --gold-light: #f5e6d0;
+    --text: #1a1a1a;
+    --text-mid: #4a4a4a;
+    --text-soft: #7a7a7a;
+    --border: #e0e0e0;
+    --bg: #f8f9fa;
+    --white: #ffffff;
+    --success: #2d7a52;
+    --success-pale: #e8f5ee;
+    --warn: #c8923a;
+    --error: #c03030;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  /* 헤더 */
+  .header {
+    background: linear-gradient(135deg, var(--forest) 0%, var(--forest-light) 100%);
+    padding: 18px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  }
+  .header-left { display: flex; align-items: center; gap: 12px; }
+  .logo {
+    font-size: 20px;
+    font-weight: 700;
+    color: white;
+    letter-spacing: -0.5px;
+  }
+  .logo span { color: #a8e0bc; }
+  .header-sub { font-size: 12px; color: rgba(255,255,255,0.7); }
+  .header-badge {
+    background: rgba(255,255,255,0.15);
+    color: white;
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.25);
+  }
+
+  /* 컨테이너 */
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 24px 16px;
+  }
+
+  /* 진행바 */
+  .progress-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: white;
+    padding: 16px 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  }
+  .step {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    position: relative;
+  }
+  .step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 50%;
+    width: 32px;
+    height: 2px;
+    background: var(--border);
+    transform: translateY(-50%);
+  }
+  .step.done:not(:last-child)::after { background: var(--forest); }
+  .step-circle {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--border);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .step.active .step-circle {
+    background: var(--forest);
+  }
+  .step.done .step-circle {
+    background: var(--forest-light);
+  }
+  .step-label {
+    font-size: 13px;
+    color: var(--text-soft);
+    font-weight: 500;
+  }
+  .step.active .step-label, .step.done .step-label {
+    color: var(--forest);
+    font-weight: 600;
+  }
+
+  /* 카드 */
+  .card {
+    background: white;
+    border-radius: 14px;
+    padding: 28px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    margin-bottom: 16px;
+  }
+  .card-title {
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--forest);
+    margin-bottom: 6px;
+    letter-spacing: -0.3px;
+  }
+  .card-sub {
+    font-size: 13px;
+    color: var(--text-soft);
+    margin-bottom: 22px;
+  }
+
+  /* 폼 */
+  .form-group {
+    margin-bottom: 20px;
+  }
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+  .form-row-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+  label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-mid);
+    margin-bottom: 6px;
+  }
+  label .req { color: var(--error); }
+  label .hint { color: var(--text-soft); font-weight: 400; font-size: 12px; }
+
+  input[type="text"], input[type="number"], select, textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: inherit;
+    background: white;
+    color: var(--text);
+    transition: all 0.15s;
+  }
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--forest-light);
+    box-shadow: 0 0 0 3px rgba(45,122,82,0.12);
+  }
+  textarea {
+    resize: vertical;
+    min-height: 72px;
+    font-family: inherit;
+  }
+
+  /* 체크박스·라디오 그룹 */
+  .chip-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .chip {
+    padding: 8px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 20px;
+    background: white;
+    font-size: 13px;
+    color: var(--text-mid);
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.15s;
+  }
+  .chip:hover { border-color: var(--forest-light); }
+  .chip.selected {
+    background: var(--forest);
+    color: white;
+    border-color: var(--forest);
+  }
+
+  /* 버튼 */
+  .btn-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 22px;
+  }
+  .btn {
+    padding: 12px 22px;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  .btn-primary {
+    background: var(--forest);
+    color: white;
+  }
+  .btn-primary:hover { background: var(--forest-light); }
+  .btn-secondary {
+    background: white;
+    color: var(--text-mid);
+    border: 1.5px solid var(--border);
+  }
+  .btn-secondary:hover { border-color: var(--forest-light); color: var(--forest); }
+  .btn-large {
+    width: 100%;
+    padding: 14px 22px;
+    font-size: 15px;
+  }
+  .btn-gold {
+    background: var(--gold);
+    color: white;
+  }
+  .btn-gold:hover { background: #a87820; }
+
+  /* 출력 섹션 */
+  .output-card {
+    background: white;
+    border-radius: 14px;
+    padding: 28px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+  .output-label {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .prompt-box {
+    background: #f5f3ee;
+    border: 1px solid #d8d2c4;
+    border-radius: 10px;
+    padding: 18px;
+    font-family: 'Courier New', monospace;
+    font-size: 12.5px;
+    line-height: 1.7;
+    color: #3a3020;
+    white-space: pre-wrap;
+    max-height: 340px;
+    overflow-y: auto;
+    margin: 14px 0;
+  }
+
+  .guide-box {
+    background: var(--forest-pale);
+    border-left: 3px solid var(--forest);
+    padding: 14px 18px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+  }
+  .guide-box h4 {
+    font-size: 13px;
+    color: var(--forest);
+    margin-bottom: 6px;
+    font-weight: 700;
+  }
+  .guide-box ol {
+    padding-left: 20px;
+    font-size: 13px;
+    color: var(--text-mid);
+  }
+  .guide-box ol li { padding: 2px 0; }
+
+  .action-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 14px;
+  }
+
+  /* 토스트 */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--forest);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 24px;
+    font-size: 13px;
+    font-weight: 600;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+    z-index: 1000;
+  }
+  .toast.show { opacity: 1; }
+
+  /* 프리셋 저장 */
+  .preset-bar {
+    background: var(--gold-light);
+    border: 1px solid #e8c898;
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    color: #8a6820;
+  }
+  .preset-bar button {
+    background: none;
+    border: 1px solid #c8923a;
+    color: #8a6820;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    margin-left: 6px;
+  }
+  .preset-bar button:hover { background: white; }
+
+  .hidden { display: none !important; }
+
+  @media (max-width: 640px) {
+    .form-row, .form-row-3, .action-row { grid-template-columns: 1fr; }
+    .step-label { display: none; }
+    .card, .output-card { padding: 20px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div>
+      <div class="logo">🌲 커리어<span>포레스트</span></div>
+      <div class="header-sub">강의안 자동화 앱 v1.0</div>
+    </div>
+  </div>
+  <div class="header-badge">API-Free · Claude.ai 연동</div>
+</div>
+
+<div class="container">
+
+  <!-- 진행바 -->
+  <div class="progress-bar">
+    <div class="step active" data-step="1">
+      <div class="step-circle">1</div>
+      <div class="step-label">기본정보</div>
+    </div>
+    <div class="step" data-step="2">
+      <div class="step-circle">2</div>
+      <div class="step-label">청중 특성</div>
+    </div>
+    <div class="step" data-step="3">
+      <div class="step-circle">3</div>
+      <div class="step-label">핵심 메시지</div>
+    </div>
+    <div class="step" data-step="4">
+      <div class="step-circle">4</div>
+      <div class="step-label">형식·생성</div>
+    </div>
+  </div>
+
+  <!-- 프리셋 저장 -->
+  <div class="preset-bar">
+    <span>💾 강사 정보를 저장하면 다음에 자동으로 채워져요.</span>
+    <div>
+      <button onclick="loadPreset()">불러오기</button>
+      <button onclick="savePreset()">저장</button>
+    </div>
+  </div>
+
+  <!-- Step 1: 기본정보 -->
+  <div class="card" id="step-1">
+    <h2 class="card-title">1단계 · 강의 기본정보</h2>
+    <p class="card-sub">강의 주제와 시간, 대상을 알려주세요.</p>
+
+    <div class="form-group">
+      <label>강의 주제 <span class="req">*</span></label>
+      <input type="text" id="topic" placeholder="예: 신중년을 위한 AI 활용 커리어 설계">
+    </div>
+
+    <div class="form-row">
+      <div>
+        <label>강사명 <span class="req">*</span></label>
+        <input type="text" id="instructor" placeholder="임금희 (커리어셀파)">
+      </div>
+      <div>
+        <label>강의 기관/장소 <span class="hint">(선택)</span></label>
+        <input type="text" id="venue" placeholder="인천테크노파크">
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div>
+        <label>강의 대상 <span class="req">*</span></label>
+        <div class="chip-group" data-group="audience">
+          <div class="chip" data-value="신중년">신중년</div>
+          <div class="chip" data-value="청년">청년</div>
+          <div class="chip" data-value="소상공인">소상공인</div>
+          <div class="chip" data-value="취업준비자">취업준비자</div>
+          <div class="chip" data-value="직장인">직장인</div>
+          <div class="chip" data-value="경력전환자">경력전환자</div>
+          <div class="chip" data-value="일반">일반</div>
+        </div>
+      </div>
+      <div>
+        <label>강의 시간 <span class="req">*</span></label>
+        <div class="chip-group" data-group="duration">
+          <div class="chip" data-value="30">30분</div>
+          <div class="chip" data-value="60">60분</div>
+          <div class="chip" data-value="90">90분</div>
+          <div class="chip" data-value="120">120분</div>
+          <div class="chip" data-value="180">180분</div>
+          <div class="chip" data-value="240">240분</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="resetAll()">초기화</button>
+      <button class="btn btn-primary" onclick="goStep(2)">다음 →</button>
+    </div>
+  </div>
+
+  <!-- Step 2: 청중 특성 -->
+  <div class="card hidden" id="step-2">
+    <h2 class="card-title">2단계 · 청중 특성</h2>
+    <p class="card-sub">듣는 분들의 특성을 알려주세요. 눈높이에 맞춰서 강의안이 만들어져요.</p>
+
+    <div class="form-group">
+      <label>연령대 <span class="hint">(복수 선택)</span></label>
+      <div class="chip-group" data-group="age" data-multi="true">
+        <div class="chip" data-value="20대">20대</div>
+        <div class="chip" data-value="30대">30대</div>
+        <div class="chip" data-value="40대">40대</div>
+        <div class="chip" data-value="50대">50대</div>
+        <div class="chip" data-value="60대 이상">60대 이상</div>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div>
+        <label>사전 지식 수준 <span class="req">*</span></label>
+        <div class="chip-group" data-group="level">
+          <div class="chip" data-value="처음 접함">처음</div>
+          <div class="chip" data-value="기초 수준">기초</div>
+          <div class="chip" data-value="중급 수준">중급</div>
+          <div class="chip" data-value="상급 수준">상급</div>
+        </div>
+      </div>
+      <div>
+        <label>예상 인원</label>
+        <div class="chip-group" data-group="size">
+          <div class="chip" data-value="10명 이하">~10명</div>
+          <div class="chip" data-value="20명">20명</div>
+          <div class="chip" data-value="30명">30명</div>
+          <div class="chip" data-value="50명">50명</div>
+          <div class="chip" data-value="100명 이상">100명+</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>강의 후 청중이 얻기 바라는 것 <span class="req">*</span></label>
+      <textarea id="outcome" placeholder="예: AI 도구 3가지를 직접 써보고, 자기 커리어에 어떻게 적용할지 구체적인 다음 행동을 정할 수 있도록"></textarea>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="goStep(1)">← 이전</button>
+      <button class="btn btn-primary" onclick="goStep(3)">다음 →</button>
+    </div>
+  </div>
+
+  <!-- Step 3: 핵심 메시지 -->
+  <div class="card hidden" id="step-3">
+    <h2 class="card-title">3단계 · 핵심 메시지</h2>
+    <p class="card-sub">이번 강의에서 꼭 전달하고 싶은 것을 알려주세요.</p>
+
+    <div class="form-group">
+      <label>핵심 메시지 1 <span class="req">*</span></label>
+      <input type="text" id="msg1" placeholder="예: AI는 도구일 뿐, 결정은 사람이 한다">
+    </div>
+    <div class="form-group">
+      <label>핵심 메시지 2 <span class="req">*</span></label>
+      <input type="text" id="msg2" placeholder="예: 16년 경력을 AI로 10배 활용하는 방법">
+    </div>
+    <div class="form-group">
+      <label>핵심 메시지 3 <span class="req">*</span></label>
+      <input type="text" id="msg3" placeholder="예: 오늘 당장 시작할 수 있는 3가지 도구">
+    </div>
+    <div class="form-group">
+      <label>마무리 한마디 <span class="hint">(강의 끝에 남길 인상적인 문장)</span></label>
+      <input type="text" id="closing" placeholder="예: 기술이 아니라 당신의 경험이 주인공입니다">
+    </div>
+
+    <div class="form-group">
+      <label>강의 톤 <span class="req">*</span></label>
+      <div class="chip-group" data-group="tone">
+        <div class="chip" data-value="실무형 (바로 쓰는 방법 중심)">실무형</div>
+        <div class="chip" data-value="동기부여형 (감동·용기 중심)">동기부여형</div>
+        <div class="chip" data-value="체험형 (실습·워크숍 중심)">체험형</div>
+        <div class="chip" data-value="정보전달형 (지식·데이터 중심)">정보전달형</div>
+        <div class="chip" data-value="혼합형">혼합형</div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="goStep(2)">← 이전</button>
+      <button class="btn btn-primary" onclick="goStep(4)">다음 →</button>
+    </div>
+  </div>
+
+  <!-- Step 4: 형식 선택 + 생성 -->
+  <div class="card hidden" id="step-4">
+    <h2 class="card-title">4단계 · 결과물 형식 선택</h2>
+    <p class="card-sub">어떤 형태로 받고 싶으세요? (복수 선택 가능)</p>
+
+    <div class="form-group">
+      <label>결과물 형식 <span class="req">*</span></label>
+      <div class="chip-group" data-group="format" data-multi="true">
+        <div class="chip" data-value="outline">📋 강의 개요·학습목표</div>
+        <div class="chip" data-value="slides">📑 슬라이드별 제목·본문</div>
+        <div class="chip" data-value="script">🎙️ 발표자 노트 (시나리오)</div>
+        <div class="chip" data-value="activity">🎲 활동·실습 아이디어</div>
+        <div class="chip" data-value="timetable">⏱️ 시간 배분표</div>
+        <div class="chip" data-value="reference">📎 참고 자료 추천</div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label>추가 요청사항 <span class="hint">(선택)</span></label>
+      <textarea id="extra" placeholder="예: 커리어포레스트 브랜드 톤 반영, 실제 컨설팅 사례 포함, 아이스브레이킹 넣기 등"></textarea>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="goStep(3)">← 이전</button>
+      <button class="btn btn-primary" onclick="generatePrompt()">✨ 프롬프트 생성</button>
+    </div>
+  </div>
+
+  <!-- 결과 -->
+  <div class="output-card hidden" id="output">
+    <div class="output-label">GENERATED PROMPT</div>
+    <h2 class="card-title">완성된 프롬프트</h2>
+    <p class="card-sub">아래 프롬프트를 복사해서 Claude.ai에 붙여넣으면 강의안이 생성됩니다.</p>
+
+    <div class="guide-box">
+      <h4>✅ 사용 방법 (3단계)</h4>
+      <ol>
+        <li><b>[프롬프트 복사]</b> 버튼 클릭</li>
+        <li><b>[Claude.ai 열기]</b> 버튼 클릭 → 새 창에서 Claude.ai 열림</li>
+        <li>새 대화창에 <b>Ctrl+V (맥: Cmd+V)</b>로 붙여넣고 엔터</li>
+      </ol>
+    </div>
+
+    <div class="prompt-box" id="promptOutput"></div>
+
+    <div class="action-row">
+      <button class="btn btn-gold btn-large" onclick="copyPrompt()">📋 프롬프트 복사</button>
+      <button class="btn btn-primary btn-large" onclick="openClaude()">🚀 Claude.ai 열기</button>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="goStep(4)">← 수정하기</button>
+      <button class="btn btn-secondary" onclick="resetAll()">새 강의안 만들기</button>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast">복사되었어요!</div>
+
+<script>
+// 선택 상태
+const state = {
+  audience: '',
+  duration: '',
+  age: [],
+  level: '',
+  size: '',
+  tone: '',
+  format: []
+};
+
+// Chip 선택 핸들러
+document.querySelectorAll('.chip-group').forEach(group => {
+  const multi = group.dataset.multi === 'true';
+  const key = group.dataset.group;
+  group.querySelectorAll('.chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      const val = chip.dataset.value;
+      if (multi) {
+        chip.classList.toggle('selected');
+        if (chip.classList.contains('selected')) {
+          if (!state[key].includes(val)) state[key].push(val);
+        } else {
+          state[key] = state[key].filter(v => v !== val);
+        }
+      } else {
+        group.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
+        chip.classList.add('selected');
+        state[key] = val;
+      }
+    });
+  });
+});
+
+// Step 이동
+function goStep(n) {
+  // 간단 검증
+  if (n >= 2) {
+    const topic = document.getElementById('topic').value.trim();
+    const instructor = document.getElementById('instructor').value.trim();
+    if (!topic || !instructor || !state.audience || !state.duration) {
+      alert('주제·강사명·대상·시간을 모두 입력해주세요.');
+      return;
+    }
+  }
+  if (n >= 3) {
+    if (!state.level) {
+      alert('사전 지식 수준을 선택해주세요.');
+      return;
+    }
+    if (!document.getElementById('outcome').value.trim()) {
+      alert('청중이 얻기 바라는 것을 입력해주세요.');
+      return;
+    }
+  }
+  if (n >= 4) {
+    const m1 = document.getElementById('msg1').value.trim();
+    const m2 = document.getElementById('msg2').value.trim();
+    const m3 = document.getElementById('msg3').value.trim();
+    if (!m1 || !m2 || !m3 || !state.tone) {
+      alert('핵심 메시지 3개와 강의 톤을 모두 입력해주세요.');
+      return;
+    }
+  }
+
+  // UI 전환
+  for (let i = 1; i <= 4; i++) {
+    document.getElementById(`step-${i}`).classList.add('hidden');
+  }
+  document.getElementById('output').classList.add('hidden');
+  document.getElementById(`step-${n}`).classList.remove('hidden');
+
+  // 진행바 업데이트
+  document.querySelectorAll('.step').forEach(s => {
+    const step = parseInt(s.dataset.step);
+    s.classList.remove('active', 'done');
+    if (step < n) s.classList.add('done');
+    if (step === n) s.classList.add('active');
+  });
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// 프롬프트 생성
+function generatePrompt() {
+  if (state.format.length === 0) {
+    alert('결과물 형식을 하나 이상 선택해주세요.');
+    return;
+  }
+
+  const topic = document.getElementById('topic').value.trim();
+  const instructor = document.getElementById('instructor').value.trim();
+  const venue = document.getElementById('venue').value.trim();
+  const outcome = document.getElementById('outcome').value.trim();
+  const m1 = document.getElementById('msg1').value.trim();
+  const m2 = document.getElementById('msg2').value.trim();
+  const m3 = document.getElementById('msg3').value.trim();
+  const closing = document.getElementById('closing').value.trim();
+  const extra = document.getElementById('extra').value.trim();
+
+  // 형식 매핑
+  const formatMap = {
+    outline: '📋 **강의 개요·학습목표**\n  - 강의 한 줄 요약 (엘리베이터 피치)\n  - 학습목표 3가지 (ABCD 원칙: Audience/Behavior/Condition/Degree)\n  - 강의 구조도 (인트로→본문→마무리)',
+    slides: '📑 **슬라이드별 제목·본문** (PPT 붙여넣기용)\n  - 슬라이드 번호 + 제목\n  - 각 슬라이드 본문 텍스트 (불릿 3~5개)\n  - 시각자료 제안 (이미지·차트·영상)',
+    script: '🎙️ **발표자 노트 (시나리오)**\n  - 슬라이드별 발표 스크립트 (실제 말할 문장)\n  - 전환 멘트 (슬라이드 간 자연스러운 연결)\n  - 인트로·클로징 대사',
+    activity: '🎲 **활동·실습 아이디어** 3가지\n  - 활동명 + 소요시간 + 준비물\n  - 진행 순서 (단계별)\n  - 기대 효과',
+    timetable: '⏱️ **시간 배분표**\n  - 섹션별 시간 (분 단위)\n  - 인트로/본문/액티비티/Q&A 비율\n  - 쉬는 시간 위치',
+    reference: '📎 **참고 자료 추천**\n  - 관련 도서·논문 3권\n  - 유튜브·팟캐스트 3개\n  - 추가 학습 사이트'
+  };
+
+  const selectedFormats = state.format.map((f, i) => `${i+1}. ${formatMap[f]}`).join('\n\n');
+
+  const prompt = `당신은 커리어포레스트(careerforest.co.kr)의 강의안 설계 전문가입니다. 아래 조건에 맞는 **한국어 강의안**을 체계적으로 만들어주세요.
+
+# 📌 강의 정보
+- **주제:** ${topic}
+- **강사:** ${instructor}${venue ? ` (${venue})` : ''}
+- **대상:** ${state.audience}
+- **시간:** ${state.duration}분
+
+# 👥 청중 특성
+- **연령대:** ${state.age.length > 0 ? state.age.join(', ') : '혼합'}
+- **사전 지식:** ${state.level}
+- **예상 인원:** ${state.size || '미정'}
+- **기대 결과:** ${outcome}
+
+# 💡 핵심 메시지 (반드시 강의에 녹여주세요)
+1. ${m1}
+2. ${m2}
+3. ${m3}
+${closing ? `\n**마무리 한마디:** "${closing}"` : ''}
+
+# 🎨 강의 톤
+${state.tone}
+
+# 📦 요청 결과물 (아래 형식으로 각각 만들어주세요)
+
+${selectedFormats}
+
+${extra ? `\n# 🔖 추가 요청사항\n${extra}` : ''}
+
+# ⚙️ 작성 원칙
+- 청중 눈높이에 정확히 맞춰주세요. 사전 지식 수준(${state.level})을 넘어선 용어는 반드시 풀어서 설명.
+- 16년 경력 직업상담사의 실무 감각이 느껴지도록, 추상적인 이론보다 **구체적인 사례·숫자·도구 이름**을 넣어주세요.
+- 한국어로, 친근하면서도 전문적인 톤으로.
+- 각 섹션 끝에 "이 부분을 수정하고 싶으면 OO을 말씀해주세요" 같은 **수정 요청 포인트**를 달아주세요.
+
+지금부터 만들어주세요.`;
+
+  document.getElementById('promptOutput').textContent = prompt;
+
+  for (let i = 1; i <= 4; i++) {
+    document.getElementById(`step-${i}`).classList.add('hidden');
+  }
+  document.getElementById('output').classList.remove('hidden');
+  document.querySelectorAll('.step').forEach(s => {
+    s.classList.remove('active');
+    s.classList.add('done');
+  });
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// 복사
+function copyPrompt() {
+  const text = document.getElementById('promptOutput').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    showToast('📋 복사되었어요! Claude.ai에 붙여넣으세요.');
+  }).catch(() => {
+    // fallback
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    showToast('📋 복사되었어요!');
+  });
+}
+
+// Claude.ai 열기
+function openClaude() {
+  window.open('https://claude.ai/new', '_blank');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// 초기화
+function resetAll() {
+  if (!confirm('입력한 내용을 모두 초기화할까요?')) return;
+  document.querySelectorAll('input[type="text"], textarea').forEach(el => el.value = '');
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('selected'));
+  Object.keys(state).forEach(k => {
+    state[k] = Array.isArray(state[k]) ? [] : '';
+  });
+  goStep(1);
+}
+
+// 프리셋 (강사 정보 저장)
+function savePreset() {
+  const preset = {
+    instructor: document.getElementById('instructor').value,
+    venue: document.getElementById('venue').value
+  };
+  try {
+    localStorage.setItem('cf_lecture_preset', JSON.stringify(preset));
+    showToast('💾 강사 정보 저장 완료');
+  } catch(e) {
+    alert('저장 실패: ' + e.message);
+  }
+}
+
+function loadPreset() {
+  try {
+    const p = localStorage.getItem('cf_lecture_preset');
+    if (!p) { alert('저장된 프리셋이 없어요.'); return; }
+    const preset = JSON.parse(p);
+    if (preset.instructor) document.getElementById('instructor').value = preset.instructor;
+    if (preset.venue) document.getElementById('venue').value = preset.venue;
+    showToast('✅ 불러왔어요');
+  } catch(e) {
+    alert('불러오기 실패');
+  }
+}
+
+// 페이지 로드 시 자동 불러오기 시도
+window.addEventListener('DOMContentLoaded', () => {
+  try {
+    const p = localStorage.getItem('cf_lecture_preset');
+    if (p) {
+      const preset = JSON.parse(p);
+      if (preset.instructor) document.getElementById('instructor').value = preset.instructor;
+      if (preset.venue) document.getElementById('venue').value = preset.venue;
+    }
+  } catch(e) {}
+});
+</script>
+
+</body>
+</html>

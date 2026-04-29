@@ -1,0 +1,1506 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI와 함께하는 희망직업 탐색 활동지</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green-darkest: #1f4d2b;
+    --green-dark: #2e7d3e;
+    --green-main: #4caf50;
+    --green-light: #81c784;
+    --green-bg: #e8f5e9;
+    --green-bg-soft: #f1f8f3;
+    --accent-coral: #ff6b6b;
+    --accent-amber: #ffa726;
+    --accent-blue: #2962ff;
+    --ink: #1a2e1f;
+    --ink-soft: #4a5d52;
+    --paper: #fefefe;
+    --paper-warm: #fbfaf6;
+    --line: #d4e5d8;
+    --line-soft: #eaf3ec;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', sans-serif;
+    background: var(--paper-warm);
+    color: var(--ink);
+    line-height: 1.6;
+    font-size: 17px;
+    letter-spacing: -0.01em;
+  }
+
+  .display-font {
+    font-family: 'Gowun Batang', serif;
+    letter-spacing: -0.02em;
+  }
+
+  /* === 헤더 / 표지 === */
+  .cover {
+    background:
+      radial-gradient(ellipse at top right, rgba(76,175,80,0.18), transparent 60%),
+      radial-gradient(ellipse at bottom left, rgba(255,167,38,0.12), transparent 60%),
+      linear-gradient(180deg, #fcfdfa 0%, #f1f8f3 100%);
+    padding: 80px 40px 60px;
+    border-bottom: 3px solid var(--green-main);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cover::before {
+    content: '';
+    position: absolute;
+    top: -100px;
+    right: -100px;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(76,175,80,0.08), transparent 70%);
+    border-radius: 50%;
+  }
+
+  .cover-inner {
+    max-width: 980px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
+
+  .cover-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 18px;
+    background: white;
+    border: 1.5px solid var(--green-main);
+    border-radius: 100px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--green-dark);
+    margin-bottom: 24px;
+  }
+
+  .cover-eyebrow::before {
+    content: '✦';
+    color: var(--accent-amber);
+  }
+
+  .cover-title {
+    font-family: 'Gowun Batang', serif;
+    font-size: clamp(36px, 6vw, 56px);
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--green-darkest);
+    margin-bottom: 20px;
+    letter-spacing: -0.03em;
+  }
+
+  .cover-title .highlight {
+    background: linear-gradient(180deg, transparent 60%, rgba(255,167,38,0.4) 60%);
+    padding: 0 4px;
+  }
+
+  .cover-sub {
+    font-size: 19px;
+    color: var(--ink-soft);
+    max-width: 680px;
+    line-height: 1.7;
+  }
+
+  .cover-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 32px;
+    margin-top: 36px;
+    padding-top: 28px;
+    border-top: 1px dashed var(--line);
+    font-size: 14px;
+    color: var(--ink-soft);
+  }
+
+  .cover-meta strong { color: var(--green-darkest); font-weight: 700; }
+
+  /* === 컨테이너 === */
+  .container {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 60px 40px;
+  }
+
+  /* === 섹션 헤더 === */
+  .sheet {
+    background: var(--paper);
+    border-radius: 24px;
+    padding: 48px 44px;
+    margin-bottom: 48px;
+    box-shadow:
+      0 1px 3px rgba(31,77,43,0.04),
+      0 12px 40px rgba(31,77,43,0.06);
+    border: 1px solid var(--line-soft);
+    position: relative;
+  }
+
+  .sheet-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    margin-bottom: 36px;
+    padding-bottom: 24px;
+    border-bottom: 2px solid var(--green-bg);
+  }
+
+  .sheet-badge {
+    flex-shrink: 0;
+    width: 64px;
+    height: 64px;
+    background: var(--green-main);
+    color: white;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 13px;
+    line-height: 1.2;
+    text-align: center;
+    box-shadow: 0 6px 20px rgba(76,175,80,0.3);
+    transform: rotate(-3deg);
+  }
+
+  .sheet-badge .num {
+    display: block;
+    font-size: 22px;
+    margin-top: 2px;
+  }
+
+  .sheet-titlebox h2 {
+    font-family: 'Gowun Batang', serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--green-darkest);
+    margin-bottom: 6px;
+    letter-spacing: -0.02em;
+  }
+
+  .sheet-titlebox .sub {
+    font-size: 15px;
+    color: var(--ink-soft);
+  }
+
+  /* === 안내 단락 === */
+  .guide-block {
+    background: var(--green-bg-soft);
+    border-left: 4px solid var(--green-main);
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin-bottom: 32px;
+  }
+
+  .guide-block ol { padding-left: 20px; }
+
+  .guide-block li {
+    margin-bottom: 10px;
+    line-height: 1.7;
+    font-size: 15.5px;
+    color: var(--ink);
+  }
+
+  .guide-block li:last-child { margin-bottom: 0; }
+
+  .guide-block li::marker { color: var(--green-dark); font-weight: 700; }
+
+  /* === AI 박스 === */
+  .ai-box {
+    background: linear-gradient(135deg, #fff8e1 0%, #fff3d6 100%);
+    border: 2px solid var(--accent-amber);
+    border-radius: 16px;
+    padding: 28px;
+    margin: 32px 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .ai-box::before {
+    content: '';
+    position: absolute;
+    top: -40px;
+    right: -40px;
+    width: 140px;
+    height: 140px;
+    background: radial-gradient(circle, rgba(255,167,38,0.18), transparent 70%);
+    border-radius: 50%;
+  }
+
+  .ai-box-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .ai-icon {
+    width: 38px;
+    height: 38px;
+    background: var(--ink);
+    color: var(--accent-amber);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 16px;
+    letter-spacing: 0;
+  }
+
+  .ai-box-header h3 {
+    font-size: 19px;
+    font-weight: 800;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+
+  .ai-box-header h3 .tag {
+    display: inline-block;
+    background: var(--ink);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    margin-left: 8px;
+    vertical-align: middle;
+    font-weight: 600;
+  }
+
+  .ai-tip {
+    font-size: 15px;
+    color: var(--ink-soft);
+    margin-bottom: 18px;
+    line-height: 1.7;
+    position: relative;
+    z-index: 1;
+  }
+
+  .ai-tools-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 18px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .ai-tool-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: white;
+    border: 1.5px solid var(--ink);
+    border-radius: 100px;
+    padding: 5px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .ai-tool-chip .dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  .prompt-card {
+    background: var(--ink);
+    color: #f5f5f0;
+    border-radius: 12px;
+    padding: 20px 22px;
+    font-size: 14.5px;
+    line-height: 1.75;
+    position: relative;
+    z-index: 1;
+    font-family: 'Pretendard', monospace;
+  }
+
+  .prompt-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px dashed rgba(255,255,255,0.2);
+  }
+
+  .prompt-label-text {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--accent-amber);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .copy-btn {
+    background: var(--accent-amber);
+    color: var(--ink);
+    border: none;
+    border-radius: 6px;
+    padding: 6px 14px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s;
+  }
+
+  .copy-btn:hover { background: white; transform: translateY(-1px); }
+  .copy-btn.copied { background: var(--green-light); color: var(--ink); }
+
+  .prompt-text {
+    white-space: pre-wrap;
+    word-break: keep-all;
+    color: #fafafa;
+  }
+
+  .prompt-text .var {
+    background: rgba(255,167,38,0.25);
+    color: var(--accent-amber);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-weight: 600;
+  }
+
+  /* === 활동지 5.1: 연결 === */
+  .connect-section h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--green-darkest);
+    margin: 28px 0 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .connect-section h3::before {
+    content: '';
+    width: 6px;
+    height: 22px;
+    background: var(--green-main);
+    border-radius: 3px;
+  }
+
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+
+  .col-title {
+    background: var(--green-main);
+    color: white;
+    padding: 12px 18px;
+    border-radius: 10px 10px 0 0;
+    font-weight: 700;
+    font-size: 16px;
+    text-align: center;
+  }
+
+  .criteria-list, .interest-list {
+    border: 2px solid var(--green-main);
+    border-top: none;
+    border-radius: 0 0 12px 12px;
+    background: white;
+  }
+
+  .criteria-item, .interest-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--line-soft);
+    min-height: 48px;
+    font-size: 15px;
+  }
+
+  .criteria-item:last-child, .interest-item:last-child { border-bottom: none; }
+
+  .criteria-item .num-circle {
+    flex-shrink: 0;
+    width: 26px;
+    height: 26px;
+    background: var(--green-bg);
+    color: var(--green-darkest);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .criteria-input, .interest-input {
+    border: none;
+    background: transparent;
+    flex: 1;
+    font-family: inherit;
+    font-size: 15px;
+    padding: 4px 0;
+    color: var(--ink);
+    outline: none;
+    border-bottom: 1px dotted var(--line);
+  }
+
+  .criteria-input:focus, .interest-input:focus {
+    border-bottom-color: var(--green-main);
+  }
+
+  /* === 활동지 5.2: 대차대조표 === */
+  .balance-wrap {
+    overflow-x: auto;
+    margin-top: 12px;
+    border-radius: 12px;
+    border: 2px solid var(--green-main);
+  }
+
+  .balance-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    min-width: 700px;
+  }
+
+  .balance-table thead th {
+    background: var(--green-main);
+    color: white;
+    padding: 12px 8px;
+    font-weight: 700;
+    font-size: 14px;
+    text-align: center;
+    border: 1px solid var(--green-dark);
+  }
+
+  .balance-table thead .job-input {
+    background: rgba(255,255,255,0.95);
+    color: var(--ink);
+    border: 1px solid white;
+    border-radius: 6px;
+    padding: 6px 10px;
+    width: 95%;
+    font-family: inherit;
+    font-size: 13px;
+    margin-top: 4px;
+    text-align: center;
+  }
+
+  .balance-table td {
+    border: 1px solid var(--line-soft);
+    padding: 8px 6px;
+    text-align: center;
+    font-size: 14px;
+    height: 44px;
+  }
+
+  .balance-table td:first-child {
+    background: var(--green-bg-soft);
+    font-weight: 600;
+    color: var(--green-darkest);
+    text-align: left;
+    padding-left: 14px;
+  }
+
+  .balance-table td input {
+    width: 100%;
+    border: none;
+    background: transparent;
+    text-align: center;
+    font-family: inherit;
+    font-size: 14px;
+    padding: 4px;
+    outline: none;
+    border-radius: 4px;
+  }
+
+  .balance-table td input:focus { background: var(--green-bg); }
+
+  .balance-table tr.total-row td {
+    background: var(--green-darkest);
+    color: white;
+    font-weight: 700;
+    height: 50px;
+  }
+
+  .balance-table tr.total-row td:first-child { background: var(--green-darkest); color: white; }
+  .balance-table tr.total-row td input { color: white; font-weight: 700; font-size: 16px; }
+
+  /* === 활동지 5.3: 정보탐색 === */
+  .info-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 2px solid var(--green-main);
+  }
+
+  .info-table .job-row td {
+    background: var(--green-darkest);
+    padding: 14px 18px;
+  }
+
+  .info-table .job-row .label {
+    color: var(--green-light);
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .info-table .job-row input {
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 18px;
+    font-weight: 700;
+    width: 100%;
+    outline: none;
+    border-bottom: 1.5px solid rgba(255,255,255,0.3);
+    padding-bottom: 6px;
+    font-family: inherit;
+  }
+
+  .info-table .job-row input::placeholder { color: rgba(255,255,255,0.4); }
+
+  .info-table th {
+    background: var(--green-bg);
+    color: var(--green-darkest);
+    text-align: center;
+    padding: 14px;
+    font-weight: 700;
+    width: 28%;
+    font-size: 15px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .info-table td.content-cell {
+    padding: 0;
+    border-bottom: 1px solid var(--line-soft);
+  }
+
+  .info-table td.content-cell textarea {
+    width: 100%;
+    min-height: 64px;
+    border: none;
+    padding: 14px 18px;
+    font-family: inherit;
+    font-size: 15px;
+    line-height: 1.6;
+    resize: vertical;
+    outline: none;
+    color: var(--ink);
+    background: transparent;
+  }
+
+  .info-table td.content-cell textarea:focus { background: var(--green-bg-soft); }
+
+  .info-table tr:last-child td { border-bottom: none; }
+
+  /* === 참고자료 7.1: 사이트 목록 === */
+  #resources-page {
+    background: linear-gradient(180deg, #f8f5ff 0%, #ffffff 100%);
+    padding: 60px 40px;
+    border-top: 3px solid #7e57c2;
+  }
+
+  #resources-page .container { padding: 0; }
+
+  .resources-header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+
+  .resources-eyebrow {
+    display: inline-block;
+    background: #7e57c2;
+    color: white;
+    padding: 6px 16px;
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    margin-bottom: 16px;
+  }
+
+  .resources-title {
+    font-family: 'Gowun Batang', serif;
+    font-size: 38px;
+    font-weight: 700;
+    color: #4527a0;
+    margin-bottom: 12px;
+    letter-spacing: -0.02em;
+  }
+
+  .resources-sub {
+    font-size: 16px;
+    color: var(--ink-soft);
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .search-bar {
+    max-width: 600px;
+    margin: 32px auto 40px;
+    position: relative;
+  }
+
+  .search-bar input {
+    width: 100%;
+    padding: 16px 20px 16px 52px;
+    border: 2px solid #d1c4e9;
+    border-radius: 100px;
+    font-family: inherit;
+    font-size: 16px;
+    background: white;
+    outline: none;
+    transition: all 0.2s;
+    box-shadow: 0 4px 12px rgba(126,87,194,0.08);
+  }
+
+  .search-bar input:focus {
+    border-color: #7e57c2;
+    box-shadow: 0 4px 16px rgba(126,87,194,0.18);
+  }
+
+  .search-bar::before {
+    content: '🔍';
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 18px;
+  }
+
+  .category-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 40px;
+  }
+
+  .cat-tab {
+    background: white;
+    border: 1.5px solid #d1c4e9;
+    color: #4527a0;
+    padding: 8px 18px;
+    border-radius: 100px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .cat-tab:hover { background: #f3e5f5; }
+
+  .cat-tab.active {
+    background: #7e57c2;
+    color: white;
+    border-color: #7e57c2;
+  }
+
+  .category-section {
+    margin-bottom: 40px;
+  }
+
+  .category-section.hidden { display: none; }
+
+  .category-heading {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #d1c4e9;
+  }
+
+  .category-icon {
+    width: 44px;
+    height: 44px;
+    background: #ede7f6;
+    color: #4527a0;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+  }
+
+  .category-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #4527a0;
+    font-family: 'Gowun Batang', serif;
+  }
+
+  .category-count {
+    margin-left: auto;
+    background: #ede7f6;
+    color: #5e35b1;
+    padding: 4px 12px;
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .site-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 12px;
+  }
+
+  .site-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 18px;
+    background: white;
+    border: 1.5px solid #ede7f6;
+    border-radius: 12px;
+    text-decoration: none;
+    color: var(--ink);
+    transition: all 0.2s ease;
+    position: relative;
+  }
+
+  .site-card:hover {
+    border-color: #7e57c2;
+    background: #faf7ff;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(126,87,194,0.12);
+  }
+
+  .site-card:hover .site-arrow { transform: translate(2px, -2px); color: #7e57c2; }
+
+  .site-favicon {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, #ede7f6 0%, #d1c4e9 100%);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    color: #4527a0;
+    font-size: 14px;
+  }
+
+  .site-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .site-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 2px;
+  }
+
+  .site-url {
+    font-size: 12px;
+    color: #7e57c2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-family: 'Pretendard', monospace;
+  }
+
+  .site-arrow {
+    color: #b39ddb;
+    font-size: 18px;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+
+  /* === 푸터 === */
+  .footer {
+    background: var(--green-darkest);
+    color: white;
+    padding: 40px;
+    text-align: center;
+  }
+
+  .footer-brand {
+    font-family: 'Gowun Batang', serif;
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--green-light);
+  }
+
+  .footer p {
+    font-size: 14px;
+    color: rgba(255,255,255,0.7);
+    margin-bottom: 6px;
+  }
+
+  .footer a { color: var(--green-light); text-decoration: none; }
+  .footer a:hover { text-decoration: underline; }
+
+  /* === 플로팅 버튼 === */
+  .floating-actions {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 100;
+  }
+
+  .float-btn {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    border: none;
+    background: var(--green-main);
+    color: white;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(76,175,80,0.4);
+    font-size: 20px;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .float-btn:hover { transform: translateY(-3px) scale(1.05); }
+  .float-btn.print-btn { background: var(--ink); box-shadow: 0 6px 20px rgba(26,46,31,0.3); }
+  .float-btn.top-btn { background: white; color: var(--green-dark); border: 1.5px solid var(--green-main); }
+
+  .toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--ink);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 100px;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    opacity: 0;
+    z-index: 200;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  }
+
+  .toast.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+
+  /* === 반응형 === */
+  @media (max-width: 720px) {
+    .container { padding: 32px 18px; }
+    .cover { padding: 50px 24px 40px; }
+    .sheet { padding: 28px 22px; border-radius: 18px; }
+    .sheet-header { flex-direction: column; gap: 14px; }
+    .sheet-titlebox h2 { font-size: 22px; }
+    .two-col { grid-template-columns: 1fr; }
+    #resources-page { padding: 40px 18px; }
+    .resources-title { font-size: 28px; }
+    .site-grid { grid-template-columns: 1fr; }
+    .floating-actions { bottom: 16px; right: 16px; }
+  }
+
+  /* === 인쇄용 === */
+  @media print {
+    body { font-size: 12pt; }
+    .floating-actions, .copy-btn, .search-bar, .category-tabs { display: none !important; }
+    .sheet { box-shadow: none; border: 1px solid #ccc; page-break-inside: avoid; padding: 24px; }
+    .ai-box { page-break-inside: avoid; }
+    .cover { padding: 30px; page-break-after: always; }
+    .container { padding: 20px; max-width: 100%; }
+    #resources-page { padding: 20px; page-break-before: always; }
+    .site-card { border: 1px solid #ccc; box-shadow: none; }
+    a { color: var(--ink); text-decoration: none; }
+    .site-url { color: #7e57c2; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ 표지 ============ -->
+<header class="cover">
+  <div class="cover-inner">
+    <span class="cover-eyebrow">AI 활용 직업탐색 워크북</span>
+    <h1 class="cover-title">
+      AI와 함께 그리는<br>
+      <span class="highlight">나의 희망직업</span> 탐색 활동지
+    </h1>
+    <p class="cover-sub">
+      강점을 발견하고, 나에게 맞는 직업을 연결하고, 객관적으로 비교하고, 충분한 정보를 모으는 4단계 활동.<br>
+      이번 워크북에서는 ChatGPT · Claude · Gemini를 어떻게 활용하면 좋을지 실전 프롬프트와 함께 안내합니다.
+    </p>
+    <div class="cover-meta">
+      <div><strong>대상</strong> 신중년 구직·전직 희망자</div>
+      <div><strong>구성</strong> 활동지 3종 + 클릭형 사이트 모음</div>
+      <div><strong>제작</strong> 커리어포레스트 · careerforest.co.kr</div>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- ============ 활동지 5.1 ============ -->
+  <section class="sheet" id="sheet-51">
+    <div class="sheet-header">
+      <div class="sheet-badge">활동지<span class="num">5.1</span></div>
+      <div class="sheet-titlebox">
+        <h2>희망 직업 선택을 위한 연결</h2>
+        <p class="sub">나의 직업선택 기준과 관심직업을 연결해 봅니다</p>
+      </div>
+    </div>
+
+    <div class="guide-block">
+      <ol>
+        <li>관심 직업은 3모듈에서 강점분석 결과를 바탕으로 탐색한 직업(활동지 3.5 참조), 4모듈에서 관심직업으로 표시한 직업(활동지 4.1 참조), 이번 강의를 들으며 새롭게 도전해보고 싶은 직업, 경험은 없지만 오래 전부터 해보고 싶었던 직업, 지금까지 해 온 일 중 앞으로도 계속 하고 싶은 직업 등을 생각해보고 여러분이 선택을 고려해볼 만한 관심직업들을 오른쪽에 작성합니다.</li>
+        <li>나의 직업선택 기준에는 내가 직업을 선택할 때 중요하거나 고려해 볼 만한 사항들을 작성해 보세요. 기재되어 있는 내용 중 나의 고려사항이 아닌 것이 있다면 삭제하고, 추가할 내용이 있다면 아래쪽 비어 있는 칸에 작성하시면 됩니다.</li>
+        <li>나의 직업선택 기준 항목에 부합하는 직업이 있다면 해당 항목과 부합되는 직업간에 선을 그어 연결해 보시기 바랍니다. 선택기준에 맞는 직업이 다수이면 여러 개의 연결선을 표시해도 괜찮습니다.</li>
+      </ol>
+    </div>
+
+    <!-- AI 활용 박스 -->
+    <div class="ai-box">
+      <div class="ai-box-header">
+        <div class="ai-icon">AI</div>
+        <h3>AI로 관심직업 후보 넓히기 <span class="tag">활용 TIP</span></h3>
+      </div>
+      <p class="ai-tip">
+        혼자 떠올리기 어려울 땐 AI에게 도움을 청해보세요. 나의 강점·경험·가치관을 알려주면, 미처 생각하지 못했던 관심직업 후보를 제안받을 수 있습니다.
+        <strong>아래 프롬프트의 〔 〕 부분만 본인 상황에 맞게 바꿔서</strong> ChatGPT·Claude·Gemini 중 한 곳에 붙여넣어 보세요.
+      </p>
+      <div class="ai-tools-row">
+        <span class="ai-tool-chip"><span class="dot" style="background:#10a37f"></span>ChatGPT</span>
+        <span class="ai-tool-chip"><span class="dot" style="background:#cc785c"></span>Claude</span>
+        <span class="ai-tool-chip"><span class="dot" style="background:#4285f4"></span>Gemini</span>
+      </div>
+      <div class="prompt-card">
+        <div class="prompt-label">
+          <span class="prompt-label-text">📋 복사해서 사용하는 프롬프트</span>
+          <button class="copy-btn" data-target="prompt-1">복사하기</button>
+        </div>
+        <div class="prompt-text" id="prompt-1">나는 〔55세 여성〕입니다.
+이전 경력은 〔20년간 회계 사무직, 5년간 자영업(카페 운영)〕이고,
+강점은 〔꼼꼼함, 사람과의 소통, 숫자에 강함〕,
+좋아하는 일은 〔정리정돈, 후배 가르치기, 글쓰기〕,
+중요하게 여기는 가치는 〔보람, 안정성, 적당한 자율성〕입니다.
+
+이런 저에게 어울릴 만한 관심직업 10가지를 추천해 주세요.
+- 신중년(50~65세)이 도전 가능한 직업 위주로
+- 각 직업마다 ① 하는 일 ② 왜 저에게 어울리는지 ③ 시작 난이도(쉬움/보통/어려움)를 함께 알려주세요.</div>
+      </div>
+    </div>
+
+    <!-- 좌우 컬럼: 직업선택 기준 ↔ 관심직업 -->
+    <div class="connect-section">
+      <h3>나의 직업선택 기준 ↔ 관심직업</h3>
+      <div class="two-col">
+        <div>
+          <div class="col-title">나의 직업선택 기준</div>
+          <div class="criteria-list">
+            <div class="criteria-item"><span class="num-circle">1</span><span style="flex:1">잘 할 수 있는가?</span></div>
+            <div class="criteria-item"><span class="num-circle">2</span><span style="flex:1">좋아하는 일인가?</span></div>
+            <div class="criteria-item"><span class="num-circle">3</span><span style="flex:1">보람, 자부심을 느낄 수 있는가?</span></div>
+            <div class="criteria-item"><span class="num-circle">4</span><span style="flex:1">지속적인 경력개발 가능성?</span></div>
+            <div class="criteria-item"><span class="num-circle">5</span><span style="flex:1">임금수준은?</span></div>
+            <div class="criteria-item"><span class="num-circle">6</span><span style="flex:1">일의 양과 시간대는?</span></div>
+            <div class="criteria-item"><span class="num-circle">7</span><span style="flex:1">계속 근로 가능한가?</span></div>
+            <div class="criteria-item"><span class="num-circle">8</span><span style="flex:1">출퇴근 거리 및 위치는?</span></div>
+            <div class="criteria-item"><span class="num-circle">9</span><span style="flex:1">사회적지위 유지가능성?</span></div>
+            <div class="criteria-item"><span class="num-circle">10</span><span style="flex:1">사업장 규모는?</span></div>
+            <div class="criteria-item"><span class="num-circle">11</span><span style="flex:1">체력적으로 가능한가?</span></div>
+            <div class="criteria-item"><span class="num-circle">12</span><input class="criteria-input" placeholder="추가 기준 작성"></div>
+            <div class="criteria-item"><span class="num-circle">13</span><input class="criteria-input" placeholder="추가 기준 작성"></div>
+            <div class="criteria-item"><span class="num-circle">14</span><input class="criteria-input" placeholder="추가 기준 작성"></div>
+            <div class="criteria-item"><span class="num-circle">15</span><input class="criteria-input" placeholder="추가 기준 작성"></div>
+          </div>
+        </div>
+        <div>
+          <div class="col-title">관심직업</div>
+          <div class="interest-list">
+            <div class="interest-item"><input class="interest-input" placeholder="① 관심직업 작성"></div>
+            <div class="interest-item"><input class="interest-input" placeholder="② 관심직업 작성"></div>
+            <div class="interest-item"><input class="interest-input" placeholder="③ 관심직업 작성"></div>
+            <div class="interest-item"><input class="interest-input" placeholder="④ 관심직업 작성"></div>
+            <div class="interest-item"><input class="interest-input" placeholder="⑤ 관심직업 작성"></div>
+            <div class="interest-item"><input class="interest-input" placeholder="⑥ 관심직업 작성"></div>
+            <div class="interest-item"><input class="interest-input" placeholder="⑦ 관심직업 작성"></div>
+            <div class="interest-item"><input class="interest-input" placeholder="⑧ 관심직업 작성"></div>
+            <div class="interest-item"><input class="interest-input" placeholder="⑨ 관심직업 작성"></div>
+            <div class="interest-item"><input class="interest-input" placeholder="⑩ 관심직업 작성"></div>
+            <div class="interest-item"><input class="interest-input" placeholder="⑪ 관심직업 작성"></div>
+            <div class="interest-item"><input class="interest-input" placeholder="⑫ 관심직업 작성"></div>
+            <div class="interest-item"><input class="interest-input" placeholder="⑬ 관심직업 작성"></div>
+            <div class="interest-item"><input class="interest-input" placeholder="⑭ 관심직업 작성"></div>
+            <div class="interest-item"><input class="interest-input" placeholder="⑮ 관심직업 작성"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 활동지 5.2 ============ -->
+  <section class="sheet" id="sheet-52">
+    <div class="sheet-header">
+      <div class="sheet-badge">활동지<span class="num">5.2</span></div>
+      <div class="sheet-titlebox">
+        <h2>희망 직업 선택을 위한 대차대조표</h2>
+        <p class="sub">관심직업 3개를 11개 항목으로 비교 평가합니다</p>
+      </div>
+    </div>
+
+    <div class="guide-block">
+      <ol>
+        <li>활동지 5.1에서 도출된 관심직업 중 가장 마음이 가는 <strong>3개를 선정</strong>하여 상단에 작성합니다.</li>
+        <li>각 고려사항의 <strong>가중치(중요도)</strong>를 1~5점 사이로 매깁니다. 본인에게 중요한 항목일수록 높은 점수를 줍니다.</li>
+        <li>각 직업이 항목별로 얼마나 부합하는지 1~5점으로 평가하고, <strong>합계 = 점수 × 가중치</strong>로 계산합니다.</li>
+        <li>총점이 가장 높은 직업이 현재 시점에서 가장 적합한 후보가 됩니다.</li>
+      </ol>
+    </div>
+
+    <!-- AI 활용 박스 -->
+    <div class="ai-box">
+      <div class="ai-box-header">
+        <div class="ai-icon">AI</div>
+        <h3>AI로 객관적 비교분석 받기 <span class="tag">활용 TIP</span></h3>
+      </div>
+      <p class="ai-tip">
+        주관적 판단이 어려운 항목(예: 임금수준, 향후 전망, 진입 난이도)은 AI에게 객관적 정보를 요청해 채점에 참고하세요.
+        AI는 비교 표를 만들어 주거나, 항목별 점수에 대한 근거를 제시해 줍니다.
+      </p>
+      <div class="ai-tools-row">
+        <span class="ai-tool-chip"><span class="dot" style="background:#10a37f"></span>ChatGPT</span>
+        <span class="ai-tool-chip"><span class="dot" style="background:#cc785c"></span>Claude</span>
+        <span class="ai-tool-chip"><span class="dot" style="background:#4285f4"></span>Gemini</span>
+      </div>
+      <div class="prompt-card">
+        <div class="prompt-label">
+          <span class="prompt-label-text">📋 복사해서 사용하는 프롬프트</span>
+          <button class="copy-btn" data-target="prompt-2">복사하기</button>
+        </div>
+        <div class="prompt-text" id="prompt-2">아래 3개 직업을 11개 항목으로 비교해 주세요.
+
+▣ 비교 대상 직업
+1) 〔요양보호사〕  2) 〔독서지도사〕  3) 〔공공일자리 사무보조〕
+
+▣ 비교 항목 (각 1~5점, 점수 근거 함께)
+① 능력발휘 가능성  ② 재미·몰입도  ③ 보람·자부심
+④ 경력개발 가능성  ⑤ 임금수준  ⑥ 일의 양·시간대 적정성
+⑦ 자율성  ⑧ 사회적 인정  ⑨ 출퇴근 편의성
+⑩ 건강 부담(낮을수록 5점)  ⑪ 50~60대 진입 용이성
+
+▣ 출력 형식
+- 표로 정리하고, 각 점수 옆에 한 줄 근거를 적어주세요.
+- 마지막에 "신중년 여성에게 추천 순위 1~3위"를 이유와 함께 알려주세요.</div>
+      </div>
+    </div>
+
+    <!-- 대차대조표 -->
+    <div class="balance-wrap">
+      <table class="balance-table">
+        <thead>
+          <tr>
+            <th rowspan="2" style="width:18%">고려사항</th>
+            <th rowspan="2" style="width:10%">가중치<br>(1~5)</th>
+            <th colspan="2">관심직업 1<br><input class="job-input" placeholder="직업명 입력"></th>
+            <th colspan="2">관심직업 2<br><input class="job-input" placeholder="직업명 입력"></th>
+            <th colspan="2">관심직업 3<br><input class="job-input" placeholder="직업명 입력"></th>
+          </tr>
+          <tr>
+            <th style="width:9%">점수</th><th style="width:9%">합계</th>
+            <th style="width:9%">점수</th><th style="width:9%">합계</th>
+            <th style="width:9%">점수</th><th style="width:9%">합계</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>능력발휘</td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td></tr>
+          <tr><td>재미, 몰입</td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td></tr>
+          <tr><td>보람, 자부심</td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td></tr>
+          <tr><td>경력개발 가능성</td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td></tr>
+          <tr><td>임금수준</td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td></tr>
+          <tr><td>일의 양</td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td></tr>
+          <tr><td>자율성</td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td></tr>
+          <tr><td>인정</td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td></tr>
+          <tr><td>출퇴근</td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td></tr>
+          <tr><td>건강</td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td></tr>
+          <tr><td>기타</td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td><td><input type="text"></td></tr>
+          <tr class="total-row"><td>총점</td><td>—</td><td colspan="2"><input type="text" placeholder="합계 입력"></td><td colspan="2"><input type="text" placeholder="합계 입력"></td><td colspan="2"><input type="text" placeholder="합계 입력"></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============ 활동지 5.3 ============ -->
+  <section class="sheet" id="sheet-53">
+    <div class="sheet-header">
+      <div class="sheet-badge">활동지<span class="num">5.3</span></div>
+      <div class="sheet-titlebox">
+        <h2>희망 직업 정보탐색</h2>
+        <p class="sub">최종 선택한 희망직업의 구체적 정보를 정리합니다</p>
+      </div>
+    </div>
+
+    <div class="guide-block">
+      <ol>
+        <li>활동지 5.2에서 가장 점수가 높았던 <strong>희망직업 1개</strong>를 선정합니다.</li>
+        <li>해당 직업에 대해 <strong>하는 일, 교육·훈련, 자격, 임금, 능력/지식, 성격/흥미, 향후 전망</strong> 등 11개 항목을 채워봅니다.</li>
+        <li>정보가 부족한 항목은 워크넷·고용24 등에서 확인하거나, 아래 AI 활용 프롬프트를 사용해 보세요.</li>
+      </ol>
+    </div>
+
+    <!-- AI 활용 박스 -->
+    <div class="ai-box">
+      <div class="ai-box-header">
+        <div class="ai-icon">AI</div>
+        <h3>AI로 직업 정보 한 번에 정리하기 <span class="tag">활용 TIP</span></h3>
+      </div>
+      <p class="ai-tip">
+        직업명만 알려줘도 AI가 11개 항목을 표 형태로 정리해 줍니다. <strong>최신 정보가 필요한 임금·자격시험 일정은 반드시 워크넷·큐넷에서 한 번 더 확인</strong>하세요.
+        AI 답변은 출발점, 공식 사이트는 확정 자료입니다.
+      </p>
+      <div class="ai-tools-row">
+        <span class="ai-tool-chip"><span class="dot" style="background:#10a37f"></span>ChatGPT</span>
+        <span class="ai-tool-chip"><span class="dot" style="background:#cc785c"></span>Claude</span>
+        <span class="ai-tool-chip"><span class="dot" style="background:#4285f4"></span>Gemini</span>
+      </div>
+      <div class="prompt-card">
+        <div class="prompt-label">
+          <span class="prompt-label-text">📋 복사해서 사용하는 프롬프트</span>
+          <button class="copy-btn" data-target="prompt-3">복사하기</button>
+        </div>
+        <div class="prompt-text" id="prompt-3">한국에서 〔희망직업명〕에 대한 정보를 아래 11개 항목에 맞춰 정리해 주세요.
+
+① 하는 일 (하루 업무 흐름 위주로)
+② 교육 및 훈련 (필요한 학력·교육 과정)
+③ 관련 자격 및 시험 일정 (자격증명, 응시 자격, 연 몇 회)
+④ 임금 수준 (초임/평균/상위 25% 연봉, 워크넷 기준)
+⑤ 필요 능력·지식·환경
+⑥ 적합한 성격·흥미·가치관
+⑦ 향후 전망 (5~10년 수요 변화, AI 영향)
+⑧ 나에게 도움 줄 수 있는 사람 (어떤 분께 자문 구하면 좋을지)
+⑨ 도움 받을 수 있는 기관 (공공·민간)
+⑩ 방문해볼 만한 곳 (현장·체험처)
+⑪ 기타 신중년에게 도움 될 만한 팁
+
+답변은 표로 정리하고, 출처가 불확실한 항목은 "확인 필요"로 표시해 주세요.</div>
+      </div>
+    </div>
+
+    <!-- 정보탐색 표 -->
+    <table class="info-table">
+      <tr class="job-row">
+        <td colspan="2">
+          <div class="label">희망직업</div>
+          <input type="text" placeholder="최종 선택한 직업명을 입력하세요">
+        </td>
+      </tr>
+      <tr><th>하는 일</th><td class="content-cell"><textarea placeholder="실제 어떤 업무를 하는지 작성하세요"></textarea></td></tr>
+      <tr><th>교육 및 훈련</th><td class="content-cell"><textarea placeholder="필요한 교육과정, 훈련기관"></textarea></td></tr>
+      <tr><th>관련 자격, 시험일정</th><td class="content-cell"><textarea placeholder="자격증명, 시험 일정, 응시 자격"></textarea></td></tr>
+      <tr><th>임금수준</th><td class="content-cell"><textarea placeholder="초임/평균/상위 25%"></textarea></td></tr>
+      <tr><th>능력 / 지식 / 환경</th><td class="content-cell"><textarea placeholder="필요한 능력과 지식, 근무환경"></textarea></td></tr>
+      <tr><th>성격 / 흥미 / 가치관</th><td class="content-cell"><textarea placeholder="이 직업에 어울리는 성향"></textarea></td></tr>
+      <tr><th>향후 전망</th><td class="content-cell"><textarea placeholder="앞으로의 수요와 변화"></textarea></td></tr>
+      <tr><th>나에게 도움을 줄 수 있는 사람</th><td class="content-cell"><textarea placeholder="현직자, 멘토 등"></textarea></td></tr>
+      <tr><th>도움 받을 수 있는 기관</th><td class="content-cell"><textarea placeholder="공공기관, 협회, 단체"></textarea></td></tr>
+      <tr><th>방문해볼 만한 곳</th><td class="content-cell"><textarea placeholder="현장 견학지, 체험 장소"></textarea></td></tr>
+      <tr><th>기타</th><td class="content-cell"><textarea placeholder="추가로 알아본 정보"></textarea></td></tr>
+    </table>
+  </section>
+
+</div>
+
+<!-- ============ 참고자료 7.1 - 클릭 가능한 사이트 목록 ============ -->
+<section id="resources-page">
+  <div class="container">
+    <div class="resources-header">
+      <span class="resources-eyebrow">참고자료 7.1</span>
+      <h2 class="resources-title">유용한 사이트 목록</h2>
+      <p class="resources-sub">직종별 전문 취업 사이트입니다. 카드를 클릭하면 새 탭에서 사이트가 열립니다.</p>
+    </div>
+
+    <div class="search-bar">
+      <input type="text" id="siteSearch" placeholder="기관명 또는 사이트 이름으로 검색...">
+    </div>
+
+    <div class="category-tabs" id="categoryTabs">
+      <button class="cat-tab active" data-cat="all">전체</button>
+      <button class="cat-tab" data-cat="finance">금융·은행</button>
+      <button class="cat-tab" data-cat="construction">건설·기계</button>
+      <button class="cat-tab" data-cat="medical">의료·돌봄</button>
+      <button class="cat-tab" data-cat="welfare">복지·교육</button>
+      <button class="cat-tab" data-cat="food">식품·외식</button>
+      <button class="cat-tab" data-cat="beauty">뷰티·패션</button>
+      <button class="cat-tab" data-cat="env">환경·기술</button>
+      <button class="cat-tab" data-cat="agri">농업·귀촌</button>
+      <button class="cat-tab" data-cat="etc">기타 전문</button>
+    </div>
+
+    <div id="siteContainer">
+      <!-- 금융 -->
+      <div class="category-section" data-cat="finance">
+        <div class="category-heading">
+          <div class="category-icon">💰</div>
+          <h3 class="category-title">금융·은행</h3>
+          <span class="category-count">5곳</span>
+        </div>
+        <div class="site-grid">
+          <a href="https://wooribank.incruit.com" target="_blank" rel="noopener" class="site-card"><div class="site-favicon">우</div><div class="site-info"><div class="site-name">금융 우리은행</div><div class="site-url">wooribank.incruit.com</div></div><span class="site-arrow">↗</span></a>
+          <a href="https://shinhan.recruiter.co.kr" target="_blank" rel="noopener" class="site-card"><div class="site-favicon">신</div><div class="site-info"><div class="site-name">신한은행</div><div class="site-url">shinhan.recruiter.co.kr</div></div><span class="site-arrow">↗</span></a>
+          <a href="https://kbstar.incruit.com" target="_blank" rel="noopener" class="site-card"><div class="site-favicon">국</div><div class="site-info"><div class="site-name">국민은행</div><div class="site-url">kbstar.incruit.com</div></div><span class="site-arrow">↗</span></a>
+          <a href="https://www.hanafn.com" target="_blank" rel="noopener" class="site-card"><div class="site-favicon">하</div><div class="site-info"><div class="site-name">하나은행</div><div class="site-url">www.hanafn.com</div></div><span class="site-arrow">↗</span></a>
+          <a href="https://www.bokjiro.go.kr" target="_blank" rel="noopener" class="site-card"><div class="site-favicon">복</div><div class="site-info"><div class="site-name">산모신생아 건강관리사 (복지로)</div><div class="site-url">www.bokjiro.go.kr</div></div><span class="site-arrow">↗</span></a>
+        </div>
+      </div>
+
+      <!-- 건설·기계 -->
+      <div class="category-section" data-cat="construction">
+        <div class="category-heading">
+          <div class="category-icon">🏗️</div>
+          <h3 class="category-title">건설·기계·자동차</h3>
+          <span class="category-count">8곳</span>
+        </div>
+        <div class="site-grid">
+          <a href="https://engjob.co.kr" target="_blank" rel="noopener" class="site-card"><div class="site-favicon">EJ</div><div class="site-info"><div class="site-name">이공계 기술취업 이앤지잡</div><div class="site-url">engjob.co.kr</div></div><span class="site-arrow">↗</span></a>
+          <a href="https://www.wbridge.or.kr" target="_blank" rel="noopener" class="site-card"><div class="site-favicon">WB</div><div class="site-info"><div class="site-name">이공계 여성 경력복귀</div><div class="site-url">www.wbridge.or.kr</div></div><span class="site-arrow">↗</span></a>
+          <a href="https://boilerin.or.kr" target="_blank" rel="noopener" class="site-card"><div class="site-favicon">B</div><div class="site-info"><div class="site-name">보일러 협동조합</div><div class="site-url">boilerin.or.kr</div></div><span class="site-arrow">↗</span></a>
+          <a href="https://www.conjob.co.kr" target="_blank" rel="noopener" class="site-card"><div class="site-favicon">CJ</div><div class="site-info"><div class="site-name">기계건설</div><div class="site-url">www.conjob.co.kr</div></div><span class="site-arrow">↗</span></a>
+          <a href="https://widejob.co.kr" target="_blank" rel="noopener" class="site-card"><div class="site-favicon">WJ</div><div class="site-info"><div class="site-name">건설 기계</div><div class="site-url">widejob.co.kr</div></div><span class="site-arrow">↗</span></a>
+          <a href="https://www.carposseoul.com" target="_blank" rel="noopener" class="site-card"><div class="site-favicon">CP</div><div class="site-info"><div class="site-name">자동차 부분 정비종합</div><div class="site-url">www.carposseoul.com</div></div><span class="site-arrow">↗</span></a>
+          <a href="https://kocea.or.kr" target="_blank" rel="noopener" class="site-card"><div class="site-favicon">K</div><div class="site-info"><div class="site-name">한국건설기술인협회</div><div class="site-url">kocea.or.kr</div></div><span class="site-arrow">↗</span></a>
+          <a href="https://www.motorsjob.co.kr" target="_blank" rel="noopener" class="site-card"><div class="site-favicon">MJ</div><div class="site-info"><div class="site-name">모터스잡</div><div class="site-url">www.motorsjob.co.kr</div></div><span class="site-arrow">↗</span></a>
+        </div>
+      </div>
+
+      <!-- 의료·돌봄 -->
+      <div class="category-section" data-cat="medical">
+        <div class="category-heading">
+          <div class="category-icon">🏥</div>
+          <h3 class="category-title">의료·돌봄</h3>
+          <span class="category-count">5곳</span>
+        </div>
+        <div class="site-grid">
+          <a href="https://www.medicaljob.co.kr" target="_blank" rel="noopener" class="site-card"><div class="site-favicon">M</div><div class="site-info"><div class="site-name">메디컬잡</div><div class="site-url">www.medicaljob.co.kr</div></div><span class="site-arrow">↗</span></a>
+          <a href="https://www.medijob.cc" target="_blank" rel="noopener" class="site-card"><div class="site-favicon">메</div><div class="site-info"><div class="site-name">메디잡</div><div class="site-url">www.medijob.cc</div></div><span class="site-arrow">↗</span></a>
+          <a href="https://www.byeongwonjob.com" target="_blank" rel="noopener" class="site-card"><div class="site-favicon">병</div><div class="site-info"><div class="site-name">병원잡</div><div class="site-url">www.byeongwonjob.com</div></div><span class="site-arrow">↗</span></a>
+          <a href="https://nursejob.co.kr" target="_blank" rel="noopener" class="site-card"><div class="site-favicon">N</div><div class="site-info"><div class="site-name">널스잡 (간호사·간호조무사)</div><div class="site-url">nursejob.co.kr</div></div><span class="site-arrow">↗</span></a>
+          <a href="https://www.carepeople.co.kr" target="_blank" rel="noopener" class="site-card"><div class="site-favicon">CP</div><div class="site-info"><div class="site-name">케어피플 (요양병원 전문)</div><div class="site-url">www.carepeople.co.kr</div></div><span class="site-arrow">↗</span></a>
+        </div>
+      </div>
+
+      <!-- 복지·교육 -->
+      <div class="category-section" data-cat="welfare">
+        <div class="category-heading">
+          <div class="category-icon">📚</div>
+          <h3 class="category-title">복지·교육·돌봄</h3>
+          <span class="category-count">8곳</span>
+        </div>
+        <div class="site-grid">
+          <a href="https://www.bokji.net" target="_blank" rel="noopener" class="site-card"><div class="site-favicon">복</div><div class="site-info"><div class="site-name">복지넷</div><div class="site-url">www.bokji.net</div></div><span class="site-arrow">↗</span></a>
+          <a href="https://www.welfare.net" target="_blank" rel="noopener" class="site-card"><div class="site-favicon">W</div><div class="site-info"><div class="site-name">사회복지사협회 (요양보호사)</div><div class="site-url">www.welfare.net</div></div><span class="site-arrow">↗</span></a>
+          <a href="https://www.hibrain.net" target="_blank" rel="noopener" class="site-card"><div class="site-favicon">H</div><div class="site-info"><div class="site-name">하이브레인넷</div><div class="site-url">www.hibrain.net</div></div><span class="site-arrow">↗</span></a>
+          <a href="https://www.hunjang.com" target="_blank" rel="noopener" class="site-card"><div class="site-favicon">훈</div><div class="site-info"><div class="site-name">훈장마을</div><div class="site-url">www.hunjang.com</div></div><span class="site-arrow">↗</span></a>
+          <a href="https://www.hunjang.com" target="_blank" rel="noopener" class="site-card"><div class="site-favicon">방</div><div class="site-info"><div class="site-name">방과후교사 (각 시도 교육청)</div><div class="site-url">www.hunjang.com</div></div><span class="site-arrow">↗</span></a>
+          <a href="https://central.childcare.go.kr" target="_blank" rel="noopener" class="site-card"><div class="site-favicon">중</div><div class="site-info"><div class="site-name">중앙육아종합지원센터</div><div class="site-url">central.childcare.go.kr</div></div><span class="site-arrow">↗</span></a>
+          <a href="https://www.comwel.or.kr/escac" target="_blank" rel="noopener" class="site-card"><div class="site-favicon">직</div><div class="site-info"><div class="site-name">직장보육지원센터</div><div class="site-url">www.comwel.or.kr/escac</div></div><span class="site-arrow">↗</span></a>
+          <a href="https://www.idolbom.go.kr" target="_blank" rel="noopener" class="site-card"><div class="site-favicon">아</div><div class="site-info"><div class="site-name">아이돌봄서비스</div><div class="site-url">www.idolbom.go.kr</div></div><span class="site-arrow">↗</span></a>
+        </div>
+      </div>
+
+      <!-- 식품·외식 -->
+      <div class="category-section" data-cat="food">
+        <div class="category-heading">
+          <div class="category-icon">🍽️</div>
+          <h3 class="category-title">식품·외식</h3>
+          <span class="category-count">4곳</span>
+        </div>
+        <div class="site-grid">
+          <a href="https://www.foodjob24.com" target="_blank" rel="noopener" class="site-card"><div class="site-favicon">F24</div><div class="site-info"><div class="site-name">푸드잡 24</div><div class="site-url">www.foodjob24.com</div></div><span class="site-arrow">↗</span></a>
+          <a href="https://222.foodnjob.com" target="_blank" rel="noopener" class="site-card"><div class="site-favicon">FN</div><div class="site-info"><div class="site-name">푸드앤잡</div><div class="site-url">222.foodnjob.com</div></div><span class="site-arrow">↗</span></a>
+          <a href="https://www.jobcook.com" target="_blank" rel="noopener" class="site-card"><div class="site-favicon">JC</div><div class="site-info"><div class="site-name">외식업 잡쿡</div><div class="site-url">www.jobcook.com</div></div><span class="site-arrow">↗</span></a>
+          <a href="https://www.cafindjob.co.kr" target="_blank" rel="noopener" class="site-card"><div class="site-favicon">CF</div><div class="site-info"><div class="site-name">카파인드잡</div><div class="site-url">www.cafindjob.co.kr</div></div><span class="site-arrow">↗</span></a>
+        </div>
+      </div>
+
+      <!-- 뷰티·패션 -->
+      <div class="category-section" data-cat="beauty">
+        <div class="category-heading">
+          <div class="category-icon">💄</div>
+          <h3 class="category-title">뷰티·패션·디자인</h3>
+          <span class="category-count">6곳</span>
+        </div>
+        <div class="site-grid">
+          <a href="https://www.fashionwork.co.kr" target="_blank" rel="noopener" class="site-card"><div class="site-favicon">FW</div><div class="site-info"><div class="site-name">섬유 패션</div><div class="site-url">www.fashionwork.co.kr</div></div><span class="site-arrow">↗</span></a>
+          <a href="https://www.designerjob.co.kr" target="_blank" rel="noopener" class="site-card"><div class="site-favicon">D</div><div class="site-info"><div class="site-name">디자이너잡</div><div class="site-url">www.designerjob.co.kr</div></div><span class="site-arrow">↗</span></a>
+          <a href="https://www.cosmejob.co.kr" target="_blank" rel="noopener" class="site-card"><div class="site-favicon">코</div><div class="site-info"><div class="site-name">화장품 전문판매 코스메잡</div><div class="site-url">www.cosmejob.co.kr</div></div><span class="site-arrow">↗</span></a>
+          <a href="https://www.miyongjob.co.kr" target="_blank" rel="noopener" class="site-card"><div class="site-favicon">미</div><div class="site-info"><div class="site-name">미용사잡</div><div class="site-url">www.miyongjob.co.kr</div></div><span class="site-arrow">↗</span></a>
+          <a href="https://xn--299au0kfvfy3a.com" target="_blank" rel="noopener" class="site-card"><div class="site-favicon">애</div><div class="site-info"><div class="site-name">애견미용사</div><div class="site-url">애견미용사.com</div></div><span class="site-arrow">↗</span></a>
+          <a href="https://www.dorus.co.kr" target="_blank" rel="noopener" class="site-card"><div class="site-favicon">D</div><div class="site-info"><div class="site-name">도루스</div><div class="site-url">www.dorus.co.kr</div></div><span class="site-arrow">↗</span></a>
+        </div>
+      </div>
+
+      <!-- 환경·기술 -->
+      <div class="category-section" data-cat="env">
+        <div class="category-heading">
+          <div class="category-icon">🌱</div>
+          <h3 class="category-title">환경·기술·시설</h3>
+          <span class="category-count">7곳</span>
+        </div>
+        <div class="site-grid">
+          <a href="https://ecojob.re.kr" target="_blank" rel="noopener" class="site-card"><div class="site-favicon">E</div><div class="site-info"><div class="site-name">에코잡</div><div class="site-url">ecojob.re.kr</div></div><span class="site-arrow">↗</span></a>
+          <a href="https://me.go.kr" target="_blank" rel="noopener" class="site-card"><div class="site-favicon">환</div><div class="site-info"><div class="site-name">환경부</div><div class="site-url">me.go.kr</div></div><span class="site-arrow">↗</span></a>
+          <a href="https://xn--rh3b14m3lh.com" target="_blank" rel="noopener" class="site-card"><div class="site-favicon">건</div><div class="site-info"><div class="site-name">건설워크잡</div><div class="site-url">워크잡.com</div></div><span class="site-arrow">↗</span></a>
+          <a href="https://www.worker.co.kr" target="_blank" rel="noopener" class="site-card"><div class="site-favicon">W</div><div class="site-info"><div class="site-name">건설워커</div><div class="site-url">www.worker.co.kr</div></div><span class="site-arrow">↗</span></a>
+          <a href="https://gisuljob.com" target="_blank" rel="noopener" class="site-card"><div class="site-favicon">G</div><div class="site-info"><div class="site-name">기술잡</div><div class="site-url">gisuljob.com</div></div><span class="site-arrow">↗</span></a>
+          <a href="https://xn--vk1bo7yytcsmi.com" target="_blank" rel="noopener" class="site-card"><div class="site-favicon">조</div><div class="site-info"><div class="site-name">조경잡</div><div class="site-url">조경구인구직.com</div></div><span class="site-arrow">↗</span></a>
+          <a href="https://www.sulbijob.co.kr" target="_blank" rel="noopener" class="site-card"><div class="site-favicon">S</div><div class="site-info"><div class="site-name">설비잡</div><div class="site-url">www.sulbijob.co.kr</div></div><span class="site-arrow">↗</span></a>
+        </div>
+      </div>
+
+      <!-- 농업·귀촌 -->
+      <div class="category-section" data-cat="agri">
+        <div class="category-heading">
+          <div class="category-icon">🌾</div>
+          <h3 class="category-title">농업·귀농·귀촌</h3>
+          <span class="category-count">2곳</span>
+        </div>
+        <div class="site-grid">
+          <a href="https://www.rturnfarm.com" target="_blank" rel="noopener" class="site-card"><div class="site-favicon">R</div><div class="site-info"><div class="site-name">귀농귀촌 종합센터</div><div class="site-url">www.rturnfarm.com</div></div><span class="site-arrow">↗</span></a>
+          <a href="https://www.agriwork.kr" target="_blank" rel="noopener" class="site-card"><div class="site-favicon">A</div><div class="site-info"><div class="site-name">도농 인력중개</div><div class="site-url">www.agriwork.kr</div></div><span class="site-arrow">↗</span></a>
+        </div>
+      </div>
+
+      <!-- 기타 전문 -->
+      <div class="category-section" data-cat="etc">
+        <div class="category-heading">
+          <div class="category-icon">🧭</div>
+          <h3 class="category-title">기타 전문분야</h3>
+          <span class="category-count">12곳</span>
+        </div>
+        <div class="site-grid">
+          <a href="https://www.khma.org/portal/portal.web" target="_blank" rel="noopener" class="site-card"><div class="site-favicon">주</div><div class="site-info"><div class="site-name">주택관리사 협회</div><div class="site-url">www.khma.org</div></div><span class="site-arrow">↗</span></a>
+          <a href="https://xn--hz2b19jvj93s.com" target="_blank" rel="noopener" class="site-card"><div class="site-favicon">사</div><div class="site-info"><div class="site-name">도서관 사서, 사서마을</div><div class="site-url">사서마을.com</div></div><span class="site-arrow">↗</span></a>
+          <a href="https://www.tradein.co.kr" target="_blank" rel="noopener" class="site-card"><div class="site-favicon">T</div><div class="site-info"><div class="site-name">트레이드인</div><div class="site-url">www.tradein.co.kr</div></div><span class="site-arrow">↗</span></a>
+          <a href="https://www.jobtogether.co.kr" target="_blank" rel="noopener" class="site-card"><div class="site-favicon">JT</div><div class="site-info"><div class="site-name">잡투게더 한국무역협회</div><div class="site-url">www.jobtogether.co.kr</div></div><span class="site-arrow">↗</span></a>
+          <a href="https://www.shopma.net" target="_blank" rel="noopener" class="site-card"><div class="site-favicon">SM</div><div class="site-info"><div class="site-name">해외영업 및 무역사무</div><div class="site-url">www.shopma.net</div></div><span class="site-arrow">↗</span></a>
+          <a href="https://www.shopnuri.net" target="_blank" rel="noopener" class="site-card"><div class="site-favicon">샵</div><div class="site-info"><div class="site-name">샵마넷</div><div class="site-url">www.shopnuri.net</div></div><span class="site-arrow">↗</span></a>
+          <a href="https://www.telejob.co.kr" target="_blank" rel="noopener" class="site-card"><div class="site-favicon">텔</div><div class="site-info"><div class="site-name">텔레마케터 직종 채용정보</div><div class="site-url">www.telejob.co.kr</div></div><span class="site-arrow">↗</span></a>
+          <a href="https://www.airportal.go.kr" target="_blank" rel="noopener" class="site-card"><div class="site-favicon">항</div><div class="site-info"><div class="site-name">항공일자리</div><div class="site-url">www.airportal.go.kr</div></div><span class="site-arrow">↗</span></a>
+          <a href="https://academy.visitkorea.or.kr" target="_blank" rel="noopener" class="site-card"><div class="site-favicon">관</div><div class="site-info"><div class="site-name">관광전문인력포털</div><div class="site-url">academy.visitkorea.or.kr</div></div><span class="site-arrow">↗</span></a>
+          <a href="https://www.chosunjob.com" target="_blank" rel="noopener" class="site-card"><div class="site-favicon">조</div><div class="site-info"><div class="site-name">조선업종 취업정보 조선잡</div><div class="site-url">www.chosunjob.com</div></div><span class="site-arrow">↗</span></a>
+          <a href="https://www.seanet.co.kr" target="_blank" rel="noopener" class="site-card"><div class="site-favicon">씨</div><div class="site-info"><div class="site-name">씨넷</div><div class="site-url">www.seanet.co.kr</div></div><span class="site-arrow">↗</span></a>
+          <a href="https://www.mediajob.co.kr" target="_blank" rel="noopener" class="site-card"><div class="site-favicon">미</div><div class="site-info"><div class="site-name">언론 방송 미디어잡</div><div class="site-url">www.mediajob.co.kr</div></div><span class="site-arrow">↗</span></a>
+          <a href="https://www.kidkids.net" target="_blank" rel="noopener" class="site-card"><div class="site-favicon">K</div><div class="site-info"><div class="site-name">키즈키드</div><div class="site-url">www.kidkids.net</div></div><span class="site-arrow">↗</span></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 푸터 ============ -->
+<footer class="footer">
+  <div class="footer-brand">커리어포레스트 🌳</div>
+  <p>AI와 함께 그리는 신중년의 새로운 직업 여정</p>
+  <p>Made by <a href="https://careerforest.co.kr" target="_blank" rel="noopener">careerforest.co.kr</a></p>
+</footer>
+
+<!-- 플로팅 버튼 -->
+<div class="floating-actions">
+  <button class="float-btn print-btn" onclick="window.print()" title="인쇄">🖨️</button>
+  <button class="float-btn top-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="맨 위로">↑</button>
+</div>
+
+<div class="toast" id="toast">복사 완료!</div>
+
+<script>
+  // 프롬프트 복사 기능
+  document.querySelectorAll('.copy-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const targetId = btn.dataset.target;
+      const text = document.getElementById(targetId).innerText;
+      navigator.clipboard.writeText(text).then(() => {
+        const orig = btn.textContent;
+        btn.textContent = '✓ 복사됨';
+        btn.classList.add('copied');
+        showToast('프롬프트가 복사되었습니다');
+        setTimeout(() => {
+          btn.textContent = orig;
+          btn.classList.remove('copied');
+        }, 1800);
+      });
+    });
+  });
+
+  // 토스트
+  function showToast(msg) {
+    const toast = document.getElementById('toast');
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2000);
+  }
+
+  // 카테고리 탭 필터
+  const tabs = document.querySelectorAll('.cat-tab');
+  const sections = document.querySelectorAll('.category-section');
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      const cat = tab.dataset.cat;
+      sections.forEach(sec => {
+        if (cat === 'all' || sec.dataset.cat === cat) {
+          sec.classList.remove('hidden');
+        } else {
+          sec.classList.add('hidden');
+        }
+      });
+      document.getElementById('siteSearch').value = '';
+    });
+  });
+
+  // 검색 필터
+  document.getElementById('siteSearch').addEventListener('input', (e) => {
+    const q = e.target.value.toLowerCase().trim();
+    document.querySelectorAll('.site-card').forEach(card => {
+      const name = card.querySelector('.site-name').textContent.toLowerCase();
+      const url = card.querySelector('.site-url').textContent.toLowerCase();
+      const match = !q || name.includes(q) || url.includes(q);
+      card.style.display = match ? '' : 'none';
+    });
+    // 빈 카테고리는 숨기기
+    sections.forEach(sec => {
+      const visibleCards = sec.querySelectorAll('.site-card:not([style*="none"])');
+      sec.style.display = visibleCards.length === 0 && q ? 'none' : '';
+    });
+    if (q) {
+      tabs.forEach(t => t.classList.remove('active'));
+      tabs[0].classList.add('active');
+      sections.forEach(s => s.classList.remove('hidden'));
+    }
+  });
+</script>
+
+</body>
+</html>
